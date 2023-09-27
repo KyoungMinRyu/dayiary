@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icia.web.dao.UserDaoG2"> <!-- Mybatis를 통해서 UserDao.java 인터페이스와 맵핑 됨 -->
+<resultMap type="com.icia.web.model.UserG2" id="userResultMap"> <!-- User객체를 리턴타입으로 넘김 -->
+   <id column="USER_ID" property="userId" /> 
+   <result column="USER_PWD" property="userPwd" />
+   <result column="USER_EMAIL" property="userEmail" />
+   <result column="USER_NAME" property="userName" />
+   <result column="USER_NICKNAME" property="userNickName" />
+   <result column="USER_PH" property="userPh" />
+   <result column="USER_GEN" property="userGen" />
+   <result column="USER_BIR" property="userBir" />
+   <result column="STATUS" property="status" />
+   <result column="REG_DATE" property="regDate" />
+   <result column="UPDATE_DATE" property="updateDate" />
+   <result column="USER_ADDRESS" property="userAddress" />
+     
+   <!-- UserProfileFile 관련 매핑 -->
+    <association property="userProfileFile" javaType="com.icia.web.model.UserProfileFile">
+        <result property="fileName" column="FILE_NAME"/>
+    </association> 
+</resultMap>
+
+<resultMap type="com.icia.web.model.OrderList" id="orderListResultMap">
+   <id column="ORDER_SEQ" property="orderSeq" />
+   <result column="PRODUCT_SEQ" property="productSeq" />
+   <result column="USER_ID" property="userId" />
+   <result column="REG_DATE" property="regDate" />
+   <result column="STATUS" property="status" />
+   <result column="RESERV_DATE" property="reservDate" />
+   <result column="RESERV_TIME" property="reservTime" />
+   <result column="RESERV_PERSON" property="reservPerson" />
+   <result column="R_SEQ" property="rSeq" />
+   <result column="FILE_NAME" property="fileName" />
+   <result column="RESTO_NAME" property="restoName" />
+   <result column="RESTO_ADDRESS" property="restoAddress" />
+   <result column="RESTO_PH" property="restoPh" />
+   <result column="TOTAL_PRICE" property="totalPrice" />
+   <result column="CHANGEABLE" property="changeable" /> 
+   <result column="REVIEWED" property="reviewed" />     
+   <result column="TOTAL_CNT" property="totalCnt" />    
+   <result column="P_NAME" property="pName" />   
+   <result column="DELIVERY_STATUS" property="deliveryStatus" />    
+   <result column="SELLER_SHOP_NAME" property="sellerShopName" /> 
+   <result column="SELLER_PH" property="sellerPh" />     
+   <result column="ORDER_ADDRESS" property="orderAddress" />    
+   <result column="USER_NAME" property="userName" />   
+   <result column="USER_PH" property="userPh" /> 
+   <result column="PAY_METHOD" property="payMethod" /> 
+</resultMap>
+
+<!-- userId 중복 체크 및 프로필 이미지 정보 함께 가져오기 -->
+<select id="userIdSelect" parameterType="String" resultMap="userResultMap">    
+ SELECT 
+    A.USER_ID,
+    A.USER_PWD,
+    A.USER_EMAIL,
+    A.USER_NAME,
+    A.USER_NICKNAME,
+    A.USER_PH,
+    A.USER_GEN,
+    A.USER_BIR,
+    A.STATUS,
+    NVL(TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS REG_DATE,
+    NVL(TO_CHAR(A.UPDATE_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS UPDATE_DATE,
+    A.USER_ADDRESS,
+    B.FILE_NAME
+ FROM
+     G2_USER A
+ LEFT JOIN USER_PROFILE_FILE B ON A.USER_ID = B.USER_ID
+ WHERE
+     A.USER_ID = #{value}
+</select>
+
+
+
+
+<!-- userNickName 중복체크 -->
+<select id="userNickNameSelect" parameterType="String" resultMap="userResultMap">    
+ SELECT 
+    USER_ID,
+    USER_PWD,
+    USER_EMAIL,
+    USER_NAME,
+    USER_NICKNAME,
+    USER_PH,
+    USER_GEN,
+    USER_BIR,
+    STATUS,
+    NVL(TO_CHAR(REG_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS REG_DATE,
+    NVL(TO_CHAR(UPDATE_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS UPDATE_DATE,
+    USER_ADDRESS 
+ FROM
+     G2_USER
+ WHERE
+     USER_NICKNAME = #{value}
+</select>    
+
+<insert id="userInsert" parameterType="com.icia.web.model.UserG2" >    
+ INSERT INTO
+     G2_USER
+     (
+         USER_ID,
+       USER_PWD,
+       USER_EMAIL,
+       USER_NAME,
+       USER_NICKNAME,
+       USER_PH,
+       USER_GEN,
+       USER_BIR,
+       STATUS,
+       REG_DATE,
+       UPDATE_DATE,
+       USER_ADDRESS
+     )
+    VALUES
+     (
+       #{userId},
+       #{userPwd},
+       #{userEmail},
+       #{userName},
+       #{userNickName},
+       #{userPh},
+       #{userGen},
+       #{userBir},
+       'Y',
+       SYSDATE,
+       SYSDATE,
+       #{userAddress}
+     )   
+</insert>    
+
+<update id="userUpdate"  parameterType="com.icia.web.model.UserG2">
+ UPDATE 
+    G2_USER 
+ SET 
+    USER_PWD = #{userPwd}, 
+    USER_NICKNAME = #{userNickName},
+    USER_ADDRESS = #{userAddress}
+ WHERE 
+    USER_ID = #{userId}
+</update>
+
+<!-- 아이디 찾기 -->
+<select id="lostIdFind" parameterType="map" resultMap="userResultMap">
+SELECT USER_ID
+  FROM G2_USER
+ WHERE USER_EMAIL = #{userEmail}
+   AND USER_NAME = #{userName}
+</select>
+
+
+<!-- 비밀번호 찾기 -->
+
+<select id="pwdCheck" parameterType="String" resultType="int">
+    SELECT COUNT(*)
+    FROM G2_USER
+    WHERE USER_ID = #{userId}
+      AND USER_EMAIL = #{userEmail}
+      AND USER_NAME = #{userName}
+</select>
+
+<!-- 프로필 이미지 파일 이름 저장: -->
+<insert id="saveProfileImageFileName">
+    INSERT INTO USER_PROFILE_FILE ( USER_ID, FILE_NAME )
+    VALUES ( #{userId}, #{fileName} )
+</insert>
+
+<!-- 프로필 이미지 불러오기 -->
+<select id="getProfileImageFileNameByUserId" resultType="string" parameterType="string">
+    SELECT FILE_NAME FROM USER_PROFILE_FILE WHERE USER_ID = #{userId}
+</select>
+
+<!-- 프로필 기존에있으면 update -->
+<update id="updateProfileImageFileName">
+    UPDATE USER_PROFILE_FILE SET FILE_NAME = #{fileName} WHERE USER_ID = #{userId}
+</update>
+
+<select id="selectProductOrderList" parameterType="com.icia.web.model.OrderList" resultMap="orderListResultMap">
+SELECT
+    ORDER_SEQ,
+    PRODUCT_SEQ,
+    P_NAME,
+    USER_ID,
+    REG_DATE,
+    STATUS,
+    DELIVERY_STATUS,
+    TOTAL_CNT,
+    TOTAL_PRICE,
+    REVIEWED
+FROM
+    (
+        SELECT
+            ROWNUM AS RNM,
+            ORDER_SEQ,
+            PRODUCT_SEQ,
+            P_NAME,
+            USER_ID,
+            REG_DATE,
+            STATUS,
+            DELIVERY_STATUS,
+            TOTAL_CNT,
+            TOTAL_PRICE,
+            REVIEWED
+        FROM
+            (
+                SELECT
+                    O.ORDER_SEQ AS ORDER_SEQ,
+                    O.PRODUCT_SEQ AS PRODUCT_SEQ,
+                    P.P_NAME AS P_NAME,
+                    O.USER_ID AS USER_ID,
+                    TO_CHAR(O.REG_DATE, 'YYYY.MM.DD') AS REG_DATE,
+                    O.STATUS AS STATUS,
+                    O.DELIVERY_STATUS AS DELIVERY_STATUS,
+                    PL.TOTAL_CNT AS TOTAL_CNT,
+                    PL.TOTAL_PRICE AS TOTAL_PRICE,
+                    O.REVIEWED AS REVIEWED
+                FROM
+                    ORDER_LIST O,
+                    PRODUCT_INFO P,
+                    PRODUCT_FILE F,
+                    PAY_LIST PL
+                WHERE
+                    O.USER_ID = #{userId}
+                    AND O.R_SEQ IS NULL
+                    AND P.PRODUCT_SEQ = O.PRODUCT_SEQ 
+                    AND O.STATUS != 'W'
+                    AND F.FILE_SEQ = 1
+                    AND F.PRODUCT_SEQ = O.PRODUCT_SEQ
+                    AND O.ORDER_SEQ = PL.ORDER_ID
+                    <if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>  
+					   	<choose>   
+					      	<when test='searchType == "1"'> 
+				         		AND P.P_NAME LIKE '%' || #{searchValue} || '%'
+					        </when>
+					        <when test='searchType == "2"'> 
+				         		AND TO_CHAR(O.REG_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+					        </when>
+					      	<otherwise>
+					   			AND
+					   				(
+							   			P.P_NAME LIKE '%' || #{searchValue} || '%'
+							   			OR TO_CHAR(O.REG_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+					   				)
+					      	</otherwise>
+					   	</choose>
+					</if>
+                ORDER BY 
+                    O.REG_DATE DESC
+            )
+    )
+WHERE RNM BETWEEN #{startRow} AND #{endRow}
+</select>
+
+<select id="selectProductOrderTotalCount" parameterType="com.icia.web.model.OrderList" resultType="int">
+SELECT
+    COUNT(O.ORDER_SEQ) AS CNT
+FROM
+    ORDER_LIST O,
+    PRODUCT_INFO P
+WHERE
+    O.USER_ID = #{userId}
+    AND O.R_SEQ IS NULL
+    AND P.PRODUCT_SEQ = O.PRODUCT_SEQ  
+	<if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>  
+	   	<choose>   
+	      	<when test='searchType == "1"'> 
+         		AND P.P_NAME LIKE '%' || #{searchValue} || '%'
+	        </when>
+	        <when test='searchType == "2"'> 
+         		AND TO_CHAR(O.REG_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+	        </when>
+	      	<otherwise>
+	   			AND
+	   				(
+			   			P.P_NAME LIKE '%' || #{searchValue} || '%'
+			   			OR TO_CHAR(O.REG_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+	   				)
+	      	</otherwise>
+	   	</choose>
+	</if>
+</select>
+
+<select id="selectRestoOrderList" parameterType="com.icia.web.model.OrderList" resultMap="orderListResultMap">
+SELECT
+    ORDER_SEQ,
+    USER_ID,
+    REG_DATE,
+    RESTO_NAME,
+    STATUS,
+    RESERV_DATE,
+    R_SEQ,
+    RESERV_TIME,
+    RESERV_PERSON,
+    FILE_NAME,
+    TOTAL_PRICE,
+    CHANGEABLE,
+    REVIEWED  
+FROM
+    (
+		SELECT
+            ROWNUM AS RNM,
+		    O.ORDER_SEQ AS ORDER_SEQ,
+		    O.USER_ID AS USER_ID,
+            SUBSTR(O.REG_DATE, 1, 10) AS REG_DATE,
+		    O.RESTO_NAME,
+		    O.STATUS AS STATUS,
+		    O.RESERV_DATE AS RESERV_DATE,
+		    O.R_SEQ AS R_SEQ,
+		    O.RESERV_TIME AS RESERV_TIME,
+		    O.RESERV_PERSON AS RESERV_PERSON,
+		    O.FILE_NAME AS FILE_NAME,
+		    O.RESTO_DEPOSIT * O.RESERV_PERSON AS TOTAL_PRICE,
+		    O.CHANGEABLE AS CHANGEABLE,
+            O.REVIEWED AS REVIEWED
+		FROM
+		    (
+		        SELECT
+		            O.ORDER_SEQ,
+		            O.USER_ID,
+		            I.RESTO_NAME,
+		            I.RESTO_DEPOSIT,
+                    TO_CHAR(O.REG_DATE, 'YYYY.MM.DD HH24:MI') AS REG_DATE,
+		            O.STATUS,
+		            TO_CHAR(O.RESERV_DATE, 'YYYY.MM.DD') AS RESERV_DATE,
+		            O.R_SEQ,
+		            SUBSTR(O.RESERV_TIME, 1, 2) || ':' || SUBSTR(O.RESERV_TIME, -2) AS RESERV_TIME,
+		            O.RESERV_PERSON,
+		            F.FILE_NAME,
+		            CASE
+		                WHEN RESERV_DATE <![CDATA[<]]> SYSDATE THEN '0'
+		                WHEN TO_CHAR(RESERV_DATE, 'YYYYMMDD') LIKE TO_CHAR((SYSDATE + 1), 'YYYYMMDD') THEN '1'
+		                ELSE '2'
+		            END CHANGEABLE,
+                    NVL(REVIEWED, '0') AS REVIEWED
+		        FROM
+		            ORDER_LIST O,
+		            RESTO_FILE F,
+		            RESTO_INFO I
+		        WHERE
+		            USER_ID = #{userId}
+		            AND PRODUCT_SEQ IS NULL
+		            <if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>  
+					   	<choose>   
+					      	<when test='searchType == "1"'> 
+		           				AND I.RESTO_NAME LIKE '%' || #{searchValue} || '%'
+					        </when>
+					        <when test='searchType == "2"'> 
+		           				AND TO_CHAR(O.REG_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+					        </when>
+					        <when test='searchType == "3"'> 
+		          				AND TO_CHAR(O.RESERV_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+					      	</when>
+					      	<otherwise>
+					   			AND
+					   				(
+							   			TO_CHAR(O.REG_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+							   			OR TO_CHAR(O.RESERV_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+							   			OR I.RESTO_NAME LIKE '%' || #{searchValue} || '%'
+					   				)
+					      	</otherwise>
+					   	</choose>
+					</if>
+		            AND F.R_SEQ = O.R_SEQ 
+		            AND I.R_SEQ = O.R_SEQ
+		            AND F.FILE_SEQ = 1
+		        ORDER BY 
+		            REG_DATE DESC
+		    ) O
+    )
+WHERE 
+	RNM BETWEEN #{startRow} AND #{endRow}
+</select>
+
+<select id="selectRestoOrderTotalCnt" parameterType="com.icia.web.model.OrderList" resultType="int">
+SELECT
+    COUNT(ORDER_SEQ) AS CNT
+FROM
+    ORDER_LIST
+WHERE
+	USER_ID = #{userId}
+    AND PRODUCT_SEQ IS NULL
+    <if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>  
+   		<choose>   
+      		<when test='searchType == "1"'> 
+        		AND TO_CHAR(O.REG_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+        	</when>
+        	<when test='searchType == "2"'> 
+       			AND TO_CHAR(O.RESERV_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+        	</when>
+        	<when test='searchType == "3"'> 
+         		AND I.RESTO_NAME LIKE '%' || #{searchValue} || '%'
+      		</when>
+      		<otherwise>
+	   			AND
+	   				(
+			   			TO_CHAR(O.REG_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+			   			OR TO_CHAR(O.RESERV_DATE, 'YYYYMMDD') LIKE '%' || #{searchValue} || '%'
+			   			OR I.RESTO_NAME LIKE '%' || #{searchValue} || '%'
+	   				)
+      		</otherwise>
+   		</choose>
+	</if>
+</select>
+
+<update id="updateCancleOrder">
+UPDATE 
+    ORDER_LIST
+SET
+    STATUS = 'N'
+WHERE
+    ORDER_SEQ = #{value}
+</update>
+
+<update id="updateCanclePayList"> 
+UPDATE 
+    PAY_LIST
+SET
+    STATUS = 'N'
+WHERE
+    ORDER_ID = #{value}
+</update>
+
+<delete id="deleteReservCancleAnniversary">
+DELETE FROM 
+    USER_ANNIVERSARY
+WHERE
+    ANNIVERSARY_SEQ = 
+                        (
+                            SELECT    
+                                A.ANNIVERSARY_SEQ AS ANNIVERSARY_SEQ
+                            FROM
+                                USER_ANNIVERSARY A,
+                                (
+                                    SELECT
+                                        TO_CHAR(RESERV_DATE, 'YYYYMMDD') AS RESERV_DATE,
+                                        RESERV_TIME
+                                    FROM
+                                        ORDER_LIST
+                                    WHERE 
+                                        ORDER_SEQ =  #{value}
+                                ) O
+                            WHERE
+                                A.ANNIVERSARY_DATE = O.RESERV_DATE
+                                AND A.ANNIVERSARY_TIME = REPLACE(O.RESERV_TIME, ':', '')
+                                AND A.ANNIVERSARY_TITLE LIKE '%' || O.RESERV_TIME || '%'
+                                AND A.ANNIVERSARY_CONTENT LIKE '%' || O.RESERV_TIME || '%'                        
+                        )
+</delete>
+
+<select id="selectMyOrder" parameterType="String" resultType="String">
+SELECT
+    USER_ID
+FROM
+    ORDER_LIST
+WHERE
+    ORDER_SEQ = #{value}
+</select>
+
+<insert id="insertReview" parameterType="hashmap">
+INSERT INTO ORDER_REVIEW 
+(
+    ORDER_SEQ,
+    REVIEW_CONTENT,
+    REVIEW_SCORE,
+    REG_DATE
+)
+VALUES 
+(
+    #{orderSeq},
+    #{reviewComment},
+    #{reviewNum},
+    SYSDATE
+)
+</insert>	
+
+<update id="updateReviewed" parameterType="String">
+UPDATE 
+    ORDER_LIST
+SET
+    REVIEWED = '1'
+WHERE
+    ORDER_SEQ = #{value}
+</update>
+
+<delete id="deleteDelivery" parameterType="String">
+DELETE FROM 
+    DELIVERY
+WHERE
+    ORDER_SEQ = #{value}
+</delete>
+
+<select id="selectGiftOrderDetail" parameterType="String" resultMap="orderListResultMap">
+SELECT
+    O.ORDER_SEQ AS ORDER_SEQ,
+    O.REG_DATE AS REG_DATE,
+    O.STATUS AS STATUS,
+    P.TOTAL_CNT AS TOTAL_CNT,
+    P.TOTAL_PRICE AS TOTAL_PRICE,
+    PI.P_NAME AS P_NAME,
+    PF.FILE_NAME AS FILE_NAME,
+    S.SELLER_SHOP_NAME AS SELLER_SHOP_NAME,
+    S.SELLER_PH AS SELLER_PH,
+    D.ORDER_ADDRESS AS ORDER_ADDRESS,
+    U.USER_NAME AS USER_NAME,
+    U.USER_PH AS USER_PH,
+    P.PAY_METHOD AS PAY_METHOD
+FROM
+    ORDER_LIST O,
+    PAY_LIST P,
+    DELIVERY D,
+    G2_USER U,
+    G2_SELLER S,
+    PRODUCT_INFO PI,
+    PRODUCT_FILE PF
+WHERE
+    O.ORDER_SEQ = #{value}
+    AND PI.PRODUCT_SEQ = O.PRODUCT_SEQ
+    AND PF.PRODUCT_SEQ = PI.PRODUCT_SEQ
+    AND PF.FILE_SEQ = 1
+    AND U.USER_ID = O.USER_ID
+    AND S.SELLER_ID = PI.SELLER_ID
+    AND D.ORDER_SEQ = O.ORDER_SEQ
+    AND P.ORDER_ID = O.ORDER_SEQ
+</select>
+
+<select id="selectRestoOrderDetail" parameterType="String" resultMap="orderListResultMap">
+SELECT
+    O.ORDER_SEQ AS ORDER_SEQ,
+    O.REG_DATE AS REG_DATE,
+    O.STATUS AS STATUS,
+    O.RESERV_DATE AS RESERV_DATE,
+    P.TOTAL_CNT AS TOTAL_CNT,
+    P.TOTAL_PRICE AS TOTAL_PRICE,
+    U.USER_NAME AS USER_NAME,
+    R.RESTO_ADDRESS AS RESTO_ADDRESS,
+    R.RESTO_NAME AS RESTO_NAME,
+    R.RESTO_PH AS RESTO_PH,
+    RF.FILE_NAME AS FILE_NAME,
+    P.PAY_METHOD AS PAY_METHOD
+FROM
+    ORDER_LIST O,
+    PAY_LIST P,
+    G2_USER U,
+    RESTO_INFO R,
+    RESTO_FILE RF
+WHERE 
+    O.ORDER_SEQ = #{value}
+    AND P.ORDER_ID = O.ORDER_SEQ
+    AND U.USER_ID = O.USER_ID
+    AND R.R_SEQ = O.R_SEQ
+    AND RF.R_SEQ = R.R_SEQ
+    AND RF.FILE_SEQ = 1
+</select>
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.icia.web.dao.GiftOrderDao">
+ 
+<!--선물 결재 완료 전 INSERT(상태: W) resultMap-->
+<resultMap id="giftOrderListResultMap" type="com.icia.web.model.OrderList">
+       <id column="ORDER_SEQ" property="orderSeq" />            
+       <result column="PRODUCT_SEQ" property="productSeq" />
+       <result column="USER_ID" property="userId" />
+       <result column="REG_DATE" property="regDate" />
+       <result column="STATUS" property="status" />
+       <result column="RESERV_DATE" property="reservDate" />
+       <result column="R_SEQ" property="rSeq" />
+       <result column="RESERV_TIME" property="reservTime" />
+       <result column="RESERV_PERSON" property="reservPerson" />
+       <result column="REVIEWED" property="reviewed" />
+       <result column="DELIVERY_STATUS" property="deliveryStatus" />
+</resultMap>
+
+
+<!--선물 결제 완료 전 INSERT(상태: W) -->
+<insert id="giftOrderListInsert" parameterType="com.icia.web.model.OrderList"> 
+<selectKey resultType="String" keyProperty="orderSeq" order="BEFORE">
+SELECT TO_CHAR(SYSDATE, 'YYYYMMDD') || DAYIARY_SEQ.NEXTVAL AS orderSeq FROM DUAL
+</selectKey>
+INSERT INTO ORDER_LIST (
+                   ORDER_SEQ,
+                   PRODUCT_SEQ,
+                   USER_ID,
+                   REG_DATE,
+                   STATUS,
+                   RESERV_DATE,
+                   R_SEQ,
+                   RESERV_TIME,
+                   RESERV_PERSON,
+                   REVIEWED,
+                   DELIVERY_STATUS
+                  
+               ) VALUES (
+                   #{orderSeq},
+                   #{productSeq},
+                   #{userId},
+                   SYSDATE,
+                   #{status},
+                   #{reservDate},
+                   #{rSeq},
+                   #{reservTime},
+                   Null,
+                   '0',
+                   Null
+               )
+</insert>
+
+<!-- 선물 결제 완료 후 PAY_LIST INSERT -->
+<insert id="giftPayListInsert" parameterType="com.icia.web.model.KakaoPayApprove2"> 
+INSERT INTO PAY_LIST (
+                 ORDER_ID,
+                 PGTOKEN,
+                 TOTAL_CNT,
+                 TOTAL_PRICE,
+                 REG_DATE,
+                 STATUS,
+                 PAY_METHOD
+          ) VALUES (
+                 #{partner_order_id},
+                 #{pgToken},
+                 #{quantity},
+                  #{totalPrice},
+                  SYSDATE,
+                  'Y',
+                  #{payment_method_type}
+                )
+</insert>
+
+<!-- 선물 결제 완료 후 ORDER_LIST (STATUS W -> Y) UPDATE -->
+<update id="giftOrderListUpdate" parameterType="String">
+UPDATE ORDER_LIST
+   SET STATUS = 'Y',
+       DELIVERY_STATUS = '0'
+ WHERE ORDER_SEQ = #{value}
+</update>
+
+<!-- 선물 결제 완료 후 DELIVERY INSERT -->
+<insert id="deliveryInsert" parameterType="com.icia.web.model.Delivery"> 
+INSERT INTO DELIVERY (
+                 DELIVER_COMPANY,
+                 ORDER_ADDRESS,
+                 ORDER_NUM,
+                 ORDER_SEQ,
+                 ORDER_MSG
+         ) VALUES (
+                 Null,
+                 #{orderAddress},
+                 Null,
+                 #{orderSeq},
+                 #{orderMsg}
+               )
+</insert>
+
+
+
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SELECT COUNT(USER_EMAIL) AS CNT FROM MAIL_PASS WHERE USER_EMAIL = ? 이메일 중복 체크 0 사용가능 1 사용불가 -->
+<!-- SELECT STATUS FROM MAIL_PASS WHERE USER_EMAIL = ? 이메일 인증 후 사용 여부 체크 -->
+<!-- INSERT INTO MAIL_PASS(USER_EMAIL, RAN_NUM, STATUS, PASS_DATE) VALUES (?, ?, 'N', SYSDATE) 이메일 인증 요청 보냈을 때 DB저장 -->
+<!-- DELETE FROM MAIL_PASS WHERE USER_EMAIL = ? 이메일 인증 시간이 만료 되었을 때 -->
+<!-- UPDATE MAIL_PASS SET STATUS = 'Y' WHERE (PASS_DATE + 5/(24*60)) > (SELECT SYSDATE FROM DUAL) AND USER_EMAIL = ? AND RAN_NUM = ? 이메일에 접속해서 버튼을 눌렀을 떄 5분이 지나지 않으면 사용여부 Y -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icia.web.dao.MailPassDao"> <!-- Mybatis를 통해서 MailPassDao.java 인터페이스와 맵핑 됨 -->  
+<!-- id값은 맵핑되는 .java에 있는 메소드명과 값아야함, parameterType은 매개변수타입, resultMap 리턴타입 -->
+<!-- 
+SQL이 select면 xml문법 select 안에서는 resultType또는 resultMap이 있어야함 
+insert, update, delete는 각각 타입에 맞게 리턴타입은 자동으로 int로 정해짐 
+-->
+<select id="userMailSelectCount" parameterType="String" resultType="String">	 <!-- 매개변수 userEmail, 리턴타입 0, 1 -->
+ 	SELECT 
+ 		COUNT(USER_EMAIL) AS CNT 
+ 	FROM 
+ 		MAIL_PASS 
+ 	WHERE 
+ 		USER_EMAIL = #{value}
+</select> 
+ 
+<select id="selectStatus" parameterType="String" resultType="String"> <!-- 매개변수 userEmail, 리턴타입 Y, N -->	 
+SELECT 
+	STATUS 
+FROM 
+	MAIL_PASS 
+WHERE 
+	USER_EMAIL = #{value}
+</select>  
+ 
+ <!-- 매개변수를 여러개 받고 싶을 떄는 hashmap을 사용하여 key : value를 사용하여 해야함 -->
+<insert id="mailPassInsert" parameterType="hashmap"> <!-- 매개변수 hashMap(userEmail, ranNum), 리턴타입 0, 1 -->	 
+INSERT INTO 
+	MAIL_PASS
+	(
+		USER_EMAIL, 
+		RAN_NUM, 
+		STATUS, 
+		PASS_DATE
+	) 
+VALUES 
+	(
+		#{userEmail}, 
+		#{ranNum}, 
+		'N', 
+		SYSDATE
+	) 
+</insert>  
+ 
+<delete id="mailPassDelete" parameterType="String"> <!-- 매개변수 userEmail -->
+DELETE FROM 
+	MAIL_PASS 
+WHERE 
+	USER_EMAIL = #{value}
+</delete>  
+ 
+<update id="mailPassUpdate" parameterType="hashmap"> <!-- 매개변수 hashMap(userEmail, ranNum) -->
+UPDATE 
+	MAIL_PASS 
+SET 
+	STATUS = 'Y' 
+WHERE 
+	(PASS_DATE + 5/(24*60)) > (SELECT SYSDATE FROM DUAL) 
+	AND USER_EMAIL = #{userEmail} 
+	AND RAN_NUM = #{ranNum}
+</update>
+
+<delete id="deleteNotUsedEmail">
+DELETE FROM 
+    MAIL_PASS
+WHERE
+    USER_EMAIL NOT IN 
+                    (
+                        SELECT 
+                            USER_EMAIL
+                        FROM
+                            G2_USER
+                    )
+    AND USER_EMAIL NOT IN 
+                    (
+                        SELECT 
+                            USER_EMAIL
+                        FROM
+                            G2_SELLER
+                    )
+    AND (SYSDATE-1/24) > PASS_DATE
+</delete>
+
+<update id="passwordUpdate" parameterType="hashmap">
+    UPDATE G2_USER
+    SET USER_PWD = #{tempPassword}
+    WHERE USER_EMAIL = #{userEmail}
+</update>
+
+<update id="sellerpasswordUpdate" parameterType="hashmap">
+    UPDATE G2_SELLER
+    SET SELLER_PWD = #{tempPassword}
+    WHERE USER_EMAIL = #{sellerEmail}
+</update>     
+</mapper>

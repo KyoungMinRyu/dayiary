@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icia.web.dao.RestoDao">
+
+
+<!-- RESTO_INFO resultMap -->
+<resultMap id="restoInfoResultMap" type="com.icia.web.model.RestoInfo">
+   <id column="R_SEQ" property="rSeq" />
+   <result column="RESTO_NAME" property="restoName" />
+   <result column="SELLER_ID" property="sellerId" />
+   <result column="RESTO_ADDRESS" property="restoAddress" />
+   <result column="RESTO_PH" property="restoPh" />
+   <result column="RESTO_CONTENT" property="restoContent" />
+   <result column="REG_DATE" property="regDate" />
+   <result column="STATUS" property="status" />
+   <result column="RESTO_TYPE" property="restoType" />
+   <result column="FOOD_TYPE" property="foodType" />
+   <result column="RESTO_OFF" property="restoOff" />
+   <result column="RESTO_OPEN" property="restoOpen" />
+   <result column="RESTO_CLOSE" property="restoClose" />
+   <result column="RESTO_DEPOSIT" property="restoDeposit" />
+   <result column="FILE_NAME" property="fileName" />
+   <result column="CNT" property="cnt" />
+   <result column="LIMIT_PERSON" property="limitPerson" />
+</resultMap>
+
+<!-- MENU resultMap -->
+<resultMap type="com.icia.web.model.Menu" id="menuResultMap">
+    <id column="MENU_SEQ" property="menuSeq" />
+    <result column="R_SEQ" property="rSeq" />
+    <result column="MENU_NAME" property="menuName" />
+    <result column="MENU_PRICE" property="menuPrice" />
+    <result column="MENU_CONTENT" property="menuContent" />
+    <result column="FILE_NAME" property="fileName" />
+</resultMap>
+
+<!-- RestoFile resultMap -->
+<resultMap type="com.icia.web.model.RestoFile" id="restoFileResultMap">
+    <result column="FILE_SEQ" property="fileSeq" />
+    <result column="R_SEQ" property="rSeq" />
+    <result column="FILE_NAME" property="fileName" />
+</resultMap>
+
+
+<!-- OrderList resultMap -->
+<resultMap type="com.icia.web.model.OrderList" id="orderListResultMap">
+   <id column="ORDER_SEQ" property="orderSeq" />
+   <result column="PRODUCT_SEQ" property="productSeq" />
+   <result column="USER_ID" property="userId" />
+   <result column="REG_DATE" property="regDate" />
+   <result column="STATUS" property="status" />
+   <result column="RESERV_DATE" property="reservDate" />
+   <result column="RESERV_TIME" property="reservTime" />
+   <result column="RESERV_PERSON" property="reservPerson" />
+   <result column="R_SEQ" property="rSeq" />
+   <result column="REVIEWED" property="reviewed" />
+</resultMap>
+
+<!-- KakaoPayApprove resultMap 
+<resultMap type="com.icia.web.model.KakaoPayApprove" id="kakaoPayApproveResultMap">
+   <id column="ORDER_ID" property="partner_order_id" />
+   <result column="PAY_METHOD" property="payment_method_type" />
+   <result column="TOTAL_PRICE" property="totalPrice" />
+   <result column="TOTAL_CNT" property="quantity" />
+   <result column="REG_DATE" property="approved_at" />
+   <result column="PGTOKEN" property="pgToken" />
+</resultMap>
+-->
+
+<!-- RestoReview resultMap --> 
+<resultMap type="com.icia.web.model.RestoReview" id="restoReviewResultMap">
+   <result column="ORDER_SEQ" property="orderSeq" />
+   <result column="REVIEW_CONTENT" property="reviewContent" />
+   <result column="REVIEW_SCORE" property="reviewScore" />
+   <result column="R_SEQ" property="rSeq" />
+   <result column="USER_ID" property="userId" />
+   <result column="FILE_NAME" property="fileName" />
+   <result column="USER_NICKNAME" property="userNickName" />
+   <result column="RESERV_DATE" property="reservDate" />
+</resultMap>
+
+
+<!-- 레스토랑 리스트 -->
+<select id="restoList" parameterType="com.icia.web.model.RestoInfo" resultMap="restoInfoResultMap">
+SELECT R_SEQ,
+       RESTO_NAME,
+       SELLER_ID,
+       RESTO_ADDRESS,
+       RESTO_PH,
+       RESTO_CONTENT,
+       REG_DATE,
+       STATUS,
+       RESTO_TYPE,
+       FOOD_TYPE,
+       RESTO_OFF,
+       RESTO_OPEN,
+       RESTO_CLOSE,
+       RESTO_DEPOSIT,
+       LIMIT_PERSON
+  FROM (SELECT ROWNUM RNM,
+               R_SEQ,
+               RESTO_NAME,
+               SELLER_ID,
+               RESTO_ADDRESS,
+               RESTO_PH,
+               RESTO_CONTENT,
+               REG_DATE,
+               STATUS,
+               RESTO_TYPE,
+               FOOD_TYPE,
+               RESTO_OFF,
+               RESTO_OPEN,
+               RESTO_CLOSE,
+               RESTO_DEPOSIT,
+               LIMIT_PERSON
+          FROM (SELECT ROWNUM RNM,
+                       R_SEQ,
+                        RESTO_NAME,
+                        SELLER_ID,
+                        RESTO_ADDRESS,
+                        RESTO_PH,
+                        RESTO_CONTENT,
+                        REG_DATE,
+                        STATUS,
+                        RESTO_TYPE,
+                        FOOD_TYPE,
+                        RESTO_OFF,
+                        RESTO_OPEN,
+                        RESTO_CLOSE,
+                        RESTO_DEPOSIT,
+                        LIMIT_PERSON
+                    FROM RESTO_INFO
+                 WHERE 1 = 1
+<if test=' searchTypeLocation != null and searchTypeLocation != "" '>
+                    AND SUBSTR(RESTO_ADDRESS, 1, 2) = #{searchTypeLocation}
+</if>
+<if test=' searchTypeShop != null and searchTypeShop != "" '>
+                    AND RESTO_TYPE = #{searchTypeShop}
+</if>
+<if test=' searchTypeFood != null and searchTypeFood != "" '>
+                AND (FOOD_TYPE = #{searchTypeFood} OR FOOD_TYPE = '기타') <!-- FOOD_TYPE이 '기타'인 경우 어느음식을 골라도 같이 나오게 하기 위함-->
+</if>
+<if test=' searchTypeDate != null and searchTypeDate != "" '>
+                  AND (RESTO_OFF NOT LIKE '%' || #{searchTypeDate} || '%' OR RESTO_OFF IS NULL)
+</if>
+              ORDER BY RESTO_ADDRESS ASC))
+ WHERE RNM <![CDATA[>=]]> #{startRow}
+   AND RNM <![CDATA[<=]]> #{endRow}  
+</select>
+<!--  꺽쇠부분을 태그로 인식해서...  <![CDATA[>=]]> 문법 사용 -->
+
+
+<!-- 총 레스토랑 수 -->
+<select id="restoCount" parameterType="com.icia.web.model.RestoInfo" resultType="long">
+SELECT COUNT(*) AS CNT
+  FROM RESTO_INFO
+ WHERE 1 = 1
+<if test=' searchTypeLocation != null and searchTypeLocation != "" '>
+   AND SUBSTR(RESTO_ADDRESS, 1, 2) = #{searchTypeLocation}
+</if>
+<if test=' searchTypeShop != null and searchTypeShop != "" '>
+   AND RESTO_TYPE = #{searchTypeShop}
+</if>
+<if test=' searchTypeFood != null and searchTypeFood != "" '>
+   AND (FOOD_TYPE = #{searchTypeFood} OR FOOD_TYPE = '기타') <!-- FOOD_TYPE이 '기타'인 경우 어느음식을 골라도 같이 나오게 하기 위함-->
+</if>
+<if test=' searchTypeDate != null and searchTypeDate != "" '>
+   AND RESTO_OFF NOT LIKE '%' || #{searchTypeDate} || '%'
+</if>
+</select>
+
+<!-- 레스토랑 조회 -->
+<!-- 이 쿼리문의 경우 WHERE절과 AND절 순서가 바뀔경우 데이터처리 속도가 크게 달라진다.(데이터가 많은것부터 비교하므로 비효율적) -->
+<select id="restoSelect" parameterType="String" resultMap="restoInfoResultMap">
+SELECT R_SEQ,
+       NVL(RESTO_NAME, '') AS RESTO_NAME,
+       NVL(SELLER_ID, '') AS SELLER_ID,
+       NVL(RESTO_ADDRESS, '') AS RESTO_ADDRESS,
+       NVL(RESTO_PH, '') AS RESTO_PH,
+       NVL(RESTO_CONTENT, '') AS RESTO_CONTENT,
+       NVL(REG_DATE, '') AS REG_DATE,
+       NVL(STATUS, '') AS STATUS,
+       NVL(RESTO_TYPE, '') AS RESTO_TYPE,
+       NVL(FOOD_TYPE, '') AS FOOD_TYPE,
+       NVL(RESTO_OFF, '') AS RESTO_OFF,
+       NVL(RESTO_OPEN, '') AS RESTO_OPEN,
+       NVL(RESTO_CLOSE, '') AS RESTO_CLOSE,
+       NVL(RESTO_DEPOSIT, 0) AS RESTO_DEPOSIT,
+       NVL(LIMIT_PERSON, 0) AS LIMIT_PERSON
+  FROM RESTO_INFO   
+ WHERE R_SEQ = #{value}
+</select>
+
+
+<!-- 레스토랑 첨부파일 조회 -->
+<select id="restoFileSelect" parameterType="String" resultMap="restoFileResultMap">
+SELECT R_SEQ,
+       FILE_SEQ,
+       NVL(FILE_NAME, '') AS FILE_NAME
+  FROM RESTO_FILE
+ WHERE R_SEQ = #{value}
+</select>
+
+
+<!-- 해당 레스토랑의 메뉴와 메뉴사진 조회 -->
+<select id="menuSelect" parameterType="String" resultMap="menuResultMap">
+SELECT A.MENU_SEQ,
+       R_SEQ,
+       NVL(MENU_NAME, '') AS MENU_NAME,
+       NVL(MENU_PRICE, '') AS MENU_PRICE,
+       NVL(MENU_CONTENT, '') AS MENU_CONTENT,
+       NVL(B.FILE_NAME, '') AS FILE_NAME
+  FROM MENU A, MENU_FILE B
+ WHERE A.MENU_SEQ = B.MENU_SEQ
+   AND R_SEQ = #{value}
+ORDER BY MENU_PRICE DESC
+</select>
+
+<!-- 해당 레스토랑의 리뷰 조회 -->
+<select id="reviewList" parameterType="String" resultMap="restoReviewResultMap">
+SELECT NVL(A.ORDER_SEQ, '') AS ORDER_SEQ,
+       NVL(A.REVIEW_CONTENT, '') AS REVIEW_CONTENT,
+       NVL(A.REVIEW_SCORE, 0) AS REVIEW_SCORE,
+       NVL(B.R_SEQ, '') AS R_SEQ,
+       NVL(B.USER_ID, '') AS USER_ID,
+       NVL(C.FILE_NAME, '/resources/images/profile.png') AS FILE_NAME,
+       NVL(D.USER_NICKNAME, '') USER_NICKNAME,
+       NVL(B.RESERV_DATE, '') RESERV_DATE
+  FROM ORDER_REVIEW A, ORDER_LIST B, USER_PROFILE_FILE C, G2_USER D
+ WHERE A.ORDER_SEQ = B.ORDER_SEQ
+   AND B.USER_ID = C.USER_ID(+)
+   AND C.USER_ID(+) = D.USER_ID
+   AND B.USER_ID = D.USER_ID
+   AND B.R_SEQ = #{value}
+ORDER BY A.REG_DATE DESC
+</select> 
+
+
+<!-- 레스토랑 예약건 인서트 -->
+<insert id="restoReservationInsert" parameterType="com.icia.web.model.OrderList">
+<selectKey resultType="String" keyProperty="orderSeq" order="BEFORE">
+SELECT TO_CHAR(SYSDATE, 'YYYYMMDD') || DAYIARY_SEQ.NEXTVAL AS orderSeq FROM DUAL
+</selectKey>
+INSERT INTO ORDER_LIST (
+    ORDER_SEQ,
+    USER_ID,
+    REG_DATE,
+    STATUS,
+    RESERV_DATE,
+    R_SEQ,
+    RESERV_TIME,
+    RESERV_PERSON,
+    REVIEWED
+) VALUES (
+    #{orderSeq},
+    #{userId},
+    SYSDATE,
+    'W',
+    #{reservDate},
+    #{rSeq},
+    #{reservTime},
+    #{reservPerson},
+    '0'
+)
+</insert>
+
+
+<!-- 인기많은 (예약순) 레스토랑 리스트 -->
+<select id="bestRestoList" resultMap="restoInfoResultMap">
+SELECT B.R_SEQ AS R_SEQ, C.FILE_NAME AS FILE_NAME, B.RESTO_NAME AS RESTO_NAME, B.CNT AS CNT
+  FROM (SELECT ROWNUM AS RNM, A.R_SEQ, A.CNT, A.RESTO_NAME
+          FROM (SELECT B.R_SEQ, A.RESTO_NAME, COUNT(*) AS CNT
+                  FROM RESTO_INFO A, ORDER_LIST B
+                 WHERE A.R_SEQ = B.R_SEQ
+              GROUP BY B.R_SEQ, A.RESTO_NAME
+              ORDER BY CNT DESC) A
+         WHERE ROWNUM <![CDATA[<=]]> 4) B, RESTO_FILE C
+ WHERE C.R_SEQ(+) = B.R_SEQ
+   AND FILE_SEQ(+) = 1
+ ORDER BY CNT DESC
+</select>
+
+
+<!-- 레스토랑 예약 시 사용자가 선택한 날짜,시간별 잔여좌석 체크하기 위한용. '앞서 몇명이 예약했는지'가 반환됨 -->
+<select id="limitPersonCheck" parameterType="com.icia.web.model.OrderList" resultType="int">
+SELECT NVL(SUM(RESERV_PERSON),0) AS CNT
+  FROM ORDER_LIST
+ WHERE R_SEQ = #{rSeq}
+   AND RESERV_DATE = #{reservDate}
+   AND SUBSTR(RESERV_TIME, 1,2) = SUBSTR(#{reservTime}, 1,2)
+   AND STATUS = 'Y'
+</select>
+
+<!-- 카카오페이 결제 완료시 결제대기(W)에서 결제완료(Y)로 업데이트 -->
+<update id="restoReservationUpdate" parameterType="String">
+UPDATE ORDER_LIST
+   SET STATUS = 'Y'
+ WHERE ORDER_SEQ = #{value}
+</update>
+
+
+<!-- 카카오페이 결제건 PAY_LIST 인서트 -->
+<insert id="payListInsert" parameterType="com.icia.web.model.KakaoPayApprove">
+INSERT INTO PAY_LIST 
+(
+    ORDER_ID,
+    PGTOKEN,
+    TOTAL_CNT,
+    TOTAL_PRICE,
+    REG_DATE,
+    STATUS,
+    PAY_METHOD
+)
+VALUES 
+(
+    #{partner_order_id},
+    #{pgToken},
+    #{quantity},
+    #{totalPrice},
+    #{approved_at},
+    'Y',
+    #{payment_method_type}
+)
+</insert>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- restoInfo -->
+<insert id="restoListInsert" parameterType="com.icia.web.model.RestoInfo">
+<selectKey resultType="string" keyProperty="rSeq" order="BEFORE">
+SELECT DAYIARY_SEQ.NEXTVAL FROM DUAL
+</selectKey>
+INSERT INTO RESTO_INFO 
+(
+    R_SEQ,
+    RESTO_NAME,
+    SELLER_ID,
+    RESTO_ADDRESS,
+    RESTO_PH,
+    RESTO_CONTENT,
+    REG_DATE,
+    STATUS,
+    RESTO_TYPE,
+    FOOD_TYPE,
+    RESTO_OFF
+) 
+VALUES 
+(
+    'R'||TRIM(TO_CHAR(#{rSeq}, '999999999999')),
+    #{restoName},
+    #{sellerId},
+    #{restoAddress},
+    #{restoPh},
+    #{restoContent},
+    SYSDATE,
+    'Y',
+    #{restoType},
+    #{foodType},
+    #{restoOff}
+)
+</insert>
+
+<!-- 첨부파일 등록 -->
+<insert id="restoFileInsert" parameterType="com.icia.web.model.RestoFile">
+<selectKey resultType="short" keyProperty="fileSeq" order="BEFORE">
+SELECT NVL(MAX(FILE_SEQ), 0) + 1 FROM RESTO_FILE WHERE R_SEQ = #{rSeq}
+</selectKey>
+INSERT INTO RESTO_FILE 
+(
+   R_SEQ,
+   FILE_SEQ,
+   FILE_NAME
+) 
+VALUES 
+(
+    #{rSeq},
+    #{fileSeq},
+    #{fileName}
+)
+</insert>
+
+<!-- 대표 메뉴 등록 -->
+<insert id="restoMenuInsert" parameterType="com.icia.web.model.Menu">
+<selectKey resultType="string" keyProperty="menuSeq" order="BEFORE">
+SELECT DAYIARY_SEQ.NEXTVAL FROM DUAL
+</selectKey>
+INSERT INTO MENU
+(
+MENU_SEQ,
+R_SEQ,
+MENU_NAME,
+MENU_PRICE,
+MENU_CONTENT
+)
+VALUES
+(
+'M'||TRIM(TO_CHAR(#{menuSeq}, '999999999999')),
+#{rSeq},
+#{menuName},
+#{menuPrice},
+#{menuContent}
+)
+</insert>
+
+ <!-- menu 첨부파일 등록 -->
+<insert id="menuFileInsert" parameterType="com.icia.web.model.MenuFile">
+<selectKey resultType="short" keyProperty="fileSeq" order="BEFORE">
+SELECT NVL(MAX(FILE_SEQ), 0) + 1 FROM MENU_FILE WHERE MENU_SEQ = #{menuSeq}
+</selectKey>
+INSERT INTO MENU_FILE 
+(
+   FILE_SEQ,
+   MENU_SEQ,
+   FILE_NAME
+) 
+VALUES 
+(
+    #{fileSeq},
+    #{menuSeq},
+    #{fileName}
+)
+</insert>
+
+
+
+
+
+<delete id="deleteOneHourLaterReserv">
+DELETE FROM
+    ORDER_LIST
+WHERE
+    ORDER_SEQ IN 
+                (
+                    SELECT
+                        ORDER_SEQ
+                    FROM   
+                        ORDER_LIST
+                    WHERE
+                        STATUS = 'W'
+                        AND (REG_DATE + 1/24) <![CDATA[<=]]> SYSDATE
+                )
+</delete>
+
+
+<select id="selectCheckFavorite" parameterType="hashmap" resultType="int">
+SELECT
+    COUNT(USER_ID)
+FROM
+    FAVORITE_LIST
+WHERE
+    USER_ID = #{userId}
+    AND R_SEQ = #{rSeq}
+</select>
+
+<delete id="deleteRestoFavorite" parameterType="hashmap">
+DELETE FROM 
+    FAVORITE_LIST
+WHERE
+    USER_ID = #{userId}
+    AND R_SEQ = #{rSeq}
+</delete>
+
+<insert id="insertRestoFavorite" parameterType="hashmap">
+INSERT INTO FAVORITE_LIST 
+(
+    USER_ID,
+    R_SEQ,
+    PRODUCT_SEQ,
+    REG_DATE
+)
+VALUES 
+(
+    #{userId},
+    #{rSeq},
+    null,
+    SYSDATE
+)
+</insert>
+
+<select id="selectRestoFavoriteList" parameterType="String" resultMap="restoInfoResultMap">
+SELECT
+    F.R_SEQ AS R_SEQ,
+    R.RESTO_NAME AS RESTO_NAME,
+    RF.FILE_NAME AS FILE_NAME,
+    R.RESTO_ADDRESS AS RESTO_ADDRESS,
+    R.RESTO_PH AS RESTO_PH,
+    R.RESTO_OFF AS RESTO_OFF,
+    R.RESTO_OPEN AS RESTO_OPEN,
+    R.RESTO_CLOSE AS RESTO_CLOSE
+FROM
+    RESTO_INFO R,
+    FAVORITE_LIST F,    
+    RESTO_FILE RF
+WHERE
+    F.USER_ID = #{value}
+    AND F.R_SEQ IS NOT NULL
+    AND R.R_SEQ = F.R_SEQ
+    AND R.STATUS = 'Y'
+    AND RF.FILE_SEQ = 1
+    AND RF.R_SEQ = F.R_SEQ
+ORDER BY 
+	F.REG_DATE DESC    
+</select>
+
+
+</mapper>

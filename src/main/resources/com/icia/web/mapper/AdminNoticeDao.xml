@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.icia.web.dao.AdminNoticeDao">
+
+<!-- 관리자 공지 게시판 resultMap --> 
+<resultMap id="adminNoticeResultMap" type="com.icia.web.model.AdminNotice">
+   <id column="BBS_SEQ" property="bbsSeq" />
+   <result column="USER_ID" property="userId" />
+   <result column="BBS_TITLE" property="bbsTitle" />
+   <result column="BBS_CONTENT" property="bbsContent" />
+   <result column="REG_DATE" property="regDate" />
+   <result column="STATUS" property="status" />
+   <result column="USER_NAME" property="userName" />
+</resultMap>
+
+<insert id="adminNoticeInsert" parameterType="com.icia.web.model.AdminNotice">
+    <selectKey resultType="long" keyProperty="bbsSeq" order="BEFORE">
+        SELECT DAYIARY_SEQ.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO NOTICE_BOARD(
+        BBS_SEQ,
+        USER_ID,
+        BBS_TITLE,
+        BBS_CONTENT,
+        REG_DATE,
+        STATUS
+    ) VALUES (
+        #{bbsSeq},
+        #{userId},
+        #{bbsTitle},
+        #{bbsContent},
+        SYSDATE,
+       #{status}
+    )
+</insert>
+
+<!-- 공지글 리스트(DB에서 쿼리문 작성 필요!) -->
+<select id="adminNoticeList" parameterType="com.icia.web.model.AdminNotice" resultMap="adminNoticeResultMap">
+SELECT BBS_SEQ,
+       USER_ID,
+       BBS_TITLE,
+       BBS_CONTENT,
+       REG_DATE,
+       STATUS,
+       USER_NAME
+  FROM (SELECT ROWNUM AS RUNM,
+               BBS_SEQ,
+               USER_ID,
+               BBS_TITLE,
+               BBS_CONTENT,
+               REG_DATE,
+               STATUS,
+               USER_NAME
+          FROM (SELECT  A.BBS_SEQ,
+                        NVL(A.USER_ID, '') AS USER_ID,
+                        NVL(A.BBS_TITLE, '') AS BBS_TITLE,
+                        NVL(A.BBS_CONTENT, '') AS BBS_CONTENT,
+                        NVL(TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS REG_DATE,
+                        NVL(A.STATUS, 'N') AS STATUS,
+                        NVL(B.USER_NAME, '') AS USER_NAME
+                  FROM NOTICE_BOARD A, G2_USER B
+                 WHERE A.USER_ID = B.USER_ID
+<if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>
+   <choose>
+      <when test='searchType == "1"'>
+         AND A.BBS_TITLE LIKE '%' || #{searchValue} || '%'
+      </when>
+      <when test='searchType == "2"'>
+                   AND DBMS_LOB.INSTR(A.BBS_CONTENT, #{searchValue}) > 0
+        </when>
+    </choose>
+</if>    
+                 ORDER BY
+                     CASE
+                         WHEN A.STATUS = 'Y' THEN 0 
+                         ELSE 1
+                     END,
+                     A.BBS_SEQ DESC))
+   WHERE RUNM <![CDATA[>=]]> #{startRow}
+     AND RUNM <![CDATA[<=]]> #{endRow}
+</select>
+
+<!-- 총 공지글 수 -->
+<select id="adminNoticeListCount" parameterType="com.icia.web.model.AdminNotice" resultType="long">
+SELECT COUNT(BBS_SEQ) AS CNT
+  FROM NOTICE_BOARD
+ WHERE 1 = 1
+<if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>  
+   <choose>   
+      <when test='searchType == "1"'>
+         AND BBS_TITLE LIKE '%' || #{searchValue} || '%'
+         </when>
+         <when test='searchType == "2"'>
+         AND DBMS_LOB.INSTR(BBS_CONTENT, #{searchValue}) > 0
+      </when>
+   </choose>
+</if>
+</select>
+
+<!-- 공지글 조회 -->
+<select id="adminNoticeSelect" parameterType="long" resultMap="adminNoticeResultMap">
+SELECT A.BBS_SEQ,
+       NVL(A.USER_ID, '') AS USER_ID,
+       NVL(A.BBS_TITLE, '') AS BBS_TITLE,
+       NVL(A.BBS_CONTENT, '') AS BBS_CONTENT,
+       NVL(TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS REG_DATE,
+       NVL(A.STATUS, 'N') AS STATUS,
+       NVL(B.USER_NAME, '') AS USER_NAME
+  FROM NOTICE_BOARD A, G2_USER B
+ WHERE A.BBS_SEQ = #{value}
+   AND A.USER_ID = B.USER_ID
+</select>
+
+<!-- 공지글 삭제 -->
+<delete id="noticeDelete" parameterType="long">
+DELETE FROM NOTICE_BOARD
+ WHERE BBS_SEQ = #{value}
+</delete>
+
+<!-- 공지글 수정 -->
+<update id="noticeUpdate" parameterType="com.icia.web.model.AdminNotice">
+UPDATE NOTICE_BOARD
+   SET BBS_TITLE = #{bbsTitle},
+       BBS_CONTENT = #{bbsContent},
+       STATUS = #{status}
+ WHERE BBS_SEQ = #{bbsSeq}
+</update>
+
+</mapper>
