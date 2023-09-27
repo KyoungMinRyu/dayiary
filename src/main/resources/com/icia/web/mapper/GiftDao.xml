@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icia.web.dao.GiftDao">
+<resultMap type="com.icia.web.model.GiftAdd" id="giftResultMap">
+    <id column="PRODUCT_SEQ" property="productSeq"/>   
+    <result column="P_NAME" property="pName"/>
+    <result column="SELLER_ID" property="sellerId"/>
+    <result column="P_PRICE" property="pPrice"/>
+    <result column="P_CONTENT" property="pContent"/>
+    <result column="REG_DATE" property="regDate"/>
+    <result column="STATUS" property="status"/>
+    <result column="PRODUCT_CATEGORY" property="productCategory"/>
+</resultMap>
+
+<resultMap type="com.icia.web.model.GiftAdd" id="giftListResultMap">
+    <id column="PRODUCT_SEQ" property="productSeq"/>
+    <result column="P_NAME" property="pName"/>
+    <result column="SELLER_ID" property="sellerId"/>
+    <result column="P_PRICE" property="pPrice"/>
+    <result column="P_CONTENT" property="pContent"/>
+    <result column="REG_DATE" property="regDate"/>
+    <result column="STATUS" property="status"/>
+    <result column="PRODUCT_CATEGORY" property="productCategory"/>
+    <result column="FILE_NAME" property="fileName"/>
+    <result column="FILE_SEQ" property="fileSeq"/>
+</resultMap>
+
+<!-- GiftFile resultMap -->
+<resultMap type="com.icia.web.model.GiftFile" id="giftFileResultMap">
+    <result column="PRODUCT_SEQ" property="productSeq" />
+    <result column="FILE_SEQ" property="fileSeq" />
+    <result column="FILE_NAME" property="fileName" />
+</resultMap>
+
+
+<!-- giftAdd -->
+<insert id="giftInsert" parameterType="com.icia.web.model.GiftAdd">
+<selectKey resultType="string" keyProperty="productSeq" order="BEFORE">
+SELECT DAYIARY_SEQ.NEXTVAL FROM DUAL
+</selectKey>
+INSERT INTO PRODUCT_INFO
+(
+   PRODUCT_SEQ,
+   P_NAME,
+   SELLER_ID,
+   P_PRICE,
+   P_CONTENT,
+   REG_DATE,
+   STATUS,
+   PRODUCT_CATEGORY
+) 
+VALUES 
+(
+    'P'||TRIM(TO_CHAR(#{productSeq}, '999999999999')),
+    #{pName},
+    #{sellerId},
+    #{pPrice},
+    #{pContent},
+    SYSDATE,
+    'Y',
+    #{productCategory}
+)
+</insert>
+
+<!-- giftFileInsert -->
+<insert id="giftFileInsert" parameterType="com.icia.web.model.GiftFile">
+<selectKey resultType="short" keyProperty="fileSeq" order="BEFORE">
+SELECT NVL(MAX(FILE_SEQ), 0) + 1 FROM PRODUCT_FILE WHERE PRODUCT_SEQ = #{productSeq}
+</selectKey>
+INSERT INTO PRODUCT_FILE 
+(
+   PRODUCT_SEQ,
+   FILE_SEQ,
+   FILE_NAME
+) 
+VALUES 
+(
+    #{productSeq},
+    #{fileSeq},
+    #{fileName}
+)
+</insert>
+
+
+<!-- 선물 리스트 -->
+<select id="giftList" parameterType="com.icia.web.model.GiftAdd" resultMap="giftListResultMap">
+SELECT PRODUCT_SEQ, 
+            P_NAME, SELLER_ID, 
+            P_PRICE, 
+            P_CONTENT, 
+            REG_DATE, 
+            STATUS, 
+            PRODUCT_CATEGORY,
+            FILE_NAME, 
+            FILE_SEQ 
+  FROM (SELECT ROWNUM AS RNUM,
+                        PRODUCT_SEQ, 
+                        P_NAME, SELLER_ID, 
+                        P_PRICE, 
+                        P_CONTENT, 
+                        REG_DATE, 
+                        STATUS, 
+                        PRODUCT_CATEGORY,
+                        FILE_NAME, 
+                        FILE_SEQ 
+              FROM (SELECT A.PRODUCT_SEQ, 
+                                    NVL(A.P_NAME,'') AS P_NAME, 
+                                    NVL(A.SELLER_ID,'') AS SELLER_ID, 
+                                    NVL(A.P_PRICE,'') AS P_PRICE, 
+                                    NVL(A.P_CONTENT,'') AS P_CONTENT, 
+                                    TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH:MM:SS') AS REG_DATE,
+                                    NVL(A.STATUS,'') AS STATUS,
+                                    NVL(A.PRODUCT_CATEGORY,'') AS PRODUCT_CATEGORY, 
+                                    NVL(B.FILE_NAME,'') AS FILE_NAME, 
+                                    NVL(B.FILE_SEQ,1) AS FILE_SEQ
+                          FROM PRODUCT_INFO A, PRODUCT_FILE B  
+                        WHERE B.FILE_SEQ = 1
+                            AND A.PRODUCT_SEQ = B.PRODUCT_SEQ
+<if test=' productType != null and productType != "" '>                            
+                            AND A.PRODUCT_CATEGORY = #{productType}
+</if>
+
+<if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>
+    <choose>
+        <when test='searchType == "1"'>
+                            AND A.P_NAME LIKE '%'||#{searchValue}||'%'
+        </when>
+        <when test='searchType == "2"'>
+                            AND A.P_CONTENT LIKE '%'||#{searchValue}||'%'
+        </when>
+    </choose>
+</if>
+
+<if test=' orderBy != null and orderBy != "" '>  
+    <choose>
+      <when test='orderBy == "regDesc"'>
+                      ORDER BY A.REG_DATE DESC 
+      </when>
+      <when test='orderBy == "priceDesc"'>
+                      ORDER BY TO_NUMBER(A.P_PRICE) DESC 
+       </when>
+        <when test='orderBy == "priceAsc"'>
+                      ORDER BY TO_NUMBER(A.P_PRICE) ASC
+       </when>            
+       <otherwise>
+                    ORDER BY A.REG_DATE ASC
+       </otherwise>
+   </choose>   
+</if>
+                        
+                        ))
+ WHERE RNUM <![CDATA[>=]]> #{startRow}
+   AND RNUM <![CDATA[<=]]> #{endRow} 
+ 
+</select>
+
+<!-- 총 선물 수 -->
+<select id="giftCount" parameterType="com.icia.web.model.GiftAdd" resultType="long">
+SELECT COUNT(A.PRODUCT_SEQ) AS CNT
+  FROM PRODUCT_INFO A, PRODUCT_FILE B  
+ WHERE B.FILE_SEQ = 1
+   AND A.PRODUCT_SEQ = B.PRODUCT_SEQ
+<if test=' productType != null and productType != "" '>                            
+   AND A.PRODUCT_CATEGORY = #{productType}
+</if>
+
+<if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>
+    <choose>
+        <when test='searchType == "1"'>
+   AND A.P_NAME LIKE '%'||#{searchValue}||'%'
+        </when>
+        <when test='searchType == "2"'>
+   AND A.P_CONTENT LIKE '%'||#{searchValue}||'%'
+        </when>
+    </choose>
+</if>
+</select>
+
+<!-- 선물 조회 -->
+<select id="giftSelect" parameterType="String" resultMap="giftListResultMap">
+SELECT 
+                 A.PRODUCT_SEQ,
+               NVL(A.P_NAME,'') AS P_NAME,
+              NVL(A.SELLER_ID,'') AS SELLER_ID,
+                NVL(A.P_PRICE,'') AS P_PRICE,
+                NVL(A.P_CONTENT,'') AS P_CONTENT,
+                TO_CHAR(A.REG_DATE, 'YYYY"년" MM"월" DD"일"') AS REG_DATE,
+               NVL(A.STATUS,'') AS STATUS,
+               NVL(A.PRODUCT_CATEGORY,'') AS PRODUCT_CATEGORY,
+               NVL(B.FILE_NAME,'') AS FILE_NAME,
+               NVL(B.FILE_SEQ,1) AS FILE_SEQ  
+        FROM
+            PRODUCT_INFO A
+        INNER JOIN
+            PRODUCT_FILE B 
+            ON A.PRODUCT_SEQ = B.PRODUCT_SEQ
+        WHERE
+              B.FILE_SEQ = 1
+         AND A.PRODUCT_SEQ = #{value}
+</select>
+
+
+
+<select id="giftFileSelect" parameterType="String" resultMap="giftFileResultMap">
+SELECT PRODUCT_SEQ,
+       FILE_SEQ,
+       NVL(FILE_NAME, '') AS FILE_NAME
+  FROM PRODUCT_FILE
+ WHERE PRODUCT_SEQ = #{value}
+ AND FILE_SEQ = 2
+</select>
+
+<select id="selectCheckFavorite" parameterType="hashmap" resultType="int">
+SELECT
+    COUNT(USER_ID)
+FROM
+    FAVORITE_LIST
+WHERE
+    USER_ID = #{userId}
+    AND PRODUCT_SEQ = #{productSeq}
+</select>
+
+<delete id="deleteProductFavorite" parameterType="hashmap">
+DELETE FROM 
+    FAVORITE_LIST
+WHERE
+    USER_ID = #{userId}
+    AND PRODUCT_SEQ = #{productSeq}
+</delete>
+
+<insert id="insertProductFavorite" parameterType="hashmap">
+INSERT INTO FAVORITE_LIST 
+(
+    USER_ID,
+    R_SEQ,
+    PRODUCT_SEQ,
+    REG_DATE
+)
+VALUES 
+(
+    #{userId},
+    null,
+    #{productSeq},
+    SYSDATE
+)
+</insert>
+
+<select id="selectGiftFavoriteList" parameterType="String" resultMap="giftListResultMap">
+SELECT
+    P.PRODUCT_SEQ AS PRODUCT_SEQ,
+    P.P_NAME AS P_NAME,
+    P.P_PRICE AS P_PRICE,
+    P.P_CONTENT AS P_CONTENT,
+    PF.FILE_NAME AS FILE_NAME
+FROM
+    PRODUCT_INFO P,
+    FAVORITE_LIST F,    
+    PRODUCT_FILE PF
+WHERE
+    F.USER_ID = #{value}
+    AND F.PRODUCT_SEQ IS NOT NULL
+    AND P.PRODUCT_SEQ = F.PRODUCT_SEQ
+    AND P.STATUS = 'Y'
+    AND PF.FILE_SEQ = 1
+    AND PF.PRODUCT_SEQ = F.PRODUCT_SEQ
+ORDER BY 
+    F.REG_DATE DESC   
+</select>
+</mapper>
+
+
+
+
+
+
+
+

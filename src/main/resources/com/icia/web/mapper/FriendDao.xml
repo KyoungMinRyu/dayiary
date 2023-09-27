@@ -1,0 +1,775 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icia.web.dao.FriendDao">
+<resultMap type="com.icia.web.model.Friend" id="friendResultMap"> <!-- User객체를 리턴타입으로 넘김 -->
+   <id column="USER_ID" property="userId" />
+   <result column="RELATIONAL_SEQ" property="relationalSeq" /> 
+   <result column="RELATIONAL_TYPE" property="relationalType" />
+   <result column="USER_EMAIL" property="userEmail" /> 
+   <result column="USER_NICKNAME" property="userNickName" />
+   <result column="REG_DATE" property="regDate" />
+   <result column="FILE_NAME" property="fileName"/>
+   <result column="DIARY_CNT" property="diaryCnt"/>
+   <result column="FRIEND_CNT" property="friendCnt"/>
+   <result column="STATUS" property="status"/>
+   <result column="myId" property="myId"/>
+   <result column="yourId" property="yourId"/>
+   <result column="myProfileImage" property="myProfileImage"/>
+   <result column="yourProfileImage" property="yourProfileImage"/>
+   <result column="myBir" property="myBir"/>
+   <result column="yourBir" property="yourBir"/>
+   <result column="myGen" property="myGen"/>
+   <result column="yourGen" property="yourGen"/>
+   <result column="myNickName" property="myNickName"/>
+   <result column="yourNickName" property= "yourNickName"/>
+</resultMap>
+<select id="selectYourUser" parameterType="hashmap" resultMap="friendResultMap">
+SELECT 
+    U.USER_ID AS USER_ID,
+    USER_EMAIL,
+    USER_NICKNAME,
+    TO_CHAR(U.REG_DATE, 'YYYY.MM.DD') AS REG_DATE,
+    NVL(FILE_NAME, '/resources/images/profile.png') AS FILE_NAME,
+    DIARY_CNT,
+    FRIEND_CNT,
+    R.STATUS AS STATUS,
+    RELATIONAL_TYPE,
+    RELATIONAL_SEQ
+FROM 
+    G2_USER U,
+    USER_PROFILE_FILE F,
+    (
+        SELECT
+            COUNT(BOARD_SEQ) AS DIARY_CNT
+        FROM
+            MAIN_BOARD
+        WHERE
+            USER_ID = #{yourId}
+    ),
+    (
+        SELECT 
+            COUNT(RELATIONAL_SEQ) AS FRIEND_CNT
+        FROM
+            RELATIONAL_USER
+        WHERE
+            (
+                RELATIONAL_USER1 = #{yourId}
+                OR RELATIONAL_USER2 = #{yourId}
+            )
+            AND STATUS = 'Y'
+    ),
+    ( 
+        SELECT 
+            U.USER_ID,
+            CASE
+                WHEN (NVL(R1.STATUS, 'NON') = 'Y' OR NVL(R2.STATUS, 'NON') = 'Y') THEN 'Y'
+                WHEN (NVL(R1.STATUS, 'NON') = 'N' OR NVL(R2.STATUS, 'NON') = 'N') THEN 'N'
+                ELSE 'NON'
+            END AS STATUS,
+            CASE
+                WHEN (NVL(R1.RELATIONAL_TYPE, 'NON') = 'NON') THEN R2.RELATIONAL_TYPE
+                ELSE R1.RELATIONAL_TYPE
+            END AS RELATIONAL_TYPE,
+            CASE
+                WHEN (NVL(R1.RELATIONAL_SEQ, 0) > 0) THEN R1.RELATIONAL_SEQ
+                WHEN (NVL(R2.RELATIONAL_SEQ, 0) > 0) THEN R2.RELATIONAL_SEQ
+                ELSE 0
+            END AS RELATIONAL_SEQ
+        FROM
+            G2_USER U,
+            RELATIONAL_USER R1,
+            RELATIONAL_USER R2
+        WHERE
+            U.USER_ID = #{yourId}
+            AND U.USER_ID = R1.RELATIONAL_USER1(+) 
+            AND R1.RELATIONAL_USER2(+) = #{userId}
+            AND U.USER_ID = R2.RELATIONAL_USER2(+) 
+            AND R2.RELATIONAL_USER1(+) = #{userId}
+    ) R
+WHERE  
+    U.USER_ID = #{yourId}
+    AND U.USER_ID = F.USER_ID(+)
+</select>
+
+<select id="selectUser" parameterType="String" resultMap="friendResultMap">
+SELECT 
+    U.USER_ID AS USER_ID,
+    USER_EMAIL,
+    USER_NICKNAME,
+    TO_CHAR(REG_DATE, 'YYYY.MM.DD') AS REG_DATE,
+    NVL(FILE_NAME, '/resources/images/profile.png') AS FILE_NAME
+FROM 
+    G2_USER U,
+    USER_PROFILE_FILE F
+WHERE  
+    U.USER_ID = #{value}
+    AND U.USER_ID = F.USER_ID(+)
+</select>
+
+<select id="friendList" parameterType="com.icia.web.model.Friend" resultMap="friendResultMap">
+SELECT
+    U.USER_ID AS USER_ID,
+    USER_EMAIL AS USER_EMAIL,
+    USER_NICKNAME AS USER_NICKNAME,
+    TO_CHAR(U.REG_DATE, 'YYYY.MM.DD') AS REG_DATE,
+    NVL(F.FILE_NAME, '/resources/images/profile.png') AS FILE_NAME,
+    FRIEND_CNT
+FROM
+    (
+        SELECT
+            USER1_CNT + USER2_CNT AS  FRIEND_CNT,
+            R1.USER_ID AS USER_ID
+        FROM
+            (
+                SELECT
+                    COUNT(RELATIONAL_SEQ) AS USER1_CNT,
+                    U.USER_ID AS USER_ID
+                FROM
+                    (  
+                        SELECT
+                            RELATIONAL_SEQ,
+                            RELATIONAL_USER1,
+                            RELATIONAL_USER2
+                        FROM
+                            RELATIONAL_USER
+                        WHERE   
+                            STATUS = 'Y'
+                    ) R,
+                    G2_USER U
+                WHERE
+                    R.RELATIONAL_USER1(+) = U.USER_ID
+                GROUP BY
+                    U.USER_ID
+            ) R1,
+            (
+                SELECT
+                    COUNT(RELATIONAL_SEQ) AS USER2_CNT,
+                    U.USER_ID AS USER_ID
+                FROM
+                    (  
+                        SELECT
+                            RELATIONAL_SEQ,
+                            RELATIONAL_USER1,
+                            RELATIONAL_USER2
+                        FROM
+                            RELATIONAL_USER
+                        WHERE   
+                            STATUS = 'Y'
+                    ) R,
+                    G2_USER U
+                WHERE
+                    R.RELATIONAL_USER2(+) = U.USER_ID
+                GROUP BY
+                    U.USER_ID
+            ) R2
+        WHERE R1.USER_ID = R2.USER_ID
+    ) RU,
+    G2_USER U,
+    USER_PROFILE_FILE F
+WHERE
+    1 = 1
+    <if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>  
+	   	<choose>   
+	      	<when test='searchType == "1"'> 
+	   			AND U.USER_ID LIKE '%' || #{searchValue} || '%'
+	        </when>
+	        <when test='searchType == "2"'> 
+	   			AND U.USER_NICKNAME LIKE '%' || #{searchValue} || '%'
+	        </when>
+	        <when test='searchType == "3"'> 
+	   			AND U.USER_EMAIL LIKE '%' || #{searchValue} || '%'
+	      	</when>
+	      	<otherwise>
+	   			AND
+	   				(
+			   			U.USER_ID LIKE '%' || #{searchValue} || '%'
+			   			OR U.USER_NICKNAME LIKE '%' || #{searchValue} || '%'
+			   			OR U.USER_EMAIL LIKE '%' || #{searchValue} || '%'
+	   				)
+	      	</otherwise>
+	   	</choose>
+	</if>
+    AND U.USER_ID != 'adm'
+	AND U.USER_ID != #{userId}
+	AND U.USER_ID NOT IN
+        (
+            SELECT
+                CASE
+                    WHEN R.R_USER_ID1 = #{userId} THEN R.R_USER_ID2
+                    ELSE R.R_USER_ID1
+                END AS USER_ID
+            FROM
+                (
+                    SELECT 
+                        RELATIONAL_USER2 AS R_USER_ID1,
+                        RELATIONAL_USER1 AS R_USER_ID2,
+                        RELATIONAL_SEQ
+                    FROM
+                        RELATIONAL_USER
+                    WHERE                        
+                        (
+                            RELATIONAL_USER2 = #{userId}
+                            OR RELATIONAL_USER1 = #{userId}
+                        )
+                ) R
+        )
+    AND U.STATUS = 'Y'
+    AND U.USER_ID = RU.USER_ID 
+    AND U.USER_ID = F.USER_ID(+)
+ORDER BY
+    REG_DATE DESC
+</select>
+
+<select id="coupleSelect" parameterType="hashmap" resultType="int">
+SELECT 
+    COUNT(RELATIONAL_SEQ)
+FROM
+    RELATIONAL_USER
+WHERE
+    RELATIONAL_TYPE = '1'
+    AND
+        (
+            (
+                RELATIONAL_USER2 = #{userId}
+                OR RELATIONAL_USER1 = #{userId}
+            )
+            OR
+            (
+                RELATIONAL_USER2 = #{yourId}
+                OR RELATIONAL_USER1 = #{yourId}
+            )
+        )
+
+</select>
+
+
+<delete id="deleteFriend" parameterType="long">
+DELETE FROM 
+    RELATIONAL_USER
+WHERE
+    RELATIONAL_SEQ = #{value}
+</delete>
+
+<update id="changeCouple" parameterType="long">
+UPDATE 
+    RELATIONAL_USER
+SET
+    RELATIONAL_TYPE = '1',
+    STATUS = 'N'
+WHERE
+    RELATIONAL_SEQ = #{value}
+</update>
+
+<insert id="requestFriend" parameterType="com.icia.web.model.Friend">
+<selectKey resultType="long" keyProperty="relationalSeq" order="BEFORE">
+SELECT DAYIARY_SEQ.NEXTVAL FROM DUAL
+</selectKey>
+INSERT INTO RELATIONAL_USER 
+(
+    RELATIONAL_SEQ,
+    RELATIONAL_DATE,
+    STATUS,
+    RELATIONAL_USER1,
+    RELATIONAL_USER2,
+    RELATIONAL_TYPE
+) 
+VALUES 
+(
+    #{relationalSeq},
+    SYSDATE,
+    #{status},
+    #{userId},
+    #{yourId},
+    #{relationalType}
+)
+</insert>
+
+<insert id="insertCoupleAnniversary" parameterType="com.icia.web.model.CoupleAnniversary">
+INSERT INTO COUPLE_ANNIVERSARY 
+    (
+        RELATIONAL_SEQ,
+        DAY100,
+        DAY200,
+        DAY300,
+        START_DATE,
+        STATUS
+    ) 
+VALUES 
+    (
+        #{relationalSeq},
+        #{day100},
+        #{day200},
+        #{day300},
+        #{startDate},
+        'N'
+    )
+</insert>
+
+<delete id="deleteCoupleAnniversary" parameterType="long">
+DELETE FROM
+    COUPLE_ANNIVERSARY
+WHERE
+    RELATIONAL_SEQ = #{value}
+</delete>
+
+<update id="updateCoupleAnniversary" parameterType="long">
+UPDATE 
+    COUPLE_ANNIVERSARY
+SET
+    STATUS = 'Y'
+WHERE
+    RELATIONAL_SEQ = #{value}
+</update>
+
+<select id="requestForMeList" parameterType="com.icia.web.model.Friend" resultMap="friendResultMap">   
+SELECT
+    R.RELATIONAL_SEQ AS RELATIONAL_SEQ,
+    R.RELATIONAL_TYPE AS RELATIONAL_TYPE,
+    R.USER_ID AS USER_ID,
+    U.USER_EMAIL AS USER_EMAIL,
+    U.USER_NICKNAME AS USER_NICKNAME,
+    TO_CHAR(U.REG_DATE, 'YYYY.MM.DD') AS REG_DATE,
+    NVL(FILE_NAME, '/resources/images/profile.png') AS FILE_NAME,
+    R.DIARY_CNT AS DIARY_CNT,
+    FRIEND_CNT
+FROM
+    (
+        SELECT 
+            COUNT(R.RELATIONAL_SEQ) AS FRIEND_CNT
+        FROM
+            RELATIONAL_USER R,
+            (
+                SELECT
+                    RELATIONAL_SEQ,
+                    RELATIONAL_USER1 AS USER_ID
+                FROM
+                    RELATIONAL_USER
+                WHERE
+                    RELATIONAL_USER2 = #{userId} 
+                    AND STATUS = 'N'
+            ) C
+        WHERE
+            (
+                RELATIONAL_USER1 = C.USER_ID
+                OR RELATIONAL_USER2 = C.USER_ID
+            )
+            AND STATUS = 'Y'
+    ), 
+    (
+       SELECT
+            COUNT(M.BOARD_SEQ) AS DIARY_CNT,
+            R.RELATIONAL_SEQ,
+            R.RELATIONAL_TYPE,
+            R.USER_ID
+        FROM
+            MAIN_BOARD M,
+            (
+                SELECT
+                    RELATIONAL_SEQ,
+                    RELATIONAL_TYPE,                    
+                    RELATIONAL_USER1 AS USER_ID
+                FROM
+                    RELATIONAL_USER
+                WHERE
+                    RELATIONAL_USER2 = #{userId} 
+                    AND STATUS = 'N'
+            ) R
+        WHERE
+            M.USER_ID(+) = R.USER_ID
+        GROUP BY
+            R.RELATIONAL_SEQ,
+            R.RELATIONAL_TYPE,
+            R.USER_ID
+    ) R,
+    G2_USER U,
+    USER_PROFILE_FILE F
+WHERE
+	U.USER_ID = R.USER_ID
+	<if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>  
+	   	<choose>   
+	      	<when test='searchType == "1"'> 
+	   			AND U.USER_ID LIKE '%' || #{searchValue} || '%'
+	        </when>
+	        <when test='searchType == "2"'> 
+	   			AND U.USER_NICKNAME LIKE '%' || #{searchValue} || '%'
+	        </when>
+	        <when test='searchType == "3"'> 
+	   			AND U.USER_EMAIL LIKE '%' || #{searchValue} || '%'
+	      	</when>
+	      	<otherwise>
+	   			AND
+	   				(
+			   			U.USER_ID LIKE '%' || #{searchValue} || '%'
+			   			OR U.USER_NICKNAME LIKE '%' || #{searchValue} || '%'
+			   			OR U.USER_EMAIL LIKE '%' || #{searchValue} || '%'
+	   				)
+	      	</otherwise>
+	   	</choose>
+	</if>
+	AND U.USER_ID = F.USER_ID(+)
+ORDER BY 
+    R.RELATIONAL_TYPE DESC,
+   	REG_DATE DESC
+</select>
+
+<select id="requestForYouList" parameterType="com.icia.web.model.Friend" resultMap="friendResultMap">
+SELECT
+    R.RELATIONAL_SEQ AS RELATIONAL_SEQ,
+    R.RELATIONAL_TYPE AS RELATIONAL_TYPE,
+    R.USER_ID AS USER_ID,
+    U.USER_EMAIL AS USER_EMAIL,
+    U.USER_NICKNAME AS USER_NICKNAME,
+    TO_CHAR(U.REG_DATE, 'YYYY.MM.DD') AS REG_DATE,
+    NVL(FILE_NAME, '/resources/images/profile.png') AS FILE_NAME,
+    R.DIARY_CNT AS DIARY_CNT,
+    FRIEND_CNT
+FROM
+    (
+        SELECT 
+            COUNT(R.RELATIONAL_SEQ) AS FRIEND_CNT
+        FROM
+            RELATIONAL_USER R,
+            (
+                SELECT
+                    RELATIONAL_SEQ,
+                    RELATIONAL_TYPE,
+                    RELATIONAL_USER2 AS USER_ID
+                FROM
+                    RELATIONAL_USER
+                WHERE
+                    RELATIONAL_USER1 = #{userId} 
+                    AND STATUS = 'N'
+            ) C
+        WHERE
+            (
+                RELATIONAL_USER1 = C.USER_ID
+                OR RELATIONAL_USER2 = C.USER_ID
+            )
+            AND STATUS = 'Y'
+    ), 
+    (
+       SELECT
+            COUNT(M.BOARD_SEQ) AS DIARY_CNT,
+            R.RELATIONAL_SEQ,
+            R.RELATIONAL_TYPE,
+            R.USER_ID
+        FROM
+            MAIN_BOARD M,
+            (
+                SELECT
+                    RELATIONAL_SEQ,
+                    RELATIONAL_TYPE,                    
+                    RELATIONAL_USER2 AS USER_ID
+                FROM
+                    RELATIONAL_USER
+                WHERE
+                    RELATIONAL_USER1 = #{userId} 
+                    AND STATUS = 'N'
+            ) R
+        WHERE
+            M.USER_ID(+) = R.USER_ID
+        GROUP BY
+            R.RELATIONAL_SEQ,
+            R.RELATIONAL_TYPE,
+            R.USER_ID
+    ) R,
+    G2_USER U,
+    USER_PROFILE_FILE F
+WHERE
+	U.USER_ID = R.USER_ID
+	<if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>  
+	   	<choose>   
+	      	<when test='searchType == "1"'> 
+	   			AND U.USER_ID LIKE '%' || #{searchValue} || '%'
+	        </when>
+	        <when test='searchType == "2"'> 
+	   			AND U.USER_NICKNAME LIKE '%' || #{searchValue} || '%'
+	        </when>
+	        <when test='searchType == "3"'> 
+	   			AND U.USER_EMAIL LIKE '%' || #{searchValue} || '%'
+	      	</when>
+	      	<otherwise>
+	   			AND
+	   				(
+			   			U.USER_ID LIKE '%' || #{searchValue} || '%'
+			   			OR U.USER_NICKNAME LIKE '%' || #{searchValue} || '%'
+			   			OR U.USER_EMAIL LIKE '%' || #{searchValue} || '%'
+	   				)
+	      	</otherwise>
+	   	</choose>
+	</if>
+	AND U.USER_ID = F.USER_ID(+)
+ORDER BY 
+    R.RELATIONAL_TYPE DESC,
+   	REG_DATE DESC   
+</select>
+
+<select id="selectStatus" parameterType="long" resultType="String">
+SELECT 
+    STATUS
+FROM
+    RELATIONAL_USER
+WHERE
+    RELATIONAL_SEQ = #{value}
+</select>
+
+<delete id="refuseFriend" parameterType="long" >
+DELETE FROM 
+    RELATIONAL_USER
+WHERE
+    RELATIONAL_SEQ = #{value}
+</delete>
+
+<update id="acceptFriend" parameterType="long">
+UPDATE 
+    RELATIONAL_USER
+SET
+    STATUS = 'Y'
+WHERE
+    RELATIONAL_SEQ = #{value}
+</update>
+
+
+<select id="myFriendList" parameterType="com.icia.web.model.Friend" resultMap="friendResultMap">
+SELECT
+    R.RELATIONAL_SEQ AS RELATIONAL_SEQ,
+    R.RELATIONAL_TYPE AS RELATIONAL_TYPE,
+    U.USER_ID AS USER_ID,
+    U.USER_EMAIL AS USER_EMAIL,
+    U.USER_NICKNAME AS USER_NICKNAME,
+    TO_CHAR(U.REG_DATE, 'YYYY.MM.DD') AS REG_DATE,
+    NVL(FILE_NAME, '/resources/images/profile.png') AS FILE_NAME,
+    R.DIARY_CNT AS DIARY_CNT,
+    R.FRIEND_CNT AS FRIEND_CNT
+FROM
+    (
+        SELECT
+            R.USER_ID AS USER_ID,
+            R.RELATIONAL_SEQ AS RELATIONAL_SEQ, 
+            R.RELATIONAL_TYPE AS RELATIONAL_TYPE,
+            DIARY_CNT,
+            FRIEND_CNT
+        FROM
+            (
+                SELECT
+                    R.USER_ID AS USER_ID,
+                    R.RELATIONAL_SEQ, 
+                    R.RELATIONAL_TYPE,
+                    COUNT(M.BOARD_SEQ) AS DIARY_CNT
+                FROM
+                    (
+                        SELECT
+                            CASE
+                                WHEN R.R_USER_ID1 = #{userId} THEN R.R_USER_ID2
+                                ELSE R.R_USER_ID1
+                            END AS USER_ID,
+                            R.RELATIONAL_SEQ,
+                            R.RELATIONAL_TYPE
+                        FROM
+                            (
+                                SELECT 
+                                    RELATIONAL_USER2 AS R_USER_ID1,
+                                    RELATIONAL_USER1 AS R_USER_ID2,
+                                    RELATIONAL_SEQ,
+                                    RELATIONAL_TYPE
+                                FROM
+                                    RELATIONAL_USER
+                                WHERE
+                                    STATUS = 'Y'
+                                    AND 
+                                        (
+                                            RELATIONAL_USER2 = #{userId} 
+                                            OR RELATIONAL_USER1 = #{userId} 
+                                        )
+                            ) R
+                    ) R,
+                    MAIN_BOARD M
+                WHERE
+                    M.USER_ID(+) = R.USER_ID 
+                GROUP BY
+                    R.USER_ID,
+                    R.RELATIONAL_SEQ,
+                    R.RELATIONAL_TYPE
+            ) R,
+            (
+                SELECT
+                    R.USER_ID AS USER_ID,
+                    COUNT(C.RELATIONAL_SEQ) AS FRIEND_CNT
+                FROM
+                    (
+                        SELECT
+                            CASE
+                                WHEN R.R_USER_ID1 = #{userId} THEN R.R_USER_ID2
+                                ELSE R.R_USER_ID1
+                            END AS USER_ID,
+                            R.RELATIONAL_SEQ
+                        FROM
+                            (
+                                SELECT 
+                                    RELATIONAL_USER2 AS R_USER_ID1,
+                                    RELATIONAL_USER1 AS R_USER_ID2,
+                                    RELATIONAL_SEQ
+                                FROM
+                                    RELATIONAL_USER
+                                WHERE
+                                    STATUS = 'Y'
+                                    AND 
+                                        (
+                                            RELATIONAL_USER2 = #{userId} 
+                                            OR RELATIONAL_USER1 = #{userId}  
+                                        )
+                            ) R
+                    ) R,
+                    RELATIONAL_USER C
+                WHERE
+                    (
+                        C.RELATIONAL_USER1 = R.USER_ID
+                        OR C.RELATIONAL_USER2 = R.USER_ID
+                        AND C.STATUS = 'Y'  
+                    )
+                GROUP BY 
+                    R.USER_ID
+            ) C
+        WHERE 
+            C.USER_ID = R.USER_ID
+    ) R,
+    G2_USER U,
+    USER_PROFILE_FILE F
+WHERE
+    U.USER_ID = R.USER_ID
+    <if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>  
+	   	<choose>   
+	      	<when test='searchType == "1"'> 
+	   			AND U.USER_ID LIKE '%' || #{searchValue} || '%'
+	        </when>
+	        <when test='searchType == "2"'> 
+	   			AND U.USER_NICKNAME LIKE '%' || #{searchValue} || '%'
+	        </when>
+	        <when test='searchType == "3"'> 
+	   			AND U.USER_EMAIL LIKE '%' || #{searchValue} || '%'
+	      	</when>
+	      	<otherwise>
+	   			AND
+	   				(
+			   			U.USER_ID LIKE '%' || #{searchValue} || '%'
+			   			OR U.USER_NICKNAME LIKE '%' || #{searchValue} || '%'
+			   			OR U.USER_EMAIL LIKE '%' || #{searchValue} || '%'
+	   				)
+	      	</otherwise>
+	   	</choose>
+	</if>
+    AND U.USER_ID = F.USER_ID(+)
+    AND U.STATUS != 'N'    
+ORDER BY
+    R.RELATIONAL_TYPE DESC,
+    U.REG_DATE DESC    
+</select>
+
+<delete id="deleteShareAnniversary" parameterType="long" >
+DELETE FROM 
+    ANNIVERSARY_SHARE
+WHERE
+    RELATIONAL_SEQ = #{value}
+</delete>
+
+<select id="selectYourId" parameterType="com.icia.web.model.Friend" resultMap="friendResultMap">
+
+
+SELECT 
+    CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN A.RELATIONAL_USER1
+        ELSE A.RELATIONAL_USER2
+    END AS myId,
+    CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN A.RELATIONAL_USER2
+        ELSE A.RELATIONAL_USER1
+    END AS yourId, 
+    CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN B1.FILE_NAME
+        ELSE B2.FILE_NAME
+    END AS myProfileImage,
+    CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN B2.FILE_NAME
+        ELSE B1.FILE_NAME
+    END AS yourProfileImage,
+    CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN U1.USER_NAME
+        ELSE U2.USER_NAME
+    END AS myName,
+    CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN U2.USER_NAME
+        ELSE U1.USER_NAME
+    END AS yourName,
+    CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN U1.USER_BIR
+        ELSE U2.USER_BIR
+    END AS myBir,
+    CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN U2.USER_BIR
+        ELSE U1.USER_BIR
+    END AS yourBir,
+    A.RELATIONAL_TYPE,
+    NVL(TO_CHAR(A.RELATIONAL_DATE, 'YYYY.MM.DD'),'') AS RELATIONAL_DATE,
+    CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN U1.USER_GEN
+        ELSE U2.USER_GEN
+    END AS myGen,
+     CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN U2.USER_GEN
+        ELSE U1.USER_GEN
+    END AS yourGen,
+    CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN U1.USER_NICKNAME
+        ELSE U2.USER_NICKNAME
+    END AS myNickName,
+     CASE 
+        WHEN A.RELATIONAL_USER1 = #{userId} THEN U2.USER_NICKNAME
+        ELSE U1.USER_NICKNAME
+    END AS yourNickName
+FROM 
+    RELATIONAL_USER A
+LEFT JOIN 
+    USER_PROFILE_FILE B1 ON A.RELATIONAL_USER1 = B1.USER_ID
+LEFT JOIN 
+    USER_PROFILE_FILE B2 ON A.RELATIONAL_USER2 = B2.USER_ID
+LEFT JOIN 
+    G2_USER U1 ON A.RELATIONAL_USER1 = U1.USER_ID
+LEFT JOIN 
+    G2_USER U2 ON A.RELATIONAL_USER2 = U2.USER_ID
+WHERE 
+    A.RELATIONAL_TYPE = 1
+    AND (A.RELATIONAL_USER1 = #{userId} OR A.RELATIONAL_USER2 = #{userId})
+
+</select>
+
+
+<select id="selectFreind" parameterType="long" resultMap="friendResultMap">
+SELECT
+    RELATIONAL_USER1 AS USER_ID,
+    RELATIONAL_USER2 AS YOUR_ID
+FROM
+    RELATIONAL_USER
+WHERE
+    RELATIONAL_SEQ = #{value}
+    AND STATUS = 'Y'
+</select>
+
+<select id="selectFriendStatus" parameterType="hashmap" resultType="int">
+SELECT
+    COUNT(RELATIONAL_SEQ) AS CNT
+FROM
+    RELATIONAL_USER
+WHERE
+    (
+        RELATIONAL_USER1 = #{userId}
+        AND RELATIONAL_USER2 = #{yourId}
+    )
+    OR
+    (
+        RELATIONAL_USER1 = #{yourId}
+        AND RELATIONAL_USER2 = #{userId}
+    )
+    AND STATUS = 'Y'
+</select>
+
+</mapper>

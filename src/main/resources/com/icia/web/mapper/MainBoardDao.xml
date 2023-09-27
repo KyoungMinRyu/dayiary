@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.icia.web.dao.MainBoardDao">
+
+<!-- 다이어리 게시물 resultMap -->
+<resultMap id="mainBoardResultMap" type="com.icia.web.model.MainBoard">
+   <id column="BOARD_SEQ" property="boardSeq" />
+   <result column="USER_ID" property="userId" />
+   <result column="USER_NAME" property="userName" />
+   <result column="USER_NICKNAME" property="userNickName" />
+   <result column="USER_EMAIL" property="userEmail" />
+   <result column="FILE_NAME" property="fileName" />
+   <result column="BOARD_TITLE" property="boardTitle" />
+   <result column="BOARD_CONTENT" property="boardContent" />
+   <result column="READ_CNT" property="readCnt" />
+   <result column="REG_DATE" property="regDate" />
+   <result column="BOARD_TYPE" property="boardType" />
+</resultMap>
+
+<!-- 다이어리 첨부파일 resultMap -->
+<resultMap id="mainBoardFileResultMap" type="com.icia.web.model.MainBoardFile">
+   <id column="BOARD_SEQ" property="boardSeq" />
+   <id column="FILE_SEQ" property="fileSeq" />
+   <result column="FILE_ORG_NAME" property="fileOrgName" />
+   <result column="FILE_NAME" property="fileName" />
+   <result column="FILE_EXT" property="fileExt" />
+   <result column="FILE_SIZE" property="fileSize" />
+   <result column="REG_DATE" property="regDate" />
+</resultMap>
+
+<!-- 다이어리 댓글 resultMap -->
+<resultMap id="mainBoardCommentResultMap" type="com.icia.web.model.MainBoardComment">
+   <id column="COMMENT_SEQ" property="commentSeq" />
+   <result column="BOARD_SEQ" property="boardSeq" />
+   <result column="USER_ID" property="userId" />
+   <result column="COMMENT_GROUP" property="commentGroup" />
+   <result column="COMMENT_ORDER" property="commentOrder" />
+   <result column="COMMENT_INDENT" property="commentIndent" />
+   <result column="COMMENT_CONTENT" property="commentContent" />
+   <result column="COMMENT_PARENT" property="commentParent" />
+   <result column="REG_DATE" property="regDate" />
+   <result column="USER_NAME" property="userName" />
+   <result column="USER_NICKNAME" property="userNickName" />
+   <result column="STATUS" property="status" />
+   <result column="FILE_NAME" property="fileName" />
+</resultMap>
+
+<!-- 다이어리 좋아요 resultMap -->
+<resultMap id="mainBoardReactionResultMap" type="com.icia.web.model.MainBoardReaction">
+   <result column="USER_ID" property="userId" />
+   <result column="BOARD_SEQ" property="boardSeq" />
+</resultMap>
+
+
+
+
+<!-- 게시물 등록 -->
+<insert id="boardInsert" parameterType="com.icia.web.model.MainBoard">
+<!-- 선행처리기(시퀀스 번호 생성) - 마이바티스에서 지원해주는것. -->
+<!-- 다른 쿼리 실행전에, selectKey(시퀀스작업)를 별도로 먼저 실행하도록 하는것 -->
+<selectKey resultType="long" keyProperty="boardSeq" order="BEFORE">
+   SELECT SEQ_BOARD_SEQ.NEXTVAL FROM DUAL
+</selectKey>
+INSERT INTO MAIN_BOARD (
+    BOARD_SEQ,
+    USER_ID,
+    BOARD_TITLE,
+    BOARD_CONTENT,
+    READ_CNT,
+    REG_DATE,
+    BOARD_TYPE
+) VALUES (
+    #{boardSeq},
+    #{userId},
+    #{boardTitle},
+    #{boardContent},
+    0,
+    SYSDATE,
+    #{boardType}
+)
+
+</insert>
+
+<insert id="boardFileInsert" parameterType="com.icia.web.model.MainBoardFile">
+<selectKey resultType="short" keyProperty="fileSeq" order="BEFORE">
+   SELECT NVL(MAX(FILE_SEQ),0) + 1
+       FROM MAIN_BOARD_FILE
+     WHERE BOARD_SEQ = #{boardSeq}
+</selectKey>
+<!-- 첨부파일 등록 -->
+INSERT INTO MAIN_BOARD_FILE (
+    BOARD_SEQ,
+    FILE_SEQ,
+    FILE_ORG_NAME,
+    FILE_NAME,
+    FILE_EXT,
+    FILE_SIZE,
+    REG_DATE
+) VALUES (
+    #{boardSeq},
+    #{fileSeq},
+    #{fileOrgName},
+    #{fileName},
+    #{fileExt},
+    #{fileSize},
+    SYSDATE
+)
+
+</insert>
+
+<!-- 게시판 리스트 -->
+<select id="boardList" parameterType="com.icia.web.model.MainBoard" resultMap="mainBoardResultMap">
+SELECT BOARD_SEQ,
+      FILE_NAME,
+       USER_ID,
+       USER_NAME,
+       USER_NICKNAME,
+       USER_EMAIL,
+       BOARD_TITLE,
+       BOARD_CONTENT,
+       READ_CNT,
+       REG_DATE,
+       BOARD_TYPE,
+       FILE_SEQ
+  FROM (SELECT ROWNUM RNM,
+               BOARD_SEQ,
+               FILE_NAME,
+               USER_ID,
+               USER_NAME,
+               USER_NICKNAME,
+               USER_EMAIL,
+               BOARD_TITLE,
+               BOARD_CONTENT,
+               READ_CNT,
+               REG_DATE,
+               BOARD_TYPE,
+               FILE_SEQ
+          FROM (SELECT A.BOARD_SEQ,
+                      C.FILE_NAME,
+                       NVL(A.USER_ID, '') AS USER_ID,
+                       NVL(B.USER_NAME, '') AS USER_NAME,
+                       NVL(B.USER_NICKNAME, '') AS USER_NICKNAME,
+                       NVL(B.USER_EMAIL, '') AS USER_EMAIL,
+                       NVL(BOARD_TITLE, '') AS BOARD_TITLE,
+                       NVL(BOARD_CONTENT, '') AS BOARD_CONTENT,
+                       NVL(READ_CNT, 0) AS READ_CNT,
+                       TO_CHAR(A.REG_DATE, 'YYYY"년" MM"월" DD"일"') AS REG_DATE,
+                       NVL(BOARD_TYPE, 'D') AS BOARD_TYPE,
+                       NVL(C.FILE_SEQ, 1) AS FILE_SEQ
+                  FROM MAIN_BOARD A, G2_USER B, MAIN_BOARD_FILE C,
+                  (
+                    SELECT
+                    CASE
+                    WHEN RELATIONAL_USER1 = #{userId} THEN RELATIONAL_USER2
+                    WHEN RELATIONAL_USER2 = #{userId} THEN RELATIONAL_USER1
+                    ELSE NULL
+                  END AS USER_ID
+                    FROM RELATIONAL_USER
+                   WHERE (RELATIONAL_USER1 = #{userId} OR RELATIONAL_USER2 = #{userId})
+                     AND STATUS = 'Y'
+                    
+                   UNION
+                    
+                  SELECT #{userId} AS USER_ID
+                    FROM DUAL
+                  ) D
+                 WHERE B.USER_ID = D.USER_ID
+                   AND A.USER_ID = B.USER_ID 
+                   AND A.BOARD_SEQ = C.BOARD_SEQ
+                   AND C.FILE_SEQ = 1
+<if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>
+   <choose>
+      <when test='searchType == "1"'>              
+                   AND A.BOARD_TITLE LIKE '%' || #{searchValue} || '%'
+        </when>
+        <when test='searchType == "2"'> 
+                   AND DBMS_LOB.INSTR(A.BOARD_CONTENT, #{searchValue}) > 0
+        </when>
+        <when test='searchType == "3"'> 
+                   AND B.USER_NICKNAME LIKE '%' || #{searchValue} || '%'
+        </when>
+        <when test='searchType == "4"'>              
+                   AND A.USER_ID LIKE '%' || #{searchValue} || '%'
+        </when>
+        <when test='searchType == "5"'>              
+                   AND B.USER_NAME LIKE '%' || #{searchValue} || '%'
+        </when>
+    </choose>
+</if>                        
+              ORDER BY BOARD_SEQ DESC))   
+ WHERE RNM <![CDATA[>=]]> #{startRow}
+   AND RNM <![CDATA[<=]]> #{endRow}
+</select>
+<!--  꺽쇠부분을 태그로 인식해서...  <![CDATA[>=]]> 문법 사용 -->
+
+
+
+<!-- 총 게시물 수 -->
+<select id="boardListCount" parameterType="com.icia.web.model.MainBoard" resultType="long">
+SELECT COUNT(A.BOARD_SEQ) AS CNT
+  FROM MAIN_BOARD A, G2_USER B,
+  (   SELECT
+        CASE
+        WHEN RELATIONAL_USER1 = #{userId} THEN RELATIONAL_USER2
+        WHEN RELATIONAL_USER2 = #{userId} THEN RELATIONAL_USER1
+        ELSE NULL
+      END AS USER_ID
+        FROM RELATIONAL_USER
+       WHERE (RELATIONAL_USER1 = #{userId} OR RELATIONAL_USER2 = #{userId})
+          AND STATUS = 'Y'
+        
+       UNION
+        
+      SELECT #{userId} AS USER_ID
+        FROM DUAL
+      ) C
+ WHERE A.USER_ID = B.USER_ID
+   AND A.USER_ID = C.USER_ID
+<if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>
+   <choose>
+      <when test='searchType == "1"'>
+   AND A.BOARD_TITLE LIKE '%' || #{searchValue} || '%'
+       </when>
+         <when test='searchType == "2"'>
+   AND DBMS_LOB.INSTR(A.BOARD_CONTENT, #{searchValue}) > 0
+         </when>
+      <when test='searchType == "3"'>
+   AND B.USER_NICKNAME LIKE '%' || #{searchValue} || '%'
+       </when>
+      <when test='searchType == "4"'>
+   AND A.USER_ID LIKE '%' || #{searchValue} || '%'
+       </when>
+      <when test='searchType == "5"'>
+   AND B.USER_NAME LIKE '%' || #{searchValue} || '%'
+       </when>
+    </choose>
+</if>
+</select>
+
+<!-- 게시물 조회 -->
+<!-- 이 쿼리문의 경우 WHERE절과 AND절 순서가 바뀔경우 데이터처리 속도가 크게 달라진다.(데이터가 많은것부터 비교하므로 비효율적) -->
+<select id="boardSelect" parameterType="long" resultMap="mainBoardResultMap">
+SELECT BOARD_SEQ,
+       NVL(A.USER_ID, '') AS USER_ID,
+       NVL(B.USER_NAME, '') AS USER_NAME,
+       NVL(B.USER_NICKNAME, '') AS USER_NICKNAME,
+       NVL(B.USER_EMAIL, '') AS USER_EMAIL,
+       NVL(BOARD_TITLE, '') AS BOARD_TITLE,
+       NVL(BOARD_CONTENT, '') AS BOARD_CONTENT,
+       NVL(READ_CNT, 0) AS READ_CNT,
+       TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH24:MI:SS') AS REG_DATE
+  FROM MAIN_BOARD A, G2_USER B
+ WHERE A.BOARD_SEQ = #{value}
+   AND A.USER_ID = B.USER_ID
+</select>
+
+<!-- 첨부파일 조회 -->
+<select id="boardFileSelect" parameterType="long" resultMap="mainBoardFileResultMap">
+SELECT BOARD_SEQ,
+       FILE_SEQ,
+       NVL(FILE_ORG_NAME, '') AS FILE_ORG_NAME,
+       NVL(FILE_NAME, '') AS FILE_NAME,
+       NVL(FILE_EXT, '') AS FILE_EXT,
+       NVL(FILE_SIZE, 0) AS FILE_SIZE,
+       TO_CHAR(REG_DATE, 'YYYY.MM.DD HH24:MI:SS') AS REG_DATE
+  FROM MAIN_BOARD_FILE
+ WHERE BOARD_SEQ = #{value}
+</select>
+
+<update id="boardReadCntPlus" parameterType="long">
+UPDATE MAIN_BOARD
+   SET READ_CNT = READ_CNT + 1
+ WHERE BOARD_SEQ = #{value}
+</update>
+
+<!-- 게시물 수정 -->
+<update id="boardUpdate" parameterType="com.icia.web.model.MainBoard">
+UPDATE MAIN_BOARD
+   SET BOARD_TITLE = #{boardTitle},
+       BOARD_CONTENT = #{boardContent}
+ WHERE BOARD_SEQ = #{boardSeq}
+</update>
+
+<!-- 첨부파일 삭제 -->
+<delete id="boardFileDelete" parameterType="long">
+DELETE FROM MAIN_BOARD_FILE
+ WHERE BOARD_SEQ = #{value}
+</delete>
+
+<!-- 게시물 삭제 -->
+<delete id="boardDelete" parameterType="long">
+DELETE FROM MAIN_BOARD
+ WHERE BOARD_SEQ = #{value}
+</delete>
+
+<!-- 댓글 등록 -->
+<insert id="commentInsert" parameterType="com.icia.web.model.MainBoardComment">
+<selectKey resultType="long" keyProperty="commentSeq" order="BEFORE">
+   SELECT SEQ_BOARD_SEQ.NEXTVAL FROM DUAL
+</selectKey>
+INSERT INTO MAIN_BOARD_COMMENT (
+    BOARD_SEQ,
+    COMMENT_SEQ,
+    USER_ID,
+    COMMENT_GROUP,
+    COMMENT_ORDER,
+    COMMENT_INDENT,
+    COMMENT_CONTENT,
+    COMMENT_PARENT,
+    REG_DATE,
+    STATUS
+) VALUES (
+    #{boardSeq},
+    #{commentSeq},
+    #{userId},
+    #{commentSeq},
+      #{commentOrder},
+    #{commentIndent},
+    #{commentContent},
+    #{commentParent},
+    SYSDATE,
+    'Y'
+)
+</insert>
+
+<!-- 댓글 조회 (해당 게시물에 대해 댓글이 존재하는지 여부)-->
+<select id="commentCount" parameterType="long" resultMap="mainBoardCommentResultMap">
+SELECT COUNT(COMMENT_SEQ) AS CNT
+  FROM MAIN_BOARD_COMMENT
+ WHERE BOARD_SEQ = #{value}
+</select>
+
+<!-- 댓글 선택 (commentSeq로 하나의 댓글만 가져오기)-->
+<select id="commentSelect" parameterType="long" resultMap="mainBoardCommentResultMap">
+SELECT BOARD_SEQ,
+       COMMENT_SEQ,
+       NVL(USER_ID, '') AS USER_ID,
+       NVL(COMMENT_GROUP, 0) AS COMMENT_GROUP,
+       NVL(COMMENT_ORDER, 0) AS COMMENT_ORDER,
+       NVL(COMMENT_INDENT, 0) AS COMMENT_INDENT,
+       NVL(COMMENT_CONTENT, '') AS COMMENT_CONTENT,
+       NVL(COMMENT_PARENT, 0) AS COMMENT_PARENT,
+       TO_CHAR(REG_DATE, 'YYYY.MM.DD HH24:MI:SS') AS REG_DATE,
+       NVL(STATUS, '') AS STATUS
+  FROM MAIN_BOARD_COMMENT
+ WHERE COMMENT_SEQ = #{value}
+</select>
+
+
+<!-- 댓글 리스트 (해당 게시물에 대한 모든 댓글을 리스트로 받을거임)-->
+<select id="commentList" parameterType="long" resultMap="mainBoardCommentResultMap">
+SELECT BOARD_SEQ,
+       COMMENT_SEQ,
+       NVL(A.USER_ID, '') AS USER_ID,
+       NVL(COMMENT_GROUP, 0) AS COMMENT_GROUP,
+       NVL(COMMENT_ORDER, 1) AS COMMENT_ORDER,
+       NVL(COMMENT_INDENT, 0) AS COMMENT_INDENT,
+       NVL(COMMENT_CONTENT, '') AS COMMENT_CONTENT,
+       NVL(COMMENT_PARENT, 0) AS COMMENT_PARENT,
+       TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH24:MI:SS') AS REG_DATE,
+       NVL(B.USER_NAME, '') AS USER_NAME,
+       NVL(B.USER_NICKNAME, '') AS USER_NICKNAME,
+       NVL(A.STATUS, '') AS STATUS,
+       NVL(C.FILE_NAME, '/resources/images/profile.png') AS FILE_NAME
+  FROM MAIN_BOARD_COMMENT A, G2_USER B, USER_PROFILE_FILE C
+ WHERE A.USER_ID = B.USER_ID
+   AND A.USER_ID = C.USER_ID
+   AND B.USER_ID = C.USER_ID
+   AND BOARD_SEQ = #{value}
+  ORDER BY COMMENT_GROUP ASC, COMMENT_ORDER ASC
+</select>
+
+<!-- 댓글 삭제 -->
+<delete id="commentDelete" parameterType="long">
+DELETE FROM MAIN_BOARD_COMMENT
+ WHERE COMMENT_SEQ = #{value}
+</delete>
+
+<!-- 게시물 삭제시 댓글 모두 삭제 -->
+<delete id="commentDeleteAll" parameterType="long">
+DELETE FROM MAIN_BOARD_COMMENT
+ WHERE BOARD_SEQ = #{value}
+</delete>
+
+<!-- 댓글 수정 -->
+<update id="commentUpdate" parameterType="com.icia.web.model.MainBoardComment">
+UPDATE MAIN_BOARD_COMMENT
+   SET COMMENT_CONTENT = #{commentContent}
+ WHERE COMMENT_SEQ = #{commentSeq}
+</update>
+
+<!-- 답글달기전 조상에 대한 답글중 나와 ORDER 번호가 같은게 있다면 +1 시켜줌 -->
+<update id="commentGroupOrderUpdate" parameterType="com.icia.web.model.MainBoardComment">
+UPDATE MAIN_BOARD_COMMENT
+   SET COMMENT_ORDER = COMMENT_ORDER + 1
+ WHERE COMMENT_GROUP = #{commentGroup}
+   AND COMMENT_ORDER <![CDATA[>=]]> #{commentOrder}
+</update>
+
+<!-- 댓글의 답댓글 등록 -->
+<insert id="commentReplyInsert" parameterType="com.icia.web.model.MainBoardComment">
+<selectKey resultType="long" keyProperty="commentSeq" order="BEFORE">
+   SELECT SEQ_BOARD_SEQ.NEXTVAL FROM DUAL
+</selectKey>
+INSERT INTO MAIN_BOARD_COMMENT (
+    BOARD_SEQ,
+    COMMENT_SEQ,
+    USER_ID,
+    COMMENT_GROUP,
+    COMMENT_ORDER,
+    COMMENT_INDENT,
+    COMMENT_CONTENT,
+    COMMENT_PARENT,
+    REG_DATE,
+    STATUS
+) VALUES (
+    #{boardSeq},
+    #{commentSeq},
+    #{userId},
+    #{commentGroup},
+    #{commentOrder},
+    #{commentIndent},
+    #{commentContent},
+    #{commentParent},
+    SYSDATE,
+    'Y'
+)
+</insert>
+
+<!-- 다이어리 게시물 좋아요 눌렀을때 1 인서트 -->
+<insert id="likeInsert" parameterType="com.icia.web.model.MainBoardReaction">
+INSERT INTO MAIN_BOARD_REACTION 
+(
+    USER_ID,
+    BOARD_SEQ
+) 
+VALUES 
+(
+    #{userId},
+    #{boardSeq}
+)
+</insert>
+
+<!-- 좋아요 취소했을때 해당 레코드 삭제 -->
+<delete id="likeDelete" parameterType="com.icia.web.model.MainBoardReaction">
+DELETE FROM MAIN_BOARD_REACTION
+ WHERE USER_ID = #{userId}
+   AND BOARD_SEQ = #{boardSeq}
+</delete>
+
+<!-- 특정유저의 특정글 좋아요 내역-->
+<select id="likeCheck" parameterType="com.icia.web.model.MainBoardReaction" resultType="int">
+SELECT COUNT(*) AS CNT
+  FROM MAIN_BOARD_REACTION
+ WHERE BOARD_SEQ = #{boardSeq}
+   AND USER_ID = #{userId}
+</select>
+
+<!-- 해당 글의 총 좋아요 개수 -->
+<select id="likeCount" parameterType="long" resultType="int">
+SELECT NVL(COUNT(*), 0) AS CNT
+  FROM MAIN_BOARD_REACTION
+ WHERE BOARD_SEQ = #{value}
+</select>
+
+<!-- 댓글 삭제 전, 답댓글 존재하는지 확인 -->
+<select id="replyCheck" parameterType="long" resultType="int">
+SELECT BOARD_SEQ,
+       COMMENT_SEQ,
+       USER_ID,
+       COMMENT_GROUP,
+       COMMENT_ORDER,
+       COMMENT_INDENT,
+       COMMENT_CONTENT,
+       COMMENT_PARENT,
+       REG_DATE,
+       STATUS
+  FROM MAIN_BOARD_COMMENT
+ WHERE COMMENT_PARENT = #{value}
+</select>
+
+<!-- 답댓글이 존재하면 delete 대신 '삭제된 댓글입니다'라고 update -->
+<update id="deleteUpdate" parameterType="long">
+UPDATE MAIN_BOARD_COMMENT
+   SET COMMENT_CONTENT = '삭제된 댓글입니다.',
+       STATUS = 'N'
+ WHERE COMMENT_SEQ = #{value}
+</update>
+
+
+<!-- 부모댓글의 인덴트가 0이면(조상댓글이면) 모든 답글중 order가 제일 큰거 가져옴. 내댓글은 거기에 +1 해서 제일 밑에 달기 위함 -->
+<select id="orderCheckZero" parameterType="long" resultType="int">
+SELECT NVL(MAX(COMMENT_ORDER), 0) AS COMMENT_ORDER
+  FROM MAIN_BOARD_COMMENT
+ WHERE COMMENT_GROUP IN (SELECT COMMENT_GROUP
+                          FROM MAIN_BOARD_COMMENT
+                         WHERE COMMENT_SEQ = #{value})
+</select>
+
+<!-- 부모댓글의 인덴트가 0보다 크면(부모도 답글이면) -->
+<select id="orderCheck" parameterType="long" resultType="int">
+SELECT COALESCE(
+  (SELECT MAX(COMMENT_ORDER)
+   FROM MAIN_BOARD_COMMENT
+   WHERE COMMENT_PARENT = #{value}),
+  (SELECT COMMENT_ORDER
+   FROM MAIN_BOARD_COMMENT
+   WHERE COMMENT_SEQ = #{value})
+) AS MAX_COMMENT_ORDER
+FROM DUAL
+</select>
+
+
+
+
+
+
+
+</mapper>

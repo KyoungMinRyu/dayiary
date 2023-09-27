@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.icia.web.dao.InquiryBoardDao">
+ 
+<!-- 문의사항 resultMap 사용자,관리자 -->
+<resultMap id="inquiryBoardResultMap" type="com.icia.web.model.InquiryBoard">
+       <id column="QNA_SEQ" property="qnaSeq" />            
+       <result column="USER_ID" property="userId" />
+      <result column="SELLER_ID" property="sellerId" />
+        <result column="QNA_GROUP" property="qnaGroup" />
+        <result column="QNA_ORDER" property="qnaOrder" />
+        <result column="QNA_INDENT" property="qnaIndent" />    
+        <result column="QNA_TITLE" property="qnaTitle" />
+        <result column="QNA_CONTENT" property="qnaContent" />
+        <result column="QNA_PARENT" property="qnaParent" />
+        <result column="REG_DATE" property="regDate" />
+        <result column="USER_NAME" property="userName" />
+        <result column="ORDERED_SEQ" property="orderedSeq" />
+        <result column="ORDERED_NAME" property="orderedName" />
+        <result column="R_SEQ" property="rSeq" />
+        <result column="PRODUCT_SEQ" property="productSeq" />
+        <result column="REPLY_STATUS" property="replyStatus" />
+        <result column="ORDER_SEQ" property="orderSeq" />
+        <result column="ORDER_GUBUN" property="orderGubun" />
+</resultMap>
+
+
+<resultMap id="inquiryBoardResultMap2" type="com.icia.web.model.InquiryBoard">
+        <result column="ORDERED_SEQ" property="orderedSeq" />
+        <result column="ORDERED_NAME" property="orderedName" />
+        <result column="SELLER_ID" property="sellerId" />
+        <result column="ORDER_SEQ" property="orderSeq" />
+</resultMap>
+ 
+
+<!-- 문의사항 resultMap 판매자 --> 
+<resultMap id="inquiryBoardResultMap3" type="com.icia.web.model.InquiryBoard">
+       <id column="QNA_SEQ" property="qnaSeq" />            
+       <result column="USER_ID" property="userId" />
+      <result column="SELLER_ID" property="sellerId" />
+        <result column="QNA_GROUP" property="qnaGroup" />
+        <result column="QNA_ORDER" property="qnaOrder" />
+        <result column="QNA_INDENT" property="qnaIndent" />    
+        <result column="QNA_TITLE" property="qnaTitle" />
+        <result column="QNA_CONTENT" property="qnaContent" />
+        <result column="QNA_PARENT" property="qnaParent" />
+        <result column="REG_DATE" property="regDate" />
+        <result column="USER_NAME" property="userName" />
+        <result column="ORDERED_SEQ" property="orderedSeq" />
+        <result column="ORDERED_NAME" property="orderedName" />
+        <result column="R_SEQ" property="rSeq" />
+        <result column="PRODUCT_SEQ" property="productSeq" />
+        <result column="REPLY_STATUS" property="replyStatus" />
+        <result column="ORDER_SEQ" property="orderSeq" />
+        <result column="ORDER_GUBUN" property="orderGubun" />
+</resultMap>
+ 
+ 
+<resultMap id="inquiryBoardInfoResultMap" type="com.icia.web.model.InquiryBoardInfo">
+        <id column="PRODUCT_SEQ" property="productSeq" />
+        <result column="P_NAME" property="pName" />
+        <result column="SELLER_ID" property="pSellerId" />
+        <result column="P_PRICE" property="pPrice" />
+        <result column="P_CONTENT" property="pContent" />
+        <result column="REG_DATE" property="pRegDate" />
+        <result column="STATUS" property="pStatus" />
+</resultMap>
+ 
+ 
+<resultMap id="inquiryBoardInfoResultMap2" type="com.icia.web.model.InquiryBoardInfo">
+        <id column="R_SEQ" property="rSeq" />
+        <result column="RESTO_NAME" property="restoName" />
+        <result column="SELLER_ID" property="rSellerId" />
+        <result column="RESTO_ADDRESS" property="restoAddress" />
+        <result column="RESTO_PH" property="restoPh" />
+        <result column="RESTO_CONTENT" property="restoContent" />
+        <result column="REG_DATE" property="rRegDate" />
+        <result column="STATUS" property="rStatus" />
+        <result column="RESTO_TYPE" property="restoType" />
+        <result column="FOOD_TYPE" property="foodType" />
+        <result column="RESTO_OFF" property="restoOff" />
+        <result column="RESTO_OPEN" property="restoOpen" />
+        <result column="RESTO_CLOSE" property="restoClose" />
+        <result column="RESTO_DEPOSIT" property="restoDeposit" />
+        <result column="LIMIT_PERSON" property="limitPerson" />
+</resultMap>
+ 
+ 
+<!-- 첨부파일 resultMap -->
+<resultMap id="inquiryBoardFileResultMap" type="com.icia.web.model.InquiryBoardFile">
+      <id column="QNA_SEQ" property="qnaSeq" />
+      <id column="FILE_SEQ" property="fileSeq" />
+      <id column="FILE_ORG_NAME" property="fileOrgName" />
+      <id column="FILE_NAME" property="fileName" />
+      <id column="FILE_EXT" property="fileExt" />
+      <id column="FILE_SIZE" property="fileSize" />
+      <id column="REG_DATE" property="regDate" />
+</resultMap>
+ 
+ 
+<!-- 문의사항 상세용 (레스토랑, 선물) -->
+<resultMap id="inquiryBoardRPResultMap" type="com.icia.web.model.InquiryBoard">
+       <id column="QNA_SEQ" property="qnaSeq" />            
+       <result column="USER_ID" property="userId" />
+      <result column="SELLER_ID" property="sellerId" />
+        <result column="QNA_GROUP" property="qnaGroup" />
+        <result column="QNA_ORDER" property="qnaOrder" />
+        <result column="QNA_INDENT" property="qnaIndent" />    
+        <result column="QNA_TITLE" property="qnaTitle" />
+        <result column="QNA_CONTENT" property="qnaContent" />
+        <result column="QNA_PARENT" property="qnaParent" />
+        <result column="REG_DATE" property="regDate" />
+        <result column="USER_NAME" property="userName" />
+        <result column="REPLY_STATUS" property="replyStatus" />
+        <result column="ORDER_SEQ" property="orderSeq" />
+        <result column="ORDERED_SEQ" property="orderedSeq" />
+        <result column="ORDERED_NAME" property="orderedName" />
+</resultMap>
+ 
+ 
+<!-- 문의사항 게시판(사용자,관리자)-->
+<select id="inquiryBoardList" parameterType="com.icia.web.model.InquiryBoard" resultMap="inquiryBoardResultMap">
+SELECT QNA_SEQ,
+       USER_ID,
+       SELLER_ID,
+       QNA_GROUP,
+       QNA_ORDER,
+       QNA_INDENT,
+       QNA_TITLE,   
+       QNA_CONTENT,
+       QNA_PARENT,
+       REG_DATE,
+       USER_NAME,
+       REPLY_STATUS,
+       R_SEQ,
+       PRODUCT_SEQ,
+       ORDER_GUBUN,
+       ORDERED_NAME
+  FROM (SELECT ROWNUM AS RNUM,
+               QNA_SEQ,
+               USER_ID,
+               SELLER_ID,
+               QNA_GROUP,
+               QNA_ORDER,
+               QNA_INDENT,
+               QNA_TITLE,
+               QNA_CONTENT,
+               QNA_PARENT,
+               REG_DATE,
+               USER_NAME,
+               REPLY_STATUS,
+               R_SEQ,
+               PRODUCT_SEQ,
+               ORDER_GUBUN,
+               ORDERED_NAME
+          FROM (SELECT A2.QNA_SEQ,
+                       NVL(A2.USER_ID, '') AS USER_ID,
+                       NVL(A2.SELLER_ID, '') AS SELLER_ID,
+                       NVL(A2.QNA_GROUP, 0) AS QNA_GROUP,
+                       NVL(A2.QNA_ORDER, 0) AS QNA_ORDER,
+                       NVL(A2.QNA_INDENT, 0) AS QNA_INDENT,
+                       NVL(A2.QNA_TITLE, '') AS QNA_TITLE,
+                       NVL(A2.QNA_CONTENT, '') AS QNA_CONTENT,
+                       NVL(A2.QNA_PARENT, 0) AS QNA_PARENT,
+                       TO_CHAR(A2.REG_DATE, 'YYYY.MM.DD HH24:MI:SS') AS REG_DATE,
+                       NVL(A1.USER_NAME, '') AS USER_NAME,
+                       NVL(A1.REPLY_STATUS, 'N') AS REPLY_STATUS,
+                       NVL(A2.R_SEQ, '') AS R_SEQ,
+                       NVL(A2.PRODUCT_SEQ, '') AS PRODUCT_SEQ,
+                       NVL(A1.ORDER_GUBUN, '') AS ORDER_GUBUN,
+                       NVL(A1.ORDERED_NAME, '') AS ORDERED_NAME
+                  FROM (SELECT QNA_SEQ,
+                               NVL(A.USER_ID, '') AS USER_ID,
+                               NVL(A.SELLER_ID, '') AS SELLER_ID,
+                               NVL(A.QNA_GROUP, 0) AS QNA_GROUP,
+                               NVL(A.QNA_ORDER, 0) AS QNA_ORDER,
+                               NVL(A.QNA_INDENT, 0) AS QNA_INDENT,
+                               NVL(A.QNA_TITLE, '') AS QNA_TITLE,
+                               NVL(A.QNA_CONTENT, '') AS QNA_CONTENT,
+                               NVL(A.QNA_PARENT, 0) AS QNA_PARENT,
+                               TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH24:MI:SS') AS REG_DATE,
+                               NVL(B.USER_NAME, '') AS USER_NAME,
+                               NVL(A.REPLY_STATUS, 'N') AS REPLY_STATUS,
+                               NVL(A.R_SEQ, '') AS R_SEQ,
+                               NVL(A.PRODUCT_SEQ, '') AS PRODUCT_SEQ,
+                               CASE
+                             WHEN A.R_SEQ IS NOT NULL THEN 'R'
+                             ELSE 'P'
+                             END AS ORDER_GUBUN,
+                         CASE
+                                    WHEN A.R_SEQ IS NOT NULL THEN (SELECT RESTO_NAME FROM RESTO_INFO R WHERE R.R_SEQ = A.R_SEQ)
+                                    ELSE (SELECT P_NAME FROM PRODUCT_INFO P WHERE P.PRODUCT_SEQ = A.PRODUCT_SEQ)
+                                    END AS ORDERED_NAME     
+                          FROM QNA_BOARD A, G2_USER B
+                         WHERE A.USER_ID = B.USER_ID   
+        <if test='userId != null and userId != "adm"'>                    
+                           AND B.USER_ID = #{userId}
+        </if>       
+        <if test='searchCategory != null and searchCategory != ""'>
+                    <choose>
+                    <when test='searchCategory == "0"'>
+                          AND (A.R_SEQ IS NOT NULL AND (SUBSTR(A.R_SEQ, 1, 1) LIKE 'R%' AND A.QNA_TITLE LIKE '[예약전]%') 
+                                OR 
+                               (A.PRODUCT_SEQ IS NOT NULL AND SUBSTR(A.PRODUCT_SEQ, 1, 1) LIKE 'P%' AND A.QNA_TITLE LIKE '[구매전]%'))
+                    </when>
+                    <when test='searchCategory == "1"'>
+                           AND (SUBSTR(A.R_SEQ, 1, 1) LIKE 'R%' AND SUBSTR(A.QNA_TITLE, 1, 5) NOT LIKE '[예약전]%')
+                    </when>
+                    <when test='searchCategory == "2"'>
+                           AND (SUBSTR(A.PRODUCT_SEQ, 1, 1) LIKE 'P%' AND SUBSTR(A.QNA_TITLE, 1, 5) NOT LIKE '[구매전]%')
+                    </when>
+                    </choose>
+        </if>
+        <if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>
+                    <choose>
+                     <when test='searchType == "1"'>           
+                           AND A.QNA_TITLE LIKE '%' || #{searchValue} || '%'
+                       </when>        
+                      <when test='searchType == "2"'>   
+                           AND DBMS_LOB.INSTR(A.QNA_CONTENT, #{searchValue}) > 0
+                    </when>
+                    </choose>
+        </if> 
+        
+        <if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>
+                           AND QNA_INDENT = 0
+        </if> 
+                       ) A1, QNA_BOARD A2
+                 WHERE A1.QNA_SEQ = A2.QNA_GROUP                           
+                 ORDER BY A2.QNA_GROUP DESC, A2.QNA_ORDER ASC))
+ WHERE RNUM <![CDATA[>=]]> #{startRow}
+   AND RNUM <![CDATA[<=]]> #{endRow}
+</select>
+
+
+<!-- 문의사항 게시판 총 게시물 수 -->
+<select id="inquiryBoardListCount" parameterType="com.icia.web.model.InquiryBoard" resultType="long"> 
+ SELECT COUNT(A.QNA_SEQ) AS CNT
+   FROM QNA_BOARD A, G2_USER B
+  WHERE A.USER_ID = B.USER_ID
+<if test='userId != null and userId != "adm"'>     
+    AND B.USER_ID = #{userId}
+</if>   
+<if test='searchCategory != null and searchCategory != ""'>
+  <choose>
+   <when test='searchCategory == "1"'>
+   AND SUBSTR(A.R_SEQ, 1, 1) LIKE 'R%' 
+   </when>
+   <when test='searchCategory == "2"'>
+   AND SUBSTR(A.PRODUCT_SEQ, 1, 1) LIKE 'P%' 
+   </when>
+  </choose>
+</if>   
+<if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>  
+  <choose>   
+   <when test='searchType == "1"'>
+    AND A.QNA_TITLE LIKE '%' || #{searchValue} || '%'
+   </when>
+   <when test='searchType == "2"'>
+    AND DBMS_LOB.INSTR(A.QNA_CONTENT, #{searchValue}) > 0
+   </when>
+  </choose>
+</if>
+</select>
+
+
+<!-- 문의글 레스토랑 상세조회(사용자,관리자,판매자)-->
+<select id="inquiryBoardRSelect" parameterType="com.icia.web.model.InquiryBoard" resultMap="inquiryBoardRPResultMap">
+  SELECT NVL(Q.QNA_SEQ, 0) AS QNA_SEQ,
+         NVL(Q.USER_ID, '') AS USER_ID,
+         NVL(Q.SELLER_ID, '') AS SELLER_ID,
+         NVL(Q.QNA_GROUP, 0) AS QNA_GROUP,
+         NVL(Q.QNA_ORDER, 0) AS QNA_ORDER,
+         NVL(Q.QNA_INDENT, 0) AS QNA_INDENT,
+         NVL(Q.QNA_TITLE, '') AS QNA_TITLE,
+         NVL(Q.QNA_CONTENT, '') AS QNA_CONTENT,
+         NVL(Q.QNA_PARENT, 0) AS QNA_PARENT,
+         NVL(TO_CHAR(Q.REG_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS REG_DATE,
+         NVL(Q.R_SEQ, '') AS ORDERED_SEQ,
+         NVL(U.USER_NAME, '') AS USER_NAME, 
+         NVL(R.RESTO_NAME, '') AS ORDERED_NAME,
+         NVL(Q.REPLY_STATUS, 'N') AS REPLY_STATUS,
+         (SELECT LISTAGG(ORDER_SEQ, ',') WITHIN GROUP (ORDER BY ORDER_SEQ) 
+            FROM ORDER_LIST O WHERE O.USER_ID = #{userId} AND O.R_SEQ = Q.R_SEQ) AS ORDER_SEQ
+    FROM QNA_BOARD Q, G2_USER U, RESTO_INFO R
+   WHERE Q.QNA_SEQ = #{qnaSeq}  
+     AND Q.USER_ID = #{userId}
+     AND Q.R_SEQ IS NOT NULL
+     AND Q.USER_ID = U.USER_ID
+     AND Q.R_SEQ = R.R_SEQ
+</select>
+
+
+<!-- 문의글 선물 상세조회(사용자,관리자,판매자)-->
+<select id="inquiryBoardPSelect" parameterType="com.icia.web.model.InquiryBoard" resultMap="inquiryBoardRPResultMap">
+  SELECT NVL(Q.QNA_SEQ, 0) AS QNA_SEQ,
+         NVL(Q.USER_ID, '') AS USER_ID,
+         NVL(Q.SELLER_ID, '') AS SELLER_ID,
+         NVL(Q.QNA_GROUP, 0) AS QNA_GROUP,
+         NVL(Q.QNA_ORDER, 0) AS QNA_ORDER,
+         NVL(Q.QNA_INDENT, 0) AS QNA_INDENT,
+         NVL(Q.QNA_TITLE, '') AS QNA_TITLE,
+         NVL(Q.QNA_CONTENT, '') AS QNA_CONTENT,
+         NVL(Q.QNA_PARENT, 0) AS QNA_PARENT,
+         NVL(TO_CHAR(Q.REG_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS REG_DATE,
+         NVL(Q.PRODUCT_SEQ, '') AS ORDERED_SEQ,
+         NVL(U.USER_NAME, '') AS USER_NAME, 
+         NVL(R.P_NAME, '') AS ORDERED_NAME,
+         NVL(Q.REPLY_STATUS, 'N') AS REPLY_STATUS,
+         (SELECT LISTAGG(ORDER_SEQ, ',') WITHIN GROUP (ORDER BY ORDER_SEQ) 
+            FROM ORDER_LIST O WHERE O.USER_ID = #{userId} AND O.PRODUCT_SEQ = Q.PRODUCT_SEQ) AS ORDER_SEQ
+    FROM QNA_BOARD Q, G2_USER U, PRODUCT_INFO R     
+   WHERE Q.QNA_SEQ = #{qnaSeq}  
+     AND Q.USER_ID = #{userId} 
+     AND Q.PRODUCT_SEQ IS NOT NULL
+     AND Q.USER_ID = U.USER_ID
+     AND Q.PRODUCT_SEQ = R.PRODUCT_SEQ
+</select>
+
+
+<!-- 문의글 첨부파일 조회// 다중등록이 아닌 1개만 등록후 1개만 보일시  AND FILE_SEQ = 1;조건 추가하기-->
+<select id="inquiryBoardFileSelect" parameterType="long" resultMap="inquiryBoardFileResultMap">
+SELECT QNA_SEQ,
+       FILE_SEQ,
+       NVL(FILE_ORG_NAME, '') AS FILE_ORG_NAME,
+       NVL(FILE_NAME, '') AS FILE_NAME,
+       NVL(FILE_EXT, '') AS FILE_EXT,
+       NVL(FILE_SIZE, 0) AS FILE_SIZE,
+       TO_CHAR(REG_DATE, 'YYYY.MM.DD HH24:MI:SS') AS REG_DATE
+  FROM QNA_BOARD_FILE
+ WHERE QNA_SEQ = #{value}
+</select>
+
+
+<!-- 문의글 등록 -->
+<insert id="inquiryBoardInsert" parameterType="com.icia.web.model.InquiryBoard"> 
+<selectKey resultType="long" keyProperty="qnaSeq" order="BEFORE">
+ SELECT DAYIARY_SEQ.NEXTVAL FROM DUAL
+</selectKey>
+INSERT INTO QNA_BOARD (
+                  QNA_SEQ,
+                  USER_ID,
+                  SELLER_ID,
+                  QNA_GROUP,
+                  QNA_ORDER,
+                  QNA_INDENT,
+                  QNA_TITLE,
+                  QNA_CONTENT,
+                  QNA_PARENT,
+                  REG_DATE,
+                  R_SEQ,
+                  PRODUCT_SEQ,
+                  REPLY_STATUS
+           ) VALUES (
+                   #{qnaSeq},
+                   #{userId},
+                   #{sellerId},   
+                   #{qnaSeq},   
+                   #{qnaOrder},
+                   #{qnaIndent},
+                   #{qnaTitle},
+                   #{qnaContent},
+                   #{qnaParent},      
+                   SYSDATE,
+                   #{rSeq},
+                   #{productSeq},
+                   'N'
+                    )
+</insert>
+
+
+<!--문의글 첨부파일 다중등록 : selectKey를 통해 담기는 파일에 fileSeq 번호는 1씩 더해서 DB에 담는다. 파일1개등록시 필요없음-->
+<insert id="inquiryBoardFileInsert" parameterType="com.icia.web.model.InquiryBoardFile">
+<selectKey resultType="short" keyProperty="fileSeq" order="BEFORE">
+SELECT NVL(MAX(FILE_SEQ),0) + 1
+  FROM QNA_BOARD_FILE
+ WHERE QNA_SEQ = #{qnaSeq}
+</selectKey>
+
+INSERT INTO QNA_BOARD_FILE (
+                      QNA_SEQ,
+                      FILE_SEQ,
+                      FILE_ORG_NAME,
+                      FILE_NAME,
+                      FILE_EXT,
+                      FILE_SIZE,
+                      REG_DATE
+              ) VALUES (
+                     #{qnaSeq},
+                     #{fileSeq},
+                     #{fileOrgName},
+                     #{fileName},
+                     #{fileExt},
+                     #{fileSize},
+                     SYSDATE
+                     )
+  </insert>
+
+
+<!-- 문의글 셀렉트 박스(본인이 구매한 예약,선물 조회) 사용 -->
+<select id="seqSelect" parameterType="string" resultMap="inquiryBoardResultMap2">
+SELECT 
+      DISTINCT
+      CASE
+           WHEN A.R_SEQ IS NOT NULL THEN A.R_SEQ
+           ELSE A.PRODUCT_SEQ
+       END AS ORDERED_SEQ,
+      CASE
+           WHEN A.R_SEQ IS NOT NULL THEN O_R.ORDER_SEQ
+           ELSE O_P.ORDER_SEQ
+       END AS ORDER_SEQ,
+      CASE
+           WHEN A.R_SEQ IS NOT NULL THEN R.RESTO_NAME
+           ELSE P.P_NAME
+       END AS ORDERED_NAME,
+      CASE 
+           WHEN A.R_SEQ IS NOT NULL THEN R.SELLER_ID
+           ELSE P.SELLER_ID
+       END AS SELLER_ID
+  FROM
+      (SELECT O.R_SEQ,
+              O.PRODUCT_SEQ
+         FROM ORDER_LIST O
+        WHERE O.USER_ID = #{value}) A,
+              RESTO_INFO R,
+              PRODUCT_INFO P,
+              ORDER_LIST O_R,
+              ORDER_LIST O_P
+              WHERE A.R_SEQ = R.R_SEQ (+)
+                AND A.PRODUCT_SEQ = P.PRODUCT_SEQ (+)
+                AND A.R_SEQ = O_R.R_SEQ (+)
+                AND A.PRODUCT_SEQ = O_P.PRODUCT_SEQ (+)
+                AND O_R.USER_ID (+) = #{value}
+                AND O_P.USER_ID (+) = #{value}  
+</select>
+
+
+<!-- 문의글 셀렉트 박스 일반문의 상품 사용 -->
+<select id="productSelect" resultMap="inquiryBoardInfoResultMap">
+SELECT
+      PRODUCT_SEQ,
+      P_NAME,
+      SELLER_ID,
+      P_PRICE,
+      P_CONTENT,
+      REG_DATE,
+      STATUS 
+  FROM
+      PRODUCT_INFO
+</select>
+
+
+<!-- 문의글 셀렉트 박스 일반문의 레스토랑 사용 -->
+<select id="restoSelect" resultMap="inquiryBoardInfoResultMap2">
+SELECT
+      R_SEQ,
+      RESTO_NAME,
+      SELLER_ID,
+      RESTO_ADDRESS,
+      RESTO_PH,
+      RESTO_CONTENT,
+      REG_DATE,
+      STATUS,
+      RESTO_TYPE,
+      FOOD_TYPE,
+      RESTO_OFF,
+      RESTO_OPEN,
+      RESTO_CLOSE,
+      RESTO_DEPOSIT,
+      LIMIT_PERSON
+  FROM
+      RESTO_INFO
+</select>
+
+
+<!-- 문의사항 게시판(판매자)-->
+<select id="inquirySellerBoardList" parameterType="com.icia.web.model.InquiryBoard" resultMap="inquiryBoardResultMap3">
+SELECT
+      QNA_SEQ,
+      USER_ID,
+      SELLER_ID,
+      QNA_GROUP,
+      QNA_ORDER,
+       QNA_INDENT,
+       QNA_TITLE,
+       QNA_CONTENT,
+       QNA_PARENT,
+       REG_DATE,
+       R_SEQ,
+       PRODUCT_SEQ,  
+       USER_NAME,
+       REPLY_STATUS,
+       ORDER_GUBUN,
+      ORDERED_NAME
+  FROM(SELECT ROWNUM AS RNUM,
+              QNA_SEQ,
+               USER_ID,
+              SELLER_ID,
+             QNA_GROUP,
+              QNA_ORDER,
+             QNA_INDENT,
+             QNA_TITLE,
+             QNA_CONTENT,
+             QNA_PARENT,
+            REG_DATE,
+             R_SEQ,
+           PRODUCT_SEQ,  
+           USER_NAME,
+           REPLY_STATUS,
+           ORDER_GUBUN,
+           ORDERED_NAME
+        FROM(SELECT NVL(A2.QNA_SEQ, '') AS QNA_SEQ,
+                 NVL(A2.USER_ID, '') AS USER_ID,
+                 NVL(A2.SELLER_ID, '') AS SELLER_ID,
+                 NVL(A2.QNA_GROUP, 0) AS QNA_GROUP,
+                 NVL(A2.QNA_ORDER, 0) AS QNA_ORDER,
+                 NVL(A2.QNA_INDENT, 0) AS QNA_INDENT,
+                 NVL(A2.QNA_TITLE, '') AS QNA_TITLE,
+                 NVL(A2.QNA_CONTENT, '') AS QNA_CONTENT,
+                 NVL(A2.QNA_PARENT, 0) AS QNA_PARENT,
+                 NVL(TO_CHAR(A2.REG_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS REG_DATE,
+                 NVL(A2.R_SEQ, '') AS R_SEQ,
+                 NVL(A2.PRODUCT_SEQ, '') AS PRODUCT_SEQ,
+                 NVL(A1.USER_NAME, '') AS USER_NAME,
+                 NVL(A1.REPLY_STATUS, 'N') AS REPLY_STATUS,
+                 NVL(A1.ORDER_GUBUN, '') AS ORDER_GUBUN,
+                 NVL(A1.ORDERED_NAME, '') AS ORDERED_NAME
+              FROM(SELECT NVL(A.QNA_SEQ, '') AS QNA_SEQ,
+                          NVL(A.USER_ID, '') AS USER_ID,
+                        NVL(A.SELLER_ID, '') AS SELLER_ID,
+                        NVL(A.QNA_GROUP, 0) AS QNA_GROUP,
+                        NVL(A.QNA_ORDER, 0) AS QNA_ORDER,
+                        NVL(A.QNA_INDENT, 0) AS QNA_INDENT,
+                        NVL(A.QNA_TITLE, '') AS QNA_TITLE,
+                        NVL(A.QNA_CONTENT, '') AS QNA_CONTENT,
+                        NVL(A.QNA_PARENT, 0) AS QNA_PARENT,
+                        NVL(TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS REG_DATE,
+                        NVL(A.R_SEQ, '') AS R_SEQ,
+                        NVL(A.PRODUCT_SEQ, '') AS PRODUCT_SEQ,
+                        NVL(C.USER_NAME, '') AS USER_NAME,
+                        NVL(A.REPLY_STATUS, 'N') AS REPLY_STATUS,
+                        CASE
+                           WHEN A.R_SEQ IS NOT NULL THEN 'R'
+                           ELSE 'P'
+                           END AS ORDER_GUBUN,
+                       CASE
+                           WHEN A.R_SEQ IS NOT NULL THEN (SELECT RESTO_NAME FROM RESTO_INFO R WHERE R.R_SEQ = A.R_SEQ)
+                           ELSE (SELECT P_NAME FROM PRODUCT_INFO P WHERE P.PRODUCT_SEQ = A.PRODUCT_SEQ)
+                           END AS ORDERED_NAME   
+                   FROM QNA_BOARD A, G2_SELLER B, G2_USER C
+                        WHERE B.SELLER_ID = #{sellerId}  
+                    AND A.SELLER_ID(+) = B.SELLER_ID
+                    AND A.USER_ID = C.USER_ID(+)
+      <if test='searchCategory != null and searchCategory != ""'>
+                 <choose>
+                  <when test='searchCategory == "0"'>
+                         AND (A.R_SEQ IS NOT NULL AND (SUBSTR(A.R_SEQ, 1, 1) LIKE 'R%' AND A.QNA_TITLE LIKE '[예약전]%') 
+                               OR 
+                              (A.PRODUCT_SEQ IS NOT NULL AND SUBSTR(A.PRODUCT_SEQ, 1, 1) LIKE 'P%' AND A.QNA_TITLE LIKE '[구매전]%'))
+                  </when>
+                  <when test='searchCategory == "1"'>
+                          AND (SUBSTR(A.R_SEQ, 1, 1) LIKE 'R%' AND SUBSTR(A.QNA_TITLE, 1, 5) NOT LIKE '[예약전]%')
+                  </when>
+                  <when test='searchCategory == "2"'>
+                          AND (SUBSTR(A.PRODUCT_SEQ, 1, 1) LIKE 'P%' AND SUBSTR(A.QNA_TITLE, 1, 5) NOT LIKE '[구매전]%')
+                  </when>
+                 </choose>
+      </if>
+      <if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>
+                 <choose>
+                  <when test='searchType == "1"'>           
+                          AND A.QNA_TITLE LIKE '%' || #{searchValue} || '%'
+                  </when>        
+                  <when test='searchType == "2"'>   
+                          AND DBMS_LOB.INSTR(A.QNA_CONTENT, #{searchValue}) > 0
+                  </when> 
+                 </choose>
+       </if> 
+       <if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>
+                          AND QNA_INDENT = 0
+       </if> 
+                       ) A1, QNA_BOARD A2
+                  WHERE A1.QNA_SEQ = A2.QNA_GROUP                           
+                  ORDER BY A2.QNA_GROUP DESC, A2.QNA_ORDER ASC))
+ WHERE RNUM <![CDATA[>=]]> #{startRow}
+   AND RNUM <![CDATA[<=]]> #{endRow}
+</select>
+
+
+<!-- 문의사항 게시판 총 게시물 수(판매자) -->
+<select id="inquirySellerBoardListCount" parameterType="com.icia.web.model.InquiryBoard" resultType="long"> 
+   SELECT COUNT(A.QNA_SEQ) AS CNT
+     FROM QNA_BOARD A, G2_SELLER B
+    WHERE 1 = 1
+<if test='sellerId != null and sellerId != ""'>     
+      AND A.SELLER_ID = #{sellerId}
+</if>   
+      AND A.SELLER_ID = B.SELLER_ID
+<if test='searchCategory != null and searchCategory != ""'>
+  <choose>
+   <when test='searchCategory == "1"'>  
+      AND SUBSTR(A.R_SEQ, 1, 1) LIKE 'R%' 
+   </when>
+   <when test='searchCategory == "2"'>
+      AND SUBSTR(A.PRODUCT_SEQ, 1, 1) LIKE 'P%' 
+   </when>
+  </choose>
+</if>   
+<if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>  
+  <choose>   
+   <when test='searchType == "1"'>
+      AND A.QNA_TITLE LIKE '%' || #{searchValue} || '%'
+   </when>
+   <when test='searchType == "2"'>
+      AND DBMS_LOB.INSTR(A.QNA_CONTENT, #{searchValue}) > 0
+   </when>
+  </choose>
+</if>
+</select>
+
+
+<!-- 문의글 삭제시 답변글수 조회 -->
+<select id="inquiryBoardAnswersCount" parameterType="long" resultType="int">
+SELECT COUNT(QNA_SEQ) AS CNT
+  FROM QNA_BOARD
+ WHERE QNA_PARENT = #{value}
+</select>
+
+
+<!-- 문의글 수정 -->
+<update id="inquiryBoardUpdate" parameterType="com.icia.web.model.InquiryBoard">
+UPDATE QNA_BOARD
+   SET QNA_TITLE = #{qnaTitle},
+       QNA_CONTENT = #{qnaContent}
+ WHERE QNA_SEQ = #{qnaSeq}
+</update>
+
+
+<!-- 문의글 첨부파일 삭제 -->
+<delete id="inquiryBoardFileDelete" parameterType="long">
+DELETE FROM QNA_BOARD_FILE
+ WHERE QNA_SEQ = #{value}
+</delete>
+
+
+<!-- 문의글 삭제 -->
+<delete id="inquiryBoardDelete" parameterType="long">
+DELETE FROM QNA_BOARD 
+ WHERE QNA_SEQ = #{value}
+</delete>
+
+
+<!-- QNA_GROUP의 QNA_ORDER 수정 (새로 작성하는 답글 이전에 달린 답글들의 ORDER(순서)에 + 1 씩 모두 해주는 것-->
+<update id="inquiryBoardGroupOrderUpdate" parameterType="com.icia.web.model.InquiryBoard">
+UPDATE QNA_BOARD
+   SET QNA_ORDER = QNA_ORDER + 1
+ WHERE QNA_ORDER = #{qnaGroup}
+   AND QNA_ORDER <![CDATA[>=]]> #{qnaOrder}
+</update>   
+
+
+<!-- 답글 등록시 답글상태 'Y'로 변경 -->
+<update id="inquiryBoardAddReplyStatusUpdate" parameterType="com.icia.web.model.InquiryBoard">
+UPDATE QNA_BOARD
+   SET REPLY_STATUS = 'Y' 
+ WHERE QNA_GROUP = #{qnaGroup}
+</update>   
+
+
+<!-- 답글 삭제시 답글상태 'N'로 변경 -->
+<update id="inquiryBoardDeleteReplyStatusUpdate" parameterType="com.icia.web.model.InquiryBoard">
+UPDATE QNA_BOARD
+   SET REPLY_STATUS = 'N'
+ WHERE QNA_GROUP = #{qnaGroup}
+</update>
+
+
+<!-- 문의글 답글 등록 -->
+<insert id="inquiryBoardReplyInsert" parameterType="com.icia.web.model.InquiryBoard"> 
+<!--선행처리기(시퀀스번호 생성) -->
+  <selectKey resultType="long" keyProperty="qnaSeq" order="BEFORE">
+  SELECT DAYIARY_SEQ.NEXTVAL FROM DUAL
+  </selectKey>
+  INSERT INTO QNA_BOARD (
+                    QNA_SEQ,
+                    USER_ID,
+                    SELLER_ID,
+                    QNA_GROUP,
+                    QNA_ORDER,
+                    QNA_INDENT,
+                    QNA_TITLE,
+                    QNA_CONTENT,
+                    QNA_PARENT,
+                    REG_DATE,
+                    REPLY_STATUS,
+                    R_SEQ,
+                    PRODUCT_SEQ
+            ) VALUES (
+                    #{qnaSeq},
+                    #{userId},
+                    #{sellerId},   
+                    #{qnaGroup},   
+                    #{qnaOrder},
+                    #{qnaIndent},
+                    #{qnaTitle},
+                    #{qnaContent},
+                    #{qnaParent},      
+                    SYSDATE,
+                    #{replyStatus},
+                    #{rSeq},
+                    #{productSeq}
+                   )
+</insert>
+
+</mapper>
