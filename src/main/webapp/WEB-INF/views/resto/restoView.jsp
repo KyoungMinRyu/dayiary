@@ -1102,6 +1102,7 @@ function payComplete(orderSeq) //결제 성공했으니 결제대기중(W)->결�
            {
               alert("예약이 확정 되었습니다.");
               document.reservationForm.target = ""; 
+              document.reservationForm.orderSeq = orderSeq; 
               document.reservationForm.action = "/resto/restoReserv";
               document.reservationForm.submit(); 
            }
@@ -1331,6 +1332,7 @@ function fn_reversal(checkFavorite, rSeq)
              }
           }
             %>
+            <input type="hidden" name="orderSeq" value="">
         </form>
     </section> 
     

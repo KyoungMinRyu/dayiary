@@ -60,6 +60,7 @@ public class AnniversaryController
 		String month = HttpUtil.get(request, "month", "");
 		String day = HttpUtil.get(request, "day", "");
 		String calTime = HttpUtil.get(request, "calTime", "");
+		String orderSeq = HttpUtil.get(request, "orderSeq", "");
 		if(!StringUtil.isEmpty(calTitle) && !StringUtil.isEmpty(calContent) && !StringUtil.isEmpty(year) && !StringUtil.isEmpty(month) && !StringUtil.isEmpty(day))
 		{
 			if(friendService.selectUser(cookieUserId) != null)
@@ -73,6 +74,16 @@ public class AnniversaryController
 				if(anniversaryService.insertAnniversary(anniversary) > 0)
 				{
 					ajaxResponse.setResponse(0, "Success", "일정 등록에 성공하였습니다.");
+					if(!StringUtil.isEmpty(orderSeq))
+					{
+						HashMap<String, Object> hashMap = new HashMap<String, Object>();
+						hashMap.put("orderSeq", orderSeq);
+						hashMap.put("anniversarySeq", anniversary.getAnniversarySeq());
+						if(anniversaryService.updateReservAnniversary(hashMap) > 0)
+						{
+							ajaxResponse.setResponse(0, "Success", "예약 일정 등록에 성공하였습니다.");
+						}
+					}
 				}
 				else
 				{

@@ -160,5 +160,19 @@ public class AnniversaryService {
 		}
 		return selectCoupleDate;
 	}
+	
 
+	public int updateReservAnniversary(HashMap<String, Object> hashMap) 
+	{
+		int count = 0;
+		try 
+		{
+			count = anniversaryDao.updateReservAnniversary(hashMap);
+		} 
+		catch (Exception e) 
+		{
+			logger.error("[AnniversaryService](updateReservAnniversary)", e);
+		}
+		return count;
+	}
 }

@@ -197,7 +197,12 @@ public class UserG2Service {
 		if(count > 0)
 		{
 			count = userG2Dao.updateCancleOrder(orderSeq);
-			userG2Dao.deleteReservCancleAnniversary(orderSeq);
+			if(count > 0)
+			{
+				userG2Dao.deleteSharedReserv(orderSeq);
+				userG2Dao.deleteReservCancleAnniversary(orderSeq);
+				userG2Dao.deleteDelivery(orderSeq);
+			}
 		}
 		return count;
 	}

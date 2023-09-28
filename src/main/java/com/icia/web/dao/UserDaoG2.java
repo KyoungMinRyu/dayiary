@@ -58,6 +58,8 @@ public interface UserDaoG2
    
    public int deleteReservCancleAnniversary(String orderSeq);
    
+   public int deleteSharedReserv(String orderSeq);
+   
    public List<OrderList> selectProductOrderList(OrderList orderList);
    
    public int selectProductOrderTotalCount(OrderList orderList);

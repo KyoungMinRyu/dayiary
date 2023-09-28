@@ -280,6 +280,7 @@ public class RestoController {
 		int totalAmount = quantity * deposit; // 예약인원수 * 예약금을 totalAmount로 사용
 		String orderDate = HttpUtil.get(request, "orderDate", "");
 		String orderTime = HttpUtil.get(request, "orderTime", "");
+		String orderSeq = HttpUtil.get(request, "orderSeq", "");
 
 		// 시간을 19 : 00 형식으로 변환
 		StringBuilder stringBuilder = new StringBuilder(orderTime);
@@ -294,7 +295,7 @@ public class RestoController {
 		model.addAttribute("totalAmount2", totalAmount2);
 		model.addAttribute("orderDate", orderDate);
 		model.addAttribute("orderTime2", orderTime2);
-
+		model.addAttribute("orderSeq", orderSeq);
 		return "/resto/restoReserv";
 	}
 

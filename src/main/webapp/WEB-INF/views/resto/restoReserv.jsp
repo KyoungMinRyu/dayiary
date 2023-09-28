@@ -12,7 +12,8 @@ $(document).ready(function() {
 	const cnt = ${quantity};
 	const restoName = "${itemName}";
 	let time = "${orderTime2}";
-
+	const orderSeq = "${orderSeq}";
+	
 	date = date.replaceAll("-", "");
 
 	time = time.replaceAll(":", "");
@@ -34,7 +35,8 @@ $(document).ready(function() {
       day: day,
       calTitle: title,
       calContent: content,
-      calTime: time
+      calTime: time,
+      orderSeq: orderSeq
     };
 	
 	
