@@ -94,7 +94,6 @@ html, body
     padding-left : 5px;
     padding-right : 5px; 
     padding-top: 8px;     
-    padding-bottom: 8px;
     width: 95%;
     height: auto;
     margin: auto;
@@ -215,7 +214,7 @@ html, body
 .selectBox
 {
    padding: 10px;
-   width: 30%;
+   width: 100%;
    height: 76px;
    display: flex;
 }
@@ -325,8 +324,12 @@ display: flex;
 
 .card-header
 {
-   background-image: url('/resources/images/resto.jpg');
-
+   	background-image: url('/resources/images/revenue.png');
+	object-fit: cover;
+	width: 100%;
+	height: 530px;
+	background-repeat: no-repeat;
+	
 }
 .left-content {
     padding: 40px;
@@ -694,13 +697,13 @@ function fn_giftList(url)
         url: url,
         success: function(response)
         {
-           console.log(response.data); 
-           let json = response.data;
-           let makeTag = "";
-           let show = "";
-            for(let i = 0; i < json.length; i++)
-           {
-              makeTag = 
+           	console.log(response.data); 
+           	let json = response.data;
+           	let makeTag = "";
+           	let show = "";
+           	for(let i = 0; i < json.length; i++)
+           	{
+           		makeTag = 
                     "<div class='listItem'><a href='/gift/giftview?productSeq=" + json[i].productSeq + "'>" +
                     "<div class='itemBox'><img class='itemImg' src='/resources/upload/" + json[i].fileName + "'>" +
                     "</div></a><div class='itemText'>" + json[i].regDate;
@@ -746,6 +749,8 @@ function orderRestoGiftList(type)
       return;
    }
 }
+
+
 
 //식당 예약 리스트 클릭 시.
 function fn_restoList2(url, formData) {
@@ -1221,44 +1226,199 @@ function fn_movePage()
   </div>
 
   
-  <div class="page-content">
-    <div class="content-categories">
-      <div class="label-wrapper">
-        <input class="nav-item" name="nav" type="radio" id="opt-1" checked>
-        <label class="category" for="opt-1" onclick="fn_getRevenue(0)" style="font-size: 30px;">식당</label>
-      </div>
-
-      <div class="label-wrapper">
-        <input class="nav-item" name="nav" type="radio" id="opt-4">
-        <label class="category" for="opt-4" onclick="fn_getRevenue(1)"  style="font-size: 30px;">선물</label>
-      </div>
-    </div>
+  <div class="page-content" style="padding: 10px;">
+  
     <div class="page-contentmain">
     
     
     
        <div class="contain">
-    <div class="card card-myId" data-state="#about" style="height: 100%">
+    <div class="card card-myId" data-state="#about" style="height: 3000px; overflow: scroll;">
   <div class="card-header">
   
   </div>
+  
+	<div class="selectBox" style="justify-content: center; align-items: center;">
+    	<div class="field listType" style="width: 60%;">            
+       	<div>
+       		<label class="listType">
+                <input type="radio" name="listType" value="0" onclick="fn_getSelectList(0)">
+                <span>레스토랑</span>
+            </label>
+            &nbsp;
+            <label class="listType">
+                <input type="radio" name="listType" value="1" onclick="fn_getSelectList(1)">
+                <span>선물</span>
+            </label>
+        </div>
+	    </div> 
+    	<select name="_searchType" id="_searchType" style="width: 250px; height: 100%">
+	        <option value="" selected>레스토랑 또는 선물을 선택해주세요.</option>
+	    </select>
+	    
+		<input type="date" id="startDate" name="calDate" style="width: 250px; height: 100%; margin-left: 10px;">
+		
+		<input type="date" id="endDate" name="calDate" style="width: 250px; height: 100%; margin-left: 10px;">
+	    <img src="/resources/images/search.png" id="btnSearch" style="width: auto; height: 100%; margin-left: 10px;">
+	</div>     
+  
   <div class="card-main">
-    <div class="card-section is-active" id="about" style="margin-left: 20px;">
-      <div class="card-content">
-        <div class="card-subtitle">내 정보</div>
-        
-          <div id="sellerContainer">
-          
-	          <div class="profilecard-name" style="text-align: center;">
-	               <b style="font-size : 20px;">예약완료건수 : ${seller.totalReservCnt}건 </b>
-	          </div>
-	          <div class="profilecard-name" style="text-align: center;">
-	               <b style="font-size : 20px;">총 매출 : ${seller.totalRevenue}원 </b>
-	          </div>
-
-          </div>
-       
-      </div>
+      	<div class="card-content" style="width: 100%; height: 100%;">
+      
+      
+		
+		<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
+      		<h3>아아아아아ㅏ아아이스크림가게</h3>
+      		<div style="justify-content: center; text-align: center;">
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      		</div>
+      	</div>
+      	
+      	
+      	
+      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
+      	
+      		<h3>아아아아아ㅏ아아이스크림가게</h3>
+      		<div style="justify-content: center; text-align: center;">
+      			
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      		</div>
+      	</div>
+      	
+      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
+      	
+      		<h3>아아아아아ㅏ아아이스크림가게</h3>
+      		<div style="justify-content: center; text-align: center;">
+      			
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      		</div>
+      	</div>
+      	
+      	
+      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
+      	
+      		<h3>아아아아아ㅏ아아이스크림가게</h3>
+      		<div style="justify-content: center; text-align: center;">
+      			
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      		</div>
+      	</div>
+      	
+      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
+      	
+      		<h3>아아아아아ㅏ아아이스크림가게</h3>
+      		<div style="justify-content: center; text-align: center;">
+      			
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      		</div>
+      	</div>
+      	
+      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
+      	
+      		<h3>아아아아아ㅏ아아이스크림가게</h3>
+      		<div style="justify-content: center; text-align: center;">
+      			
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      		</div>
+      	</div>
+      	
+      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
+      	
+      		<h3>아아아아아ㅏ아아이스크림가게</h3>
+      		<div style="justify-content: center; text-align: center;">
+      			
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      		</div>
+      	</div>
+      	
+      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
+      	
+      		<h3>아아아아아ㅏ아아이스크림가게</h3>
+      		<div style="justify-content: center; text-align: center;">
+      			
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      			<h4>202308 3명 300000만원</h4>
+      		</div>
+      	</div>
     </div>
   </div>
 </div>
