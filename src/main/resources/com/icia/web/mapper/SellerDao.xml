@@ -87,6 +87,7 @@
    <result column="DELIVERY_STATUS" property="deliveryStatus" />  
    <result column="SELLER_ID" property="sellerId" />  
    <result column="P_NAME" property="pName" />
+   <result column="RESTO_NAME" property="restoName" />
    <result column="TOTAL_CNT" property="totalCnt" />
    <result column="TOTAL_PRICE"  property="totalPrice" />  
    <result column="ORDER_ADDRESS" property="orderAddress" />
@@ -689,5 +690,27 @@ UPDATE DELIVERY
      WHERE ORDER_SEQ = #{orderSeq}
  </update>
 
+<select id="selectMyGift" parameterType="String" resultMap="orderListResultMap">
+SELECT 
+    P_NAME,
+    PRODUCT_SEQ
+FROM 
+    PRODUCT_INFO
+WHERE
+    SELLER_ID = #{value}
+ORDER BY
+    REG_DATE DESC
+</select>
 
+<select id="selectMyResto" parameterType="String" resultMap="orderListResultMap">
+SELECT 
+    RESTO_NAME,
+    R_SEQ
+FROM
+    RESTO_INFO
+WHERE
+    SELLER_ID = #{value}
+ORDER BY
+    REG_DATE DESC
+</select>
 </mapper>
