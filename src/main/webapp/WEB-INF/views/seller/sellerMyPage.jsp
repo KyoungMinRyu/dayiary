@@ -327,7 +327,7 @@ display: flex;
    	background-image: url('/resources/images/revenue.png');
 	object-fit: cover;
 	width: 100%;
-	height: 530px;
+	height: 380px;
 	background-repeat: no-repeat;
 	
 }
@@ -567,8 +567,142 @@ $(document).ready(function()
          }
        });
       
-   
-   
+   	$("#searchMyThings").click(function() 
+	{
+   		let startDate = $("#startDate").val();
+   		let endDate = $("#endDate").val();
+   		let listType = $("input[type=radio][name=listType]:checked").val();
+   		let searchType = $("#_searchType").val();
+   		if(listType == null || listType == "" || listType == "undefined")
+   		{
+   			alert("조회 할 항목을 선택해주세요.");
+			return;
+   		}
+   		
+   		if(startDate != null && startDate != "")
+   		{
+   			if(endDate == null || endDate == "")
+   	   		{
+   	   			alert("조회 끝 날짜를 선택해주세요.");
+   	   			return;		
+   	   		}
+   		}
+   		else if(endDate != null && endDate != "")
+   		{
+   			if(startDate == null || startDate == "")
+   	   		{
+   	   			alert("조회 시작 날짜를 선택해주세요.");
+   	   			return;		
+   	   		}
+   		}
+   		
+   		let formData = 
+   	    {
+   			startDate: startDate.replaceAll("-", ""),
+   			endDate: endDate.replaceAll("-", ""),
+   			listType: listType,
+   			searchType: searchType
+	    };
+   		
+   		$.ajax
+   	    ({
+   	        type: "POST",
+   	        url: "/seller/getPeriodRevenue",
+   	        data: formData,
+   	        success: function(response)
+   	        {
+   	        	if(response.code == 0)
+   	        	{
+   	        		let temp = "";
+   	        		let makeTag = "";
+   	        		let show = "";
+   	        		let revenueContainer = $("#revenueContainer");
+   	        		revenueContainer.html("");
+   	        		let json = response.data;
+   	        		let data = "";
+   	        		let flag = 0;
+   	        		if(listType == 0)
+   	        		{
+   	        			for(let i = 0; i < json.length; i++)
+   	   	        		{
+   	   	        			data = json[i];	
+   	   	        			if(flag == 1)
+   	   	        			{
+	   	   	        			if(temp === data.rSeq)
+	   	   	        			{
+	   	   	        				makeTag += "<h4>" + data.regDate + " " + data.reservPerson + "명 " + data.totalPrice + "원</h4>";
+	   	   	        			}
+	   	   	        			else
+	   	   	        			{
+	   	   	        				makeTag += "</div></div>";
+	   	   	        				show += makeTag;
+	   	   	        				makeTag = "";
+	   	   	        				flag = 0;
+	   	   	        			}	
+   	   	        			}
+   	   	        			if(flag == 0)
+							{
+	   	   	        			makeTag = 
+		   	        					"<div style='width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;'><h3>" +
+		   	        					 data.restoName + "</h3><div style='justify-content: center; text-align: center;'><h4>" +
+		   	        					 data.regDate + " " + data.reservPerson + "명 " + data.totalPrice + "원</h4>";	   	           			
+	   	        				flag = 1;
+							}
+   	   	        			temp = data.rSeq;   	   	        			
+   	   	           		}
+  	        			makeTag += "</div></div>";
+   	        			show += makeTag;
+   	        			revenueContainer.html(show);
+   	        		}
+   	        		else if(listType == 1)
+   	        		{
+   	        			for(let i = 0; i < json.length; i++)
+   	   	        		{
+   	   	        			data = json[i];	
+   	   	        			if(flag == 1)
+   	   	        			{
+	   	   	        			if(temp === data.productSeq)
+	   	   	        			{
+	   	   	        				makeTag += "<h4>" + data.regDate + " " + data.totalCnt + "개 " + data.totalPrice + "원</h4>";
+	   	   	        			}
+	   	   	        			else
+	   	   	        			{
+	   	   	        				makeTag += "</div></div>";
+	   	   	        				show += makeTag;
+	   	   	        				makeTag = "";
+	   	   	        				flag = 0;
+	   	   	        			}	
+   	   	        			}
+   	   	        			if(flag == 0)
+							{
+	   	   	        			makeTag = 
+		   	        					"<div style='width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;'><h3>" +
+		   	        					 data.pName + "</h3><div style='justify-content: center; text-align: center;'><h4>" +
+		   	        					 data.regDate + " " + data.totalCnt + "개 " + data.totalPrice + "원</h4>";	   	           			
+	   	        				flag = 1;
+							}
+   	   	        			temp = data.productSeq;   	   	        			
+   	   	           		}
+  	        			makeTag += "</div></div>";
+   	        			show += makeTag;
+   	        			revenueContainer.html(show);
+   	        		}
+   	        		else
+   	        		{
+   	        			return;
+   	        		}
+   	        	}
+   	        	else
+   	        	{
+   	        		alert("알 수 없는 오류가 발생하였습니다.");	
+   	        	}
+   	        },
+   	        error: function(xhr, status, error) 
+   	        {
+   	            console.log(error);
+   	        }
+   	    });  
+	});
 });
 
 //aboutMe 메서드 실행
@@ -1131,6 +1265,72 @@ function fn_movePage()
 {
 	window.location.href = "/seller/sellerMyPage";
 }
+
+function fn_getMyThings(type)
+{
+	let formData = 
+    {
+		type: type
+    };
+	
+	$.ajax
+    ({
+        type: "POST",
+        url: "/seller/getMyThings",
+        data: formData,
+        success: function(response)
+        {
+        	if(response.code == 0)
+        	{
+        		let json = response.data;
+            	if(json.length > 0)
+            	{
+            		let searchType = $("#_searchType");
+                   	searchType.empty();
+                   	let option = [{text: "전체", value: 0}];
+                   	let data;
+                   	if(type == 0)
+                   	{
+                   		for(let i = 0; i < json.length; i++)
+                   		{
+                   			option.push({text: json[i].restoName, value: json[i].rSeq});
+                   		}
+                   	}
+                   	else if(type == 1)
+               		{
+                   		for(let i = 0; i < json.length; i++)
+                   		{
+                   			option.push({text: json[i].pName, value: json[i].productSeq});
+                   		}
+               		}
+                   	$.each(option, function(index, option) 
+               		{
+               			searchType.append($('<option>', 
+               			{
+                               value: option.value,
+                               text: option.text
+                    	}));
+					})
+            	}
+            	else 
+            	{
+            		alert("등록된 매장이나 레스토랑이 없습니다.");
+            	}	
+        	}
+        	else 
+        	{
+        		alert("알 수 없는 오류가 발생하였습니다.");
+        	}
+        	
+        },
+        error: function(xhr, status, error) 
+        {
+            console.log(error);
+        }
+    });
+}
+
+
 </script>
 
 </head>
@@ -1233,7 +1433,7 @@ function fn_movePage()
     
     
        <div class="contain">
-    <div class="card card-myId" data-state="#about" style="height: 3000px; overflow: scroll;">
+    <div class="card card-myId" data-state="#about"	style="height: 935px;">
   <div class="card-header">
   
   </div>
@@ -1242,12 +1442,12 @@ function fn_movePage()
     	<div class="field listType" style="width: 60%;">            
        	<div>
        		<label class="listType">
-                <input type="radio" name="listType" value="0" onclick="fn_getSelectList(0)">
+                <input type="radio" name="listType" value="0" onclick="fn_getMyThings(0)">
                 <span>레스토랑</span>
             </label>
             &nbsp;
             <label class="listType">
-                <input type="radio" name="listType" value="1" onclick="fn_getSelectList(1)">
+                <input type="radio" name="listType" value="1" onclick="fn_getMyThings(1)">
                 <span>선물</span>
             </label>
         </div>
@@ -1256,171 +1456,20 @@ function fn_movePage()
 	        <option value="" selected>레스토랑 또는 선물을 선택해주세요.</option>
 	    </select>
 	    
-		<input type="date" id="startDate" name="calDate" style="width: 250px; height: 100%; margin-left: 10px;">
+		<input type="date" id="startDate" name="calDate" style="width: 250px; height: 100%;">
 		
 		<input type="date" id="endDate" name="calDate" style="width: 250px; height: 100%; margin-left: 10px;">
-	    <img src="/resources/images/search.png" id="btnSearch" style="width: auto; height: 100%; margin-left: 10px;">
+		
+	    <img src="/resources/images/search.png" id="searchMyThings" style="width: auto; height: 100%; margin-left: 10px;">
 	</div>     
   
-  <div class="card-main">
-      	<div class="card-content" style="width: 100%; height: 100%;">
-      
-      
-		
+  	<div class="card-main" id="revenueContainer" style="overflow: scroll; height: 1000px;">	
 		<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-      		<h3>아아아아아ㅏ아아이스크림가게</h3>
       		<div style="justify-content: center; text-align: center;">
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      		</div>
-      	</div>
-      	
-      	
-      	
-      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-      	
-      		<h3>아아아아아ㅏ아아이스크림가게</h3>
-      		<div style="justify-content: center; text-align: center;">
-      			
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      		</div>
-      	</div>
-      	
-      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-      	
-      		<h3>아아아아아ㅏ아아이스크림가게</h3>
-      		<div style="justify-content: center; text-align: center;">
-      			
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      		</div>
-      	</div>
-      	
-      	
-      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-      	
-      		<h3>아아아아아ㅏ아아이스크림가게</h3>
-      		<div style="justify-content: center; text-align: center;">
-      			
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      		</div>
-      	</div>
-      	
-      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-      	
-      		<h3>아아아아아ㅏ아아이스크림가게</h3>
-      		<div style="justify-content: center; text-align: center;">
-      			
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      		</div>
-      	</div>
-      	
-      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-      	
-      		<h3>아아아아아ㅏ아아이스크림가게</h3>
-      		<div style="justify-content: center; text-align: center;">
-      			
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      		</div>
-      	</div>
-      	
-      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-      	
-      		<h3>아아아아아ㅏ아아이스크림가게</h3>
-      		<div style="justify-content: center; text-align: center;">
-      			
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      		</div>
-      	</div>
-      	
-      	<div style="width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;">
-      	
-      		<h3>아아아아아ㅏ아아이스크림가게</h3>
-      		<div style="justify-content: center; text-align: center;">
-      			
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
-      			<h4>202308 3명 300000만원</h4>
+  				<h3>검색할 조건을 선택해주세요.</h3>			  
       		</div>
       	</div>
     </div>
-  </div>
 </div>
 
 </div> 

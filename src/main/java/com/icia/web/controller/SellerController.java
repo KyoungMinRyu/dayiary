@@ -1,5 +1,7 @@
 package com.icia.web.controller;
 
+import static org.hamcrest.CoreMatchers.allOf;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -325,9 +327,8 @@ public class SellerController {
 	}
 
 	@RequestMapping(value = "/seller/sellerMyPage", method = RequestMethod.GET)
-	public String sellerMyPage(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response) {
-		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
-		modelMap.addAttribute("seller", sellerService.selectReservCntRevenue(cookieSellerId));
+	public String sellerMyPage(HttpServletRequest request, HttpServletResponse response) 
+	{
 		return "/seller/sellerMyPage";
 	}
 
@@ -543,7 +544,6 @@ public class SellerController {
 							menu.setMenuPrice(menuPrice);
 							menu.setMenuContent(menuDescription);
 							menuFile1.setFileName(menuFile.getFileName());
-							System.out.println(menuFile1.getFileName());
 							menu.setMenuFileList(menuFile1);
 						} else {
 							String menuName = HttpUtil.get(request, "menuName" + i);
@@ -554,12 +554,10 @@ public class SellerController {
 							menu.setMenuPrice(menuPrice);
 							menu.setMenuContent(menuDescription);
 							menuFile1.setFileName(menuFile.getFileName());
-							System.out.println(menuFile1.getFileName());
 							menu.setMenuFileList(menuFile1);
 
 						}
 						menuList.add(menu);
-						System.out.println(menuList.get(i).getMenuFileList().getFileName());
 
 					}
 
@@ -597,7 +595,6 @@ public class SellerController {
 					try {
 						if (sellerService.restoUpdate(restoInfo) > 0) {
 							ajaxResponse.setResponse(0, "success");
-							logger.debug("22222222222222222222222222222222222222");
 						} else {
 							ajaxResponse.setResponse(500, "Internal server error");
 						}
@@ -641,106 +638,6 @@ public class SellerController {
 		return "/seller/giftBring";
 	}
 
-//       //선물&선물파일 정보 수정(ajax -리턴타입 객체)
-//       @RequestMapping(value="/seller/giftUpdateProc", method=RequestMethod.POST)
-//       @ResponseBody
-//       public Response<Object> giftUpdateProc(MultipartHttpServletRequest request, HttpServletResponse response)
-//       {
-//           Response<Object> ajaxResponse = new Response<Object>();
-//           
-//          String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
-//          String productSeq = HttpUtil.get(request, "productSeq","");
-//          String pName = HttpUtil.get(request, "pName","");
-//          String pPrice = HttpUtil.get(request,"pPrice","");
-//          String pContent = HttpUtil.get(request, "pContent","");
-//          String status = HttpUtil.get(request, "status","");   
-//          String productCategory = HttpUtil.get(request, "productCategory","");
-//          FileData thumFile = HttpUtil.getFile(request, "giftThum", UPLOAD_SAVE_DIR);
-//           List<FileData> fileData = HttpUtil.getFiles(request, "product_detail_image", UPLOAD_SAVE_DIR);
-//         
-//          
-//          if(!StringUtil.isEmpty(productSeq) && !StringUtil.isEmpty(pName) && !StringUtil.isEmpty(pPrice) 
-//                && !StringUtil.isEmpty(pContent) &&!StringUtil.isEmpty(status) && !StringUtil.isEmpty(productCategory))
-//          {   //게시글 원내용
-//            
-//             GiftAdd giftAdd = giftService.giftView(productSeq);
-//            
-//             if(giftAdd != null)
-//             {
-//
-//                       giftAdd.setProductSeq(productSeq);
-//                      giftAdd.setSellerId(cookieSellerId);
-//                      giftAdd.setpName(pName);
-//                      giftAdd.setpPrice(pPrice);
-//                      giftAdd.setpContent(pContent);
-//                      giftAdd.setStatus(status);   
-//                      giftAdd.setProductCategory(productCategory);
-//                      GiftFile giftFile; 
-//                      //리스트 화 
-//                         List<GiftFile> giftFileList = new ArrayList<GiftFile>();
-//                      if( thumFile != null && fileData != null && fileData.size() > 0  )
-//                      {
-//                         
-//                       
-//                         
-//                         if(thumFile.getFileSize()>0)
-//                         {
-//                            giftFile = new GiftFile();
-//                            
-//                            giftFile.setFileName(thumFile.getFileName());
-//                            
-//                            giftFileList.add(giftFile);
-//
-//                         }
-//                         
-//                         for(int i=0 ; i< fileData.size() ; i++)
-//                         {
-//                            if(fileData.get(i).getFileSize()>0)
-//                            {
-//                               giftFile = new GiftFile();
-//                               
-//                               giftFile.setFileName(fileData.get(i).getFileName());
-//                               
-//                               giftFileList.add(giftFile);            
-//                            }
-//                         }
-//                         
-//                         giftAdd.setGiftFileList(giftFileList);
-//
-//                       }
-//                     
-//                      
-//                      //서비스 호출
-////                      try
-////                      {
-////                         if(sellerService.giftUpdate(giftAdd) > 0 && sellerService.giftFileUpdate(giftFileList) > 0)
-////                            {
-////                               ajaxResponse.setResponse(0, "success");
-////                               logger.debug("[SellerController.gift수정] 성공 ");
-////                            }
-////                            else
-////                            {
-////                               ajaxResponse.setResponse(500, "Internal server error");
-////                            }
-////                       }
-////                      catch(Exception e)
-////                      {
-////                         logger.error("[SellerController] giftUpdateProc Exception", e);
-////                         ajaxResponse.setResponse(500, "internal server error");
-////                      }
-////                   }
-////                   else
-////                   {
-////                      ajaxResponse.setResponse(400, "Bad Request");
-////                   }
-//                    
-//           
-//             
-//             }
-//          return ajaxResponse;
-//             
-//       }
-
 	// 내가 등록한 선물 중 결제된레스토랑리스트
 
 	@RequestMapping(value = "/seller/getRestoOrderList", method = RequestMethod.POST)
@@ -778,40 +675,6 @@ public class SellerController {
 
 		return ajaxResponse;
 	}
-
-//       //레스토랑 취소 
-//       @RequestMapping(value = "/seller/sellerCancelReserv", method = RequestMethod.POST)
-//       @ResponseBody
-//       public Response<Object> sellerCancelReserv(HttpServletRequest request, HttpServletResponse response) 
-//       {
-//          Response<Object> ajaxResponse = new Response<Object>();
-//          String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
-//          String orderSeq = HttpUtil.get(request, "orderSeq", "");
-//          
-//          if(!StringUtil.isEmpty(orderSeq))
-//          {
-//             if(sellerService.sellerIdSelect(cookieSellerId) != null)
-//              {
-//                if(sellerService.sellerCancelReserv(orderSeq) > 0)
-//                {
-//                   ajaxResponse.setResponse(0, "Success", "예약 취소되었습니다.");
-//                } 
-//                else
-//                {
-//                   ajaxResponse.setResponse(500, "DB Sever Error", "서버에서 오류가 발생하였습니다. 다시 시도해 주세요.");
-//                }
-//              }
-//             else
-//             {
-//                ajaxResponse.setResponse(404, "Not Found");
-//             }
-//          }
-//          else
-//          {
-//             ajaxResponse.setResponse(400, "Bad Request");
-//          }
-//          return ajaxResponse;
-//       }
 
 	// 내가 등록한 선물 중 결제된선물리스트
 
@@ -917,4 +780,92 @@ public class SellerController {
 		return ajaxResponse;
 	}
 
+	@RequestMapping(value = "/seller/getMyThings", method = RequestMethod.POST)
+	@ResponseBody
+	public Response<Object> getMyThings(HttpServletRequest request, HttpServletResponse response) 
+	{
+		Response<Object> ajaxResponse = new Response<Object>();
+		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+		int type = HttpUtil.get(request, "type", -1);
+		if(type == 0)
+		{
+			ajaxResponse.setResponse(0, "Success", sellerService.selectMyResto(cookieSellerId));
+		}
+		else if(type == 1)
+		{
+			ajaxResponse.setResponse(0, "Success", sellerService.selectMyGift (cookieSellerId));	
+		}
+		else
+		{
+			ajaxResponse.setResponse(400, "Bad Request");
+		}
+		return ajaxResponse;
+	}
+	
+	@RequestMapping(value = "/seller/getPeriodRevenue", method = RequestMethod.POST)
+	@ResponseBody
+	public Response<Object> getPeriodRevenue(HttpServletRequest request, HttpServletResponse response) 
+	{
+		Response<Object> ajaxResponse = new Response<Object>();
+		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+		String startDate = HttpUtil.get(request, "startDate", "");
+		String endDate = HttpUtil.get(request, "endDate", "");
+		int listType = HttpUtil.get(request, "listType", -1);
+		String searchType = HttpUtil.get(request, "searchType", "");
+		if(!StringUtil.isEmpty(searchType) && listType >= 0)
+		{
+			if(StringUtil.equals(searchType, "0"))
+			{
+				searchType = "";
+			}
+			HashMap<String, String> hashMap = new HashMap<String, String>();
+			hashMap.put("startDate", startDate);
+			hashMap.put("endDate", endDate);
+			hashMap.put("searchType", searchType);
+			hashMap.put("cookieSellerId", cookieSellerId);
+			if(listType == 0)
+			{
+				ajaxResponse.setResponse(0, "Success", sellerService.selectRestoPeriodRevenue(hashMap));
+			}
+			else if(listType == 1)
+			{
+				ajaxResponse.setResponse(0, "Success", sellerService.selectGiftPeriodRevenue(hashMap));	
+			}
+			else
+			{
+				ajaxResponse.setResponse(404, "Not Found");
+			}
+		}
+		else
+		{
+			ajaxResponse.setResponse(400, "Bad Request");	
+		}
+		
+		return ajaxResponse;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

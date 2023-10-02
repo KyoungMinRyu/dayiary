@@ -71,19 +71,10 @@ public class AnniversaryController
 				anniversary.setAnniversaryContent(calContent);
 				anniversary.setAnniversaryDate(year + month + day);
 				anniversary.setAnniversaryTime(calTime);
+				anniversary.setOrderSeq(orderSeq);
 				if(anniversaryService.insertAnniversary(anniversary) > 0)
 				{
 					ajaxResponse.setResponse(0, "Success", "일정 등록에 성공하였습니다.");
-					if(!StringUtil.isEmpty(orderSeq))
-					{
-						HashMap<String, Object> hashMap = new HashMap<String, Object>();
-						hashMap.put("orderSeq", orderSeq);
-						hashMap.put("anniversarySeq", anniversary.getAnniversarySeq());
-						if(anniversaryService.updateReservAnniversary(hashMap) > 0)
-						{
-							ajaxResponse.setResponse(0, "Success", "예약 일정 등록에 성공하였습니다.");
-						}
-					}
 				}
 				else
 				{

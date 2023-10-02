@@ -96,4 +96,12 @@ public interface SellerDao {
 
 	// 하나의 선물 사진 정보 삭제 int boardFileDelete(long hiBbsSeq);
 	public int giftFileDelete(HashMap<String, Object> hashMap);
-}
+	
+	public List<OrderList> selectMyGift(String sellerId);
+
+	public List<OrderList> selectMyResto(String sellerId);
+	
+	public List<OrderList> selectRestoPeriodRevenue(HashMap<String, String> hashMap); 
+	
+	public List<OrderList> selectGiftPeriodRevenue(HashMap<String, String> hashMap);
+} 

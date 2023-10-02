@@ -41,7 +41,8 @@ INSERT INTO USER_Anniversary
         ANNIVERSARY_DATE,
         ANNIVERSARY_TIME,
         ANNIVERSARY_TITLE,
-        ANNIVERSARY_CONTENT
+        ANNIVERSARY_CONTENT,
+        ORDER_SEQ
     ) 
 VALUES 
     (
@@ -50,7 +51,8 @@ VALUES
         #{anniversaryDate},
         #{anniversaryTime},
         #{anniversaryTitle},
-        #{anniversaryContent}
+        #{anniversaryContent},
+        #{orderSeq}
     )
 </insert>
 

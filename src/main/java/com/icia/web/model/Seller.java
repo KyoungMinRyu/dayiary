@@ -17,7 +17,7 @@ public class Seller implements Serializable
 			    status, // 상태
 			    regDate,
 			    totalReservCnt,
-			    totalRevenue; // 가입일
+			    totalRevenue;
 	
 
 	private long startRow;      //시작 rownum

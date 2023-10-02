@@ -421,31 +421,26 @@ WHERE
     ORDER_ID = #{value}
 </update>
 
-<delete id="deleteReservCancleAnniversary">
+<delete id="deleteSharedReserv" parameterType="String">
+DELETE FROM 
+    ANNIVERSARY_SHARE
+WHERE
+    ANNIVERSARY_SEQ IN 
+                        (
+                            SELECT  
+                                ANNIVERSARY_SEQ
+                            FROM
+                                USER_ANNIVERSARY
+                            WHERE
+                                ORDER_SEQ = #{value}
+                        )
+</delete>
+
+<delete id="deleteReservCancleAnniversary" parameterType="String">
 DELETE FROM 
     USER_ANNIVERSARY
 WHERE
-    ANNIVERSARY_SEQ = 
-                        (
-                            SELECT    
-                                A.ANNIVERSARY_SEQ AS ANNIVERSARY_SEQ
-                            FROM
-                                USER_ANNIVERSARY A,
-                                (
-                                    SELECT
-                                        TO_CHAR(RESERV_DATE, 'YYYYMMDD') AS RESERV_DATE,
-                                        RESERV_TIME
-                                    FROM
-                                        ORDER_LIST
-                                    WHERE 
-                                        ORDER_SEQ =  #{value}
-                                ) O
-                            WHERE
-                                A.ANNIVERSARY_DATE = O.RESERV_DATE
-                                AND A.ANNIVERSARY_TIME = REPLACE(O.RESERV_TIME, ':', '')
-                                AND A.ANNIVERSARY_TITLE LIKE '%' || O.RESERV_TIME || '%'
-                                AND A.ANNIVERSARY_CONTENT LIKE '%' || O.RESERV_TIME || '%'                        
-                        )
+    ORDER_SEQ = #{value}
 </delete>
 
 <select id="selectMyOrder" parameterType="String" resultType="String">

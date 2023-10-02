@@ -47,6 +47,4 @@ public interface AnniversaryDao
 	public List<Anniversary> selectFriendBirProfile(String userId); // 친구 생일 이미지
 
 	public List<Anniversary> selectCoupleDate(String userId);
-	
-	public int updateReservAnniversary(HashMap<String, Object> hashMap);
 }

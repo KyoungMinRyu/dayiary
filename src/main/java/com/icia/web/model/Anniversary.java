@@ -18,7 +18,8 @@ public class Anniversary implements Serializable {
 	private String userPh;
 	private long relationalSeq;
 	private String fileName;
-	private String sharedStatus; // 추가한거
+	private String sharedStatus;
+	private String orderSeq;
 
 	public Anniversary() {
 		anniversarySeq = 0;
@@ -34,6 +35,15 @@ public class Anniversary implements Serializable {
 		userBir = "";
 		userPh = "";
 		sharedStatus = "";
+		orderSeq = "";
+	}
+	
+	public String getOrderSeq() {
+		return orderSeq;
+	}
+
+	public void setOrderSeq(String orderSeq) {
+		this.orderSeq = orderSeq;
 	}
 
 	public String getSharedStatus() {

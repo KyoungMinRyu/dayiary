@@ -713,4 +713,67 @@ WHERE
 ORDER BY
     REG_DATE DESC
 </select>
+
+<select id="selectRestoPeriodRevenue" parameterType="hashmap" resultMap="orderListResultMap">
+SELECT
+	R.R_SEQ AS R_SEQ,
+    TO_CHAR(O.REG_DATE, 'YYYYMM') AS REG_DATE,
+    COUNT(RESERV_PERSON) AS RESERV_PERSON,
+    SUM(RESTO_DEPOSIT) AS TOTAL_PRICE,
+    R.RESTO_NAME
+FROM
+    ORDER_LIST O, 
+    RESTO_INFO R
+WHERE
+    R.SELLER_ID = #{cookieSellerId}
+    AND O.R_SEQ = R.R_SEQ
+    AND O.STATUS = 'Y'
+    <if test="startDate != '' and endDate != ''">
+    	AND O.REG_DATE BETWEEN TO_DATE(#{startDate}, 'YYYYMMDD') AND TO_DATE(#{endDate}, 'YYYYMMDD')
+    </if>
+    <if test="searchType != ''">
+    	AND R.R_SEQ = #{searchType}
+    </if>
+GROUP BY
+	R.R_SEQ,
+    TO_CHAR(O.REG_DATE, 'YYYYMM'),
+    R.RESTO_NAME
+ORDER BY
+	R.R_SEQ,
+    R.RESTO_NAME,
+    TO_CHAR(O.REG_DATE, 'YYYYMM') ASC
+</select>
+
+
+<select id="selectGiftPeriodRevenue" parameterType="hashmap" resultMap="orderListResultMap">
+SELECT
+    P.P_NAME,
+    P.PRODUCT_SEQ,
+    TO_CHAR(O.REG_DATE, 'YYYYMM') AS REG_DATE,
+    SUM(TOTAL_CNT) AS TOTAL_CNT,
+    SUM(TOTAL_PRICE) AS TOTAL_PRICE
+FROM 
+    ORDER_LIST O,
+    PRODUCT_INFO P,
+    PAY_LIST PL
+WHERE
+    P.SELLER_ID = #{cookieSellerId}
+    AND O.PRODUCT_SEQ = P.PRODUCT_SEQ
+    AND O.ORDER_SEQ = PL.ORDER_ID
+    AND O.STATUS = 'Y'
+    <if test="startDate != '' and endDate != ''">
+    	AND O.REG_DATE BETWEEN TO_DATE(#{startDate}, 'YYYYMMDD') AND TO_DATE(#{endDate}, 'YYYYMMDD')
+    </if>
+    <if test="searchType != ''">
+    	AND P.PRODUCT_SEQ = #{searchType}
+    </if>
+GROUP BY
+	P.PRODUCT_SEQ,
+    TO_CHAR(O.REG_DATE, 'YYYYMM'),
+    P.P_NAME
+ORDER BY
+	P.PRODUCT_SEQ,
+    P.P_NAME,
+    TO_CHAR(O.REG_DATE, 'YYYYMM') ASC
+</select>
 </mapper>

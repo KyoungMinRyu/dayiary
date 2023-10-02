@@ -291,5 +291,62 @@ public class SellerService {
 		count = sellerDao.confirmGiftOrder2((String) hashMap.get("orderSeq"));
 		return count;
 	}
+	
 
+	public List<OrderList> selectMyGift(String sellerId)
+	{
+		List<OrderList> list = null;
+		try 
+		{
+			list = sellerDao.selectMyGift(sellerId);
+		}
+		catch (Exception e) 
+		{
+			logger.error("[SellerService](selectMyGift)", e);
+		}
+		return list;
+	}
+
+	public List<OrderList> selectMyResto(String sellerId)
+	{
+		List<OrderList> list = null;
+		try 
+		{
+			list = sellerDao.selectMyResto(sellerId);
+		}
+		catch (Exception e) 
+		{
+			logger.error("[SellerService](selectMyResto)", e);
+		}
+		return list;
+	}
+	
+
+	public List<OrderList> selectRestoPeriodRevenue(HashMap<String, String> hashMap)
+	{
+		List<OrderList> list = null;
+		try 
+		{
+			list = sellerDao.selectRestoPeriodRevenue(hashMap);
+		}
+		catch (Exception e) 
+		{
+			logger.error("[SellerService](selectRestoPeriodRevenue)", e);
+		}
+		return list;
+	}
+	
+	public List<OrderList> selectGiftPeriodRevenue(HashMap<String, String> hashMap)
+	{
+		List<OrderList> list = null;
+		try 
+		{
+			list = sellerDao.selectGiftPeriodRevenue(hashMap);
+		}
+		catch (Exception e) 
+		{
+			logger.error("[SellerService](selectGiftPeriodRevenue)", e);
+		}
+		return list;
+	}
 }
