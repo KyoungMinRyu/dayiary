@@ -62,12 +62,38 @@
      margin-top:0;
      padding:0;
     } 
+    
+.confetti
+{
+	color: white; /* 링크 글자 색상을 흰색으로 설정 */
+    text-decoration: none; /* 밑줄 제거 */
+    margin-bottom:0;
+    margin-top:0;
+    padding:0;
+    font-size: 35px;
+}
 </style>
+
 <nav class="navbar">
+	<div style="display: flex; align-items: center;">
+    	<a href="/index/adminIndex">
+        	<div style="display: flex; position: absolute; top: 0; left: 0; padding: 10px; margin-left: 5px;"> <!-- .confetti 클래스 추가 -->
+            	<span class="confetti">D</span> <!-- .confetti 클래스 추가 -->
+              	<span class="confetti">A</span> <!-- .confetti 클래스 추가 -->
+	            <span class="confetti">Y</span> <!-- .confetti 클래스 추가 -->
+	            <span class="confetti">i</span> <!-- .confetti 클래스 추가 -->
+	            <span class="confetti">a</span> <!-- .confetti 클래스 추가 -->
+	            <span class="confetti">r</span> <!-- .confetti 클래스 추가 -->
+	            <span class="confetti">y</span> <!-- .confetti 클래스 추가 -->
+        	</div>
+    	</a>
+	</div>
           <ul class="nav-list">
             <li><a href="/notice/adminNotice">Notice</a></li>
             <li><a href="/inquiry/inquiryList">QnA</a></li>
             <li><a href="/admin/adminManageUserList">Member Management</a></li>
+            <li><a href="/admin/adminRestoList">Resto Management</a></li>
+            <li><a href="/admin/adminGiftList">Gift Management</a></li>
             </ul>
          <ul class="right">
          <li><b style="color: #FFF; text-decoration: underline; margin-left: 5px; display: inline-block; vertical-align: middle;">

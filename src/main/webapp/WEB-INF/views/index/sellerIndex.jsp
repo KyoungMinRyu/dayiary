@@ -374,14 +374,6 @@ letter-spacing: 10px;
 }
 
 
-/*body {
-  background-color: lightgray;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-} */
-
 </style>
 
 </head>

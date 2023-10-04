@@ -227,7 +227,6 @@ public class SellerService {
 	public List<GiftFile> giftFileBring(String productSeq) {
 		List<GiftFile> list = null;
 		try {
-			logger.debug("아아");
 			list = sellerDao.giftFileBring(productSeq);
 		} catch (Exception e) {
 			logger.error("[SellerService] giftFileBring Exception", e);

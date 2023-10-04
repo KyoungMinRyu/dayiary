@@ -268,8 +268,7 @@ function fn_loginCheck()
                   }
                   else if(code == 1)
                   {
-                     
-                     location.href = "/notice/adminNotice";
+                     location.href = "/index/adminIndex";
                   }
                   else
                   {

@@ -212,5 +212,232 @@ UPDATE G2_SELLER
  WHERE SELLER_ID = #{sellerId}
 </update>
 
+<resultMap type="com.icia.web.model.Admin" id="adminResultMap"> 
+   <result column="RESTO_TOTAL_PRICE" property="restoTotalPrice" />
+   <result column="RESTO_TOTAL_COUNT" property="restoTotalCount" />
+   <result column="RESTO_REG_DATE" property="restoRegDate" />
+   <result column="USER_TOTAL_COUNT" property="userTotalCount" />
+   <result column="USER_REG_DATE" property="userRegDate" />
+   <result column="SELLER_TOTAL_COUNT" property="sellerTotalCount" />
+   <result column="SELLER_REG_DATE" property="sellerRegDate" />
+   <result column="GIFT_REG_DATE" property="giftRegDate" />
+   <result column="GIFT_TOTAL_CNT" property="giftTotalCnt" />
+   <result column="GIFT_TOTAL_PRICE" property="giftTotalPrice" />
+   <result column="RESTO_NAME" property="restoName" />
+   <result column="FILE_NAME" property="fileName" />
+   <result column="R_SEQ" property="rSeq" />
+   <result column="P_NAME" property="pName" />
+   <result column="PRODUCT_SEQ" property="productSeq" />
+   <result column="RESTO_DEPOSIT" property="restoDeposit" />
+   <result column="RESERV_PERSON" property="reservPerson" />
+   <result column="ORDER_TOTAL_CNT" property="orderTotalCnt" />
+   <result column="P_PRICE" property="pPrice" />
+</resultMap>
 
+<select id="selectGiftTotalRevenue" resultMap="adminResultMap">
+SELECT
+    TO_CHAR(O.REG_DATE, 'YYYYMM') AS GIFT_REG_DATE,
+    SUM(TOTAL_CNT) AS GIFT_TOTAL_CNT,
+    SUM(TOTAL_PRICE) AS GIFT_TOTAL_PRICE
+FROM 
+    ORDER_LIST O,
+    PRODUCT_INFO P,
+    PAY_LIST PL
+WHERE
+    O.PRODUCT_SEQ = P.PRODUCT_SEQ
+    AND O.ORDER_SEQ = PL.ORDER_ID
+    AND O.STATUS = 'Y'
+GROUP BY
+    TO_CHAR(O.REG_DATE, 'YYYYMM')
+ORDER BY
+    TO_CHAR(O.REG_DATE, 'YYYYMM') DESC
+</select>
+
+<select id="selectRestoTotalRevenue" resultMap="adminResultMap">
+SELECT
+    TO_CHAR(O.REG_DATE, 'YYYYMM') AS RESTO_REG_DATE,
+    COUNT(ORDER_SEQ) AS RESTO_TOTAL_COUNT,
+    SUM(RESTO_DEPOSIT * RESERV_PERSON) AS RESTO_TOTAL_PRICE
+FROM
+    ORDER_LIST O, 
+    RESTO_INFO R
+WHERE
+    O.R_SEQ = R.R_SEQ
+    AND O.STATUS = 'Y'
+GROUP BY
+    TO_CHAR(O.REG_DATE, 'YYYYMM')
+ORDER BY
+    TO_CHAR(O.REG_DATE, 'YYYYMM') DESC
+</select>
+
+<select id="selectUserTotalCount" resultMap="adminResultMap">
+SELECT
+    COUNT(USER_ID) AS USER_TOTAL_COUNT,
+    TO_CHAR(REG_DATE, 'YYYYMM') AS USER_REG_DATE
+FROM
+    G2_USER
+WHERE
+    USER_ID != 'adm'
+GROUP BY
+    TO_CHAR(REG_DATE, 'YYYYMM')
+ORDER BY
+    TO_CHAR(REG_DATE, 'YYYYMM') DESC
+</select>
+
+<select id="selectSellerTotalCount" resultMap="adminResultMap">
+SELECT
+    COUNT(SELLER_ID) AS SELLER_TOTAL_COUNT,
+    TO_CHAR(REG_DATE, 'YYYYMM') AS SELLER_REG_DATE
+FROM
+    G2_SELLER
+GROUP BY
+    TO_CHAR(REG_DATE, 'YYYYMM')
+ORDER BY
+    TO_CHAR(REG_DATE, 'YYYYMM') DESC
+</select>
+
+<select id="selectRestoTotalRevenueList" parameterType="hashmap" resultMap="adminResultMap">
+
+SELECT
+    RESTO_TOTAL_PRICE,
+    RESTO_TOTAL_COUNT,
+    RESTO_NAME,
+    FILE_NAME,
+    R_SEQ,
+    RESTO_DEPOSIT,
+    RESERV_PERSON
+FROM
+    (
+        SELECT
+            ROWNUM AS RNM,
+            RESTO_TOTAL_PRICE,
+            RESTO_TOTAL_COUNT,
+            RESTO_NAME,
+            FILE_NAME,
+            R_SEQ,
+            RESTO_DEPOSIT,
+            RESERV_PERSON
+        FROM
+            (
+                SELECT
+                    (RESTO_DEPOSIT * RESERV_PERSON) AS RESTO_TOTAL_PRICE,
+                    RESTO_TOTAL_COUNT,
+                    RESTO_NAME,
+                    FILE_NAME,
+                    R_SEQ,
+                    RESTO_DEPOSIT,
+                    RESERV_PERSON
+                FROM
+                    (
+                        SELECT
+                            COUNT(ORDER_SEQ) AS RESTO_TOTAL_COUNT,
+                            R.RESTO_NAME AS RESTO_NAME,
+                            F.FILE_NAME AS FILE_NAME,
+                            R.R_SEQ AS R_SEQ,
+                            R.RESTO_DEPOSIT AS RESTO_DEPOSIT,
+                            SUM(NVL(O.RESERV_PERSON, 0)) AS RESERV_PERSON
+                        FROM
+                            ORDER_LIST O, 
+                            RESTO_INFO R,
+                            RESTO_FILE F
+                        WHERE
+                            O.R_SEQ(+) = R.R_SEQ
+                            AND O.STATUS(+) = 'Y'
+                            AND F.R_SEQ = R.R_SEQ
+                            AND F.FILE_SEQ = 1
+                            <if test='searchValue != null and searchValue != ""'>  
+						    	AND RESTO_NAME LIKE '%' || #{searchValue} || '%'
+						    </if>
+                        GROUP BY
+                            R.RESTO_NAME,
+                            F.FILE_NAME,
+                            R.R_SEQ,
+                            RESTO_DEPOSIT
+                    )
+                ORDER BY
+                    (RESTO_DEPOSIT * RESERV_PERSON) DESC
+            )
+    )
+WHERE RNM BETWEEN #{startRow} AND #{endRow}
+</select>
+
+<select id="selectRestoTotalCount" parameterType="String" resultType="int">
+SELECT
+    COUNT(R_SEQ) AS CNT
+FROM
+    RESTO_INFO
+WHERE
+    1 = 1
+    <if test='searchValue != null and searchValue != ""'>  
+    	AND RESTO_NAME LIKE '%' || #{searchValue} || '%'
+    </if>
+</select>
+
+<select id="selectGiftTotalRevenueList" parameterType="hashmap" resultMap="adminResultMap">
+SELECT
+    GIFT_TOTAL_CNT,
+    ORDER_TOTAL_CNT,
+    GIFT_TOTAL_PRICE,
+    P_NAME,
+    PRODUCT_SEQ,
+    P_PRICE,
+    FILE_NAME
+FROM
+    (
+        SELECT
+            ROWNUM AS RNM,
+            ORDER_TOTAL_CNT,
+            GIFT_TOTAL_CNT,
+            GIFT_TOTAL_PRICE,
+            P_NAME,
+            PRODUCT_SEQ,
+            P_PRICE,
+            FILE_NAME
+        FROM
+            (
+                SELECT
+                    COUNT(O.ORDER_SEQ) AS ORDER_TOTAL_CNT,
+                    SUM(NVL(TOTAL_CNT, 0)) AS GIFT_TOTAL_CNT,
+                    SUM(NVL(TOTAL_PRICE, 0)) AS GIFT_TOTAL_PRICE,
+                    P.P_NAME,
+                    P.PRODUCT_SEQ,
+                    P.P_PRICE,
+                    NVL(F.FILE_NAME, 'gift.png') AS FILE_NAME
+                FROM 
+                    ORDER_LIST O,
+                    PRODUCT_INFO P,
+                    PAY_LIST PL,
+                    PRODUCT_FILE F
+                WHERE
+                    O.PRODUCT_SEQ(+) = P.PRODUCT_SEQ
+                    AND O.ORDER_SEQ = PL.ORDER_ID(+)
+                    AND O.STATUS(+) = 'Y'
+                    AND F.PRODUCT_SEQ(+) = P.PRODUCT_SEQ
+                    AND F.FILE_SEQ(+) = 1
+                    <if test='searchValue != null and searchValue != ""'>  
+				    	AND P_NAME LIKE '%' || #{searchValue} || '%'
+				    </if>
+                GROUP BY 
+                    P.P_NAME,
+                    P.PRODUCT_SEQ,
+                    P.P_PRICE,
+                    F.FILE_NAME
+                ORDER BY
+                    GIFT_TOTAL_PRICE DESC
+            )
+    )
+WHERE RNM BETWEEN #{startRow} AND #{endRow}
+</select>
+
+<select id="selectGiftTotalCount" parameterType="String" resultType="int">
+SELECT
+    COUNT(PRODUCT_SEQ) AS CNT
+FROM
+    PRODUCT_INFO
+WHERE
+    1 = 1
+    <if test='searchValue != null and searchValue != ""'>  
+    	AND P_NAME LIKE '%' || #{searchValue} || '%'
+    </if>
+</select>
 </mapper>

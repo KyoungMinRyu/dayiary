@@ -1,5 +1,9 @@
 package com.icia.web.controller;
 
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.icia.common.util.StringUtil;
+import com.icia.web.model.Admin;
 import com.icia.web.model.Paging;
 import com.icia.web.model.Response;
 import com.icia.web.model.Seller;
@@ -40,7 +45,9 @@ public class AdminController
    @Value("#{env['auth.cookie.name']}")
    private String AUTH_COOKIE_NAME;
 
-   
+
+   private LocalDateTime localDateTime = LocalDateTime.now();
+	
    //유저 관리 페이지
    @RequestMapping(value="/admin/adminManageUserList")
    public String adminManageUserList(ModelMap model, HttpServletRequest request, HttpServletResponse response)
@@ -277,7 +284,7 @@ public class AdminController
    
    //판매자조회 수정
    @RequestMapping(value="/admin/adminManageSellerUpdate")
-   public String  adminManageSellerUpdate(ModelMap model, HttpServletRequest request, HttpServletResponse response)
+   public String adminManageSellerUpdate(ModelMap model, HttpServletRequest request, HttpServletResponse response)
    {
       //판매자아이디
       String sellerId = HttpUtil.get(request, "sellerId");
@@ -357,4 +364,172 @@ public class AdminController
       
       return res;
    }
+   
+   @RequestMapping(value="/index/adminIndex")
+   public String adminIndex(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
+   {
+	   	String yearMonth = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMM"));
+	   	List<Admin> list = adminService.selectGiftTotalRevenue();
+	   	long totalCount = 0;
+	   	long totalPrice = 0;
+	   	Admin admin = null;
+	   	for(int i = 0; i < list.size(); i++)
+	   	{
+	   		admin = list.get(i);
+	   		totalCount += Long.parseLong(admin.getGiftTotalCnt());
+	   		totalPrice += Long.parseLong(admin.getGiftTotalPrice());
+	   		if(StringUtil.equals(yearMonth, admin.getGiftRegDate()))
+	   		{
+	   			modelMap.addAttribute("giftMonthlyTotalCount", admin.getGiftTotalCnt());
+	   			modelMap.addAttribute("giftMonthlyTotalPrice", admin.getGiftTotalPrice());
+	   		}
+	   	}
+		modelMap.addAttribute("giftTotalCount", totalCount);
+		modelMap.addAttribute("giftTotalPrice", totalPrice);
+		totalCount = 0;
+		totalPrice = 0;
+		list = adminService.selectRestoTotalRevenue();
+		for(int i = 0; i < list.size(); i++)
+	   	{
+	   		admin = list.get(i);
+	   		totalCount += Long.parseLong(admin.getRestoTotalCount());
+	   		totalPrice += Long.parseLong(admin.getRestoTotalPrice());
+	   		if(StringUtil.equals(yearMonth, admin.getRestoRegDate()))
+	   		{
+	   			modelMap.addAttribute("restoMonthlyTotalCount", admin.getRestoTotalCount());
+	   			modelMap.addAttribute("restoMonthlyTotalPrice", admin.getRestoTotalPrice());
+	   		}
+	   	}
+		modelMap.addAttribute("restoTotalCount", totalCount);
+		modelMap.addAttribute("restoTotalPrice", totalPrice);
+		totalCount = 0;
+		
+		list = adminService.selectUserTotalCount();
+		for(int i = 0; i < list.size(); i++)
+	   	{
+	   		admin = list.get(i);
+	   		totalCount += Long.parseLong(admin.getUserTotalCount());
+	   		if(StringUtil.equals(yearMonth, admin.getUserTotalCount()))
+	   		{
+	   			modelMap.addAttribute("userMonthlyTotalCount", admin.getUserTotalCount());
+	   		}
+	   	}
+		if(modelMap.getAttribute("userMonthlyTotalCount") == null || modelMap.getAttribute("userMonthlyTotalCount") == "")
+		{
+   			modelMap.addAttribute("userMonthlyTotalCount", 0);
+		}
+		modelMap.addAttribute("userTotalCount", totalCount);
+		totalCount = 0;
+		
+		list = adminService.selectSellerTotalCount();
+		for(int i = 0; i < list.size(); i++)
+	   	{
+	   		admin = list.get(i);
+	   		totalCount += Long.parseLong(admin.getSellerTotalCount());
+	   		if(StringUtil.equals(yearMonth, admin.getSellerRegDate()))
+	   		{
+	   			modelMap.addAttribute("sellerMonthlyTotalCount", admin.getSellerTotalCount());
+	   		}
+	   	}
+		if(modelMap.getAttribute("sellerMonthlyTotalCount") == null || modelMap.getAttribute("sellerMonthlyTotalCount") == "")
+		{
+   			modelMap.addAttribute("sellerMonthlyTotalCount", 0);
+		}
+		modelMap.addAttribute("sellerTotalCount", totalCount);
+		
+	   	return "/index/adminIndex";
+   }
+   
+   @RequestMapping(value="/admin/adminRestoList")
+   public String adminRestoList(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
+   {
+	   HashMap<String, Object> hashMap = new HashMap<String, Object>();
+	   hashMap.put("startRow", 1);
+	   hashMap.put("endRow", 6);
+	   modelMap.addAttribute("list", adminService.selectRestoTotalRevenueList(hashMap));
+	   modelMap.addAttribute("totalCount", adminService.selectRestoTotalCount(null));
+	   modelMap.addAttribute("hashMap", hashMap);
+	   return "/admin/adminRestoList";   
+   }
+   
+   @RequestMapping(value="/admin/getRestoTotalRevenueList", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> getRestoTotalRevenueList(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   int startRow = HttpUtil.get(request, "startRow", 0);
+	   int endRow = HttpUtil.get(request, "endRow", 0);
+	   String searchValue = HttpUtil.get(request, "searchValue", "");
+	   if(startRow > 0 && endRow > 0)
+	   {
+		   HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		   hashMap.put("startRow", startRow);
+		   hashMap.put("endRow", endRow);
+		   hashMap.put("searchValue", searchValue);
+		   ajaxResponse.setResponse(0, "Success", adminService.selectRestoTotalRevenueList(hashMap));
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+   
+
+   @RequestMapping(value="/admin/getRestoTotalCount", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> getRestoTotalCount(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String searchValue = HttpUtil.get(request, "searchValue", "");
+	   ajaxResponse.setResponse(0, "Success", adminService.selectRestoTotalCount(searchValue));
+	   return ajaxResponse;
+   }
+   
+   @RequestMapping(value="/admin/adminGiftList")
+   public String adminGiftList(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
+   {
+	   HashMap<String, Object> hashMap = new HashMap<String, Object>();
+	   hashMap.put("startRow", 1);
+	   hashMap.put("endRow", 6);
+	   modelMap.addAttribute("list", adminService.selectGiftTotalRevenueList(hashMap));
+	   modelMap.addAttribute("totalCount", adminService.selectGiftTotalCount(null));
+	   modelMap.addAttribute("hashMap", hashMap);
+	   return "/admin/adminGiftList";   
+   }
+   
+   @RequestMapping(value="/admin/getGiftTotalRevenueList", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> getGiftTotalRevenueList(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   int startRow = HttpUtil.get(request, "startRow", 0);
+	   int endRow = HttpUtil.get(request, "endRow", 0);
+	   String searchValue = HttpUtil.get(request, "searchValue", "");
+	   if(startRow > 0 && endRow > 0)
+	   {
+		   HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		   hashMap.put("startRow", startRow);
+		   hashMap.put("endRow", endRow);
+		   hashMap.put("searchValue", searchValue);
+		   ajaxResponse.setResponse(0, "Success", adminService.selectGiftTotalRevenueList(hashMap));
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+   
+
+   @RequestMapping(value="/admin/getGiftTotalCount", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> getGiftTotalCount(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String searchValue = HttpUtil.get(request, "searchValue", "");
+	   ajaxResponse.setResponse(0, "Success", adminService.selectGiftTotalCount(searchValue));
+	   return ajaxResponse;
+   }
 }
+		
