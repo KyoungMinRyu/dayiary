@@ -380,8 +380,6 @@ function fn_list(curPage)
             <option value="뷔페" <c:if test='${searchTypeShop eq "뷔페"}'>selected</c:if>>뷔페</option>
             <option value="파인다이닝" <c:if test='${searchTypeShop eq "파인다이닝"}'>selected</c:if>>파인다이닝</option>
             <option value="일반식당" <c:if test='${searchTypeShop eq "일반식당"}'>selected</c:if>>일반식당</option>
-            <option value="헤헤">헤헤</option>
-            <option value="테스트">테스트중</option>
         </select>
         
         <label for="food">음식 종류:</label>

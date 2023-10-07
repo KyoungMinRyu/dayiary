@@ -35,8 +35,6 @@
        display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh; /* 화면 높이에 맞게 조절할 수 있습니다. */
-
 }
 
 body {
@@ -49,8 +47,6 @@ body {
     font-family: Philosopher, sans-serif; }
     body.christmas .dark-light {
       display: none; }
-    body.christmas section {
-      overflow: hidden; }
 
 h1 {
   font-size: 60px;
@@ -1181,356 +1177,340 @@ button.btn.btn-solid:active, button.btn.btn-outline:active {
 
 
 
-$(document).ready(function() {
-    
-       var price = ${giftAdd.pPrice}; 
-       var quantityInput = document.getElementById("quantity");
-       var quantity = parseInt(quantityInput.value, 10);
-       var formattedPrice = numberWithCommas(${giftAdd.pPrice});
-   
-      
-     //가격에 천단위 콤마 찍기
-       function numberWithCommas(p) {
-           return p.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-           document.getElementById("formattedPrice").innerHTML = formattedPrice + "원";
-       }
+$(document).ready(function() 
+{
+	let productSeq = '${giftAdd.productSeq}';
+	
+	let formData = {};
+	
+    $("#giftDetailRevenueButton").on("click", function()
+    {
+    	formData = 
+        {
+    		productSeq: productSeq
+        };
 
-     //첫번째 가격  
-       var formattedPriceElement = document.getElementById("formattedPrice");
-       formattedPriceElement.textContent = formattedPrice + "원";
+		fn_ajaxRequest("/admin/selectAdminGiftRevenue", formData, 1);
+    });
+	
+    $("#resumptionGiftButton").on("click", function()
+    {
+    	if(confirm("상품을 정지 해제하시겠습니까?"))
+		{
+    		formData = 
+	        {
+    			productSeq: productSeq,
+				status: 'Y'
+	        };
+			
+    		fn_ajaxRequest("/admin/updateAdminGiftStatus", formData, 0, "상품 정지상태가 해제되었습니다.");
+		}
+    });
 
-       console.log(formattedPrice);
-
-     //수량결정 후 가격
-       function updateTotalPrice() {
-           var totalPrice = price * quantity;
-           var formattedTotalPrice = numberWithCommas(totalPrice);
-           document.getElementById("totalprice").innerHTML = formattedTotalPrice + "원";
-
-       }
-     
-      //수량 플러스 버튼 클릭 시 
-       $("#increaseQuantity").on("click", function() {
-           quantity++;
-           quantityInput.value = quantity; // 수량 값을 업데이트
-           updateTotalPrice();
-       });
-      
-       //수량 마이너스 버튼 클릭 시  
-       $("#decreaseQuantity").on("click", function() {
-           if (quantity > 1) {
-               quantity--;
-               quantityInput.value = quantity; // 수량 값을 업데이트
-               updateTotalPrice();
-           }
-       });
-
-   
-       // 페이지 로드 시 초기 총 가격 설정
-       updateTotalPrice();
-       
-       
-      var productSeq = "${productSeq}";
-       
-      //구매버튼
-       function handlePurchaseButtonClick() 
-      {
-
-       // document.orderPage를 통해 필요한 속성 값을 변경합니다.
-       document.orderPage.price.value = price;
-       document.orderPage.quantity.value = quantity;
-       document.orderPage.totalPrice.value = price * quantity;
-       document.orderPage.giftFileName.value = "${giftAdd.fileName}";
-       document.orderPage.giftpName.value = "${giftAdd.pName}";
-       document.orderPage.giftpContent.value = "${giftAdd.pContent}";
-       document.orderPage.productSeq.value = productSeq;
-
-      // 폼의 action 속성을 설정하여 어떤 URL로 전송할지 지정합니다.
-       document.orderPage.action = "/gift/giftOrder";
-
-       // 폼을 제출합니다.
-       document.orderPage.submit();
-       
-     }
-   
-     // "구매하기" 버튼을 가져와 클릭 이벤트를 추가합니다.
-     const purchaseButton = document.getElementById("purchaseButton");
-     purchaseButton.addEventListener("click", handlePurchaseButtonClick);
-
+    $("#suspendedGiftButton").on("click", function()
+    {
+    	if(confirm("상품을 정지하시겠습니까?"))
+		{
+    		formData = 
+	        {
+    			productSeq: productSeq,
+				status: 'T'
+	        };
+			
+			fn_ajaxRequest("/admin/updateAdminGiftStatus", formData, 0, "상품이 정지되었습니다.");
+		}
+    });
 });
 
-
-//문의하기 버튼 클릭시 QNA 화면에 상품구매전 (afterSelected) 와 상품번호 (productSeq)를 넘겨서 셀렉트박스 고정시키는 용도 
-function fn_movePage(afterSelected, productSeq)
+function fn_changeTexts(seq, type)
 {
-   
-     window.location.href = "/inquiryWriteForm?afterSelected=" + afterSelected + "&productSeq=" + productSeq;
-  
+	let changeText = "";
+	let formData = {};
+	
+	if(seq.indexOf('P') == 0)
+	{
+		// seq가 R로 시작하고 type이 0이면 레스토랑명 1이면 레스토랑 소개  
+		if(type == 0)
+		{
+			changeText = prompt("변경하실 상품명을 입력해주세요.");
+			if(changeText.trim().length > 0)
+			{
+				if(confirm("상품명을 " + changeText + "으로 수정하시겠습니까?"))
+				{
+					formData = 
+			        {
+						productSeq: seq,
+						changeText: changeText,
+						type: type
+			        };
+					
+					fn_ajaxRequest("/admin/updateGiftText", formData, 0, "상품이 변경되었습니다.");
+				}
+			}
+		}
+		else if(type == 1)
+		{
+			changeText = prompt("변경하실 상품 소개글을 입력해주세요.");
+			if(changeText.trim().length > 0)
+			{
+				if(confirm("상품 소개글을 " + changeText + "으로 수정하시겠습니까?"))
+				{
+					formData = 
+			        {
+						productSeq: seq,
+						changeText: changeText,
+						type: type
+			        };
+					
+					fn_ajaxRequest("/admin/updateGiftText", formData, 0, "상품 소개글이 변경되었습니다.");
+				}
+			}
+		}
+		else
+		{
+			return;	
+		}
+	}
+	else
+	{
+		return;
+	}
 }
 
-
-
-function fn_reversal(checkFavorite, productSeq)
+function fn_changeImages(seq, fileSeq)
 {
-   if(checkFavorite === 0 || checkFavorite === 1)
-   {
-      let formData = 
-       {
-         checkFavorite: checkFavorite,
-         productSeq: productSeq
-       };
-      
-      $.ajax
-       ({
-           type: "POST",
-           url: "/gift/reversalFavorite",
-           data: formData,
-           success: function(response)
-           {
-              if(response.code == 0)
-              {
-                 let checkFavoriteBox = $("#checkFavoriteBox");
-                 checkFavoriteBox.html("");
-                 if(checkFavorite == 0) // insert
-                 { 
-                    checkFavoriteBox.html("<b onclick='fn_reversal(" + Number(response.data.cnt) + ", \"" + productSeq + "\")' style='font-size: 32px; color: red;'>♥</b>");
-                 }
-                 else if(checkFavorite == 1) // delete
-                 {
-                    checkFavoriteBox.html("<b onclick='fn_reversal(" + Number(response.data.cnt) + ", \"" + productSeq + "\")' style='font-size: 32px;'>♡</b>");
-                 }
-                 else
-                 {
-                    return;
-                 }
-              }
-              else if(response.code == 500)
-              {
-                 alert("서버에서 오류가 발생하였습니다.");
-              }
-              else
-              {
-                 return;
-              }
-           },
-           error: function(xhr, status, error) 
-           {
-               console.log(error);
-           }
-       });  
-   }
-   else
-   {
-      return;
-   }
+	let formData = 
+        {
+			productSeq: seq,
+			fileSeq: fileSeq
+        };
+		
+	if(seq.indexOf('P') == 0 && fileSeq > 0)
+	{
+		if(confirm("상품 사진을 기본이미지로 수정하시겠습니까?"))
+		{
+			fn_ajaxRequest("/admin/updateGiftImages", formData, 0, "상품 사진이 기본이미지로 변경되었습니다.");
+		}
+	}
+	else
+	{
+		return;
+	}	
+}
+
+function fn_ajaxRequest(url, formData, returnType, msg)
+{
+	$.ajax
+    ({
+        type: "POST",
+        url: url,
+        data: formData,
+        success: function(response)
+        {
+        	if(returnType == 0)
+        	{
+        		if(response.code == 0)
+				{
+					alert(msg);
+	        		location.reload();
+				}
+				else if(response.code == 500)
+				{
+					alert("서버에서 오류가 발생하였습니다.");
+				}
+				else
+				{
+					return;
+				}
+        	}
+        	else if(returnType == 1)
+        	{
+        		let json = response.data;
+        		console.log(json);
+        		let totalCount = 0;
+        		let totalPrice = 0;
+        		let orderTotalCount = 0;
+        		if(json.length > 0)
+        		{
+        			let popupWindow = window.open("", "restoDetailRevenue", "width=600,height=700");
+	                popupWindow.document.open();
+	                popupWindow.document.write("<html><head><title>매출 정보</title>");
+
+	                popupWindow.document.write('<style>');
+	                popupWindow.document.write('.container { max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }');
+	                popupWindow.document.write('.header { font-size: 24px; font-weight: bold; margin-bottom: 20px; white-space: nowrap;}');
+	                popupWindow.document.write('.delivery-info { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }');
+	                popupWindow.document.write('.info-title { font-weight: bold;}');
+	                popupWindow.document.write('.info-data { margin-left: 10%; display: inline-block;  }'); 
+	                popupWindow.document.write('.info-none { display: inline-block; width: 150px;}'); 
+
+	                popupWindow.document.write('</style>');
+
+	                popupWindow.document.write('</head><body style="background: #fffbf4;">');
+
+	                popupWindow.document.write('<div class="container">');
+
+	                popupWindow.document.write('<div class="basic-info">');
+
+	                popupWindow.document.write('<div class="info-data-container" style="display: flex;">');
+	                popupWindow.document.write('<div class="header">상품명 : </div> <span class="header">&nbsp;' + json[0].pName + '</span>');
+	                popupWindow.document.write('</div><br>');
+	                
+	                for(let i = 0; i < json.length; i++)
+	                {
+
+		                popupWindow.document.write("<div style='border: 2px solid #000; border-radius: 5px; padding: 10px;'>");
+		                popupWindow.document.write(json[i].giftRegDate);
+		                popupWindow.document.write('<div class="info-data-container">');
+		                popupWindow.document.write('<div class="info-none">당월 총 구매건수 : </div> <span id="sender" class="info-data">' + json[i].orderTotalCnt.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '건</span>');
+		                popupWindow.document.write('</div>');
+		                popupWindow.document.write('<div class="info-data-container">');
+		                popupWindow.document.write('<div class="info-none">당월 총 구매개수 : </div> <span id="sender" class="info-data">' + json[i].giftTotalCnt.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '개</span>');
+		                popupWindow.document.write('</div>');
+		                popupWindow.document.write('<div class="info-data-container">');
+		                popupWindow.document.write('<div class="info-none">당월 총 판매액 : </div> <span id="sender" class="info-data">' + json[i].giftTotalPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원</span>');
+		                popupWindow.document.write('</div></div><br>');
+		                totalCount += Number(json[i].giftTotalCnt);
+		                totalPrice += Number(json[i].giftTotalPrice);
+		        		orderTotalCount += Number(json[i].orderTotalCnt);
+	                }
+
+	                popupWindow.document.write("<div style='border: 2px solid #000; border-radius: 5px; padding: 10px;'>");
+	                popupWindow.document.write("총 매출액");
+	                popupWindow.document.write('<div class="info-data-container">');
+	                popupWindow.document.write('<div class="info-none">총 구매건수 : </div> <span id="sender" class="info-data">' + orderTotalCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '건</span>');
+	                popupWindow.document.write('</div>');
+	                popupWindow.document.write('<div class="info-data-container">');
+	                popupWindow.document.write('<div class="info-none">총 구매개수 : </div> <span id="sender" class="info-data">' + totalCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '개</span>');
+	                popupWindow.document.write('</div>');
+	                popupWindow.document.write('<div class="info-data-container">');
+	                popupWindow.document.write('<div class="info-none">총 매출액 : </div> <span id="sender" class="info-data">' + totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원</span>');
+	                popupWindow.document.write('</div></div><br>');
+	                
+				   	popupWindow.document.write('</div><br>');
+					popupWindow.document.write("</body></html>");
+	                popupWindow.document.close();	
+        		}
+        		else
+        		{
+        			alert("해당 상품에 주문내역이 없습니다.");
+        		}
+        	}
+        	else
+        	{
+        		return;
+        	}
+        },
+        error: function(xhr, status, error) 
+        {
+            console.log(error);
+        }
+    });
 }
 
 </script>
 </head>
-<body>
-<%@ include file="/WEB-INF/views/include/navigation.jsp" %>   
-	<div>
-    	<div class="collection-wrapper">
-        	<div class="container">
-            	<div class="row">   
-                    <div class="col-lg-5 col-sm-10 col-xs-12">
-                    	<div class="product-right-slick">
-                            <div>
-                            	<img src="/resources/upload/${giftAdd.giftFileList.get(0).fileName}" style="width:480px; height:500px;" alt="NO IMAGE " />
-                            </div>
-						</div>
-                    </div>
-                    <div class="col-lg-1 col-sm-2 col-xs-12"></div>
-                    <div class="col-lg-6 rtl-text">
-                        <div class="product-right">
-                        	<h5 style="font-size:18px;">카테고리:${giftAdd.productCategory}</h5>
-                            <h2>${giftAdd.pName}</h2>
-                          	<p id="formattedPrice" style="font-size: 30px; color: black;"></p>
-							<div class="product-description border-product">
-							<h5 class="product-title">구매 수량</h5>
-                            <div class="qty-box">
-                            	<div class="input-group">
-                                	<span class="input-group-prepend">
-                  						<button type="button" id="decreaseQuantity"  data-type="minus" data-field="">
-                      						<i class="ti-angle-left">-</i>
-                  						</button>
-										<input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-										<button type="button" id="increaseQuantity" data-type="plus" data-field="">
-									    	<i class="ti-angle-right" >+</i>
-										</button> 
-                     				</span>
-   								</div>        
-    						</div>
-                            <div class="border-product">
-                                <h5 class="product-title">상품 소개</h5>
-                                <p style="font-size: 20px;">${giftAdd.pContent}</p>
-                            </div>
-                            <div class="border-product">
-                                <h5 class="product-title">상품금액 합계</h5>
-                             	<p id="totalprice" style="font-size: 38px; color: black; font-weight: bold;"></p>
-                			</div> 
-	                        <div class="product-buttons" style="justify-content: space-between; display: flex; align-items: center;"> 
-	                           	<%
-	                         	if(com.icia.web.util.CookieUtil.getHexValue(request, "SELLER_ID") == null || com.icia.web.util.CookieUtil.getHexValue(request, "SELLER_ID") == "")
-	                         	{
-	                         	%>
-	                           		<button type="button" id="purchaseButton" class="btn btn-solid">구매하기</button>
-	                            <%
-	                            	if(com.icia.web.util.CookieUtil.getHexValue(request, "USER_ID") != null && com.icia.web.util.CookieUtil.getHexValue(request, "USER_ID") != "")
-	                            	{
-	                            %>
-	                               		<div  id="checkFavoriteBox">
-	                                  		<c:choose>
-	                                     		<c:when test="${checkFavorite eq 0}">
-	                                        		<b onclick="fn_reversal(${checkFavorite}, '${giftAdd.productSeq}')" style="font-size: 32px;">♡</b>
-	                                     		</c:when>
-	                                     		<c:otherwise>
-	                                        		<b onclick="fn_reversal(${checkFavorite}, '${giftAdd.productSeq}')" style="font-size: 32px; color: red;">♥</b>
-	                                     		</c:otherwise>
-	                                  		</c:choose>
-	                               		</div>
-	                         	<%
-	                            	}
-	                         	}
-	                         	%>
-                            </div>
-              				<div class="border-product"></div>
+<body style="">
+<%@ include file="/WEB-INF/views/include/adminNavi.jsp" %>
+      <!--list 객체가 비어있지 않을때 실행-->
+<div style="height : auto; min-height: 100%;">
+    <div class="collection-wrapper">
+        <div class="container">
+            <div class="row">   
+                <div class="col-lg-5 col-sm-10 col-xs-12">
+                    <div class="product-right-slick">
+                        <div>
+                        	<img src="/resources/upload/${giftAdd.giftFileList.get(0).fileName}" style="width:480px; height:500px;" alt="NO IMAGE " />                       	
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-   	</div>
+                <div class="col-lg-1 col-sm-2 col-xs-12">
+					<svg onclick="fn_changeImages('${giftAdd.productSeq}', ${giftAdd.giftFileList.get(0).fileSeq})" class="centered-svg" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;">
+				    	<path fill="white" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+				    	</path>
+				   		<circle  cx="12" cy="12" r="3"></circle>
+				   	</svg>
+                </div>
+                <div class="col-lg-6 rtl-text">
+                    <div class="product-right">
+                    	<h5 style="font-size:18px;">카테고리:${giftAdd.productCategory}</h5>
+                    	<div onclick="fn_changeTexts('${giftAdd.productSeq}', 0)" style="display: flex;">
+                       		<h2>${giftAdd.pName}</h2>
+                    		<svg class="centered-svg" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;">
+						    	<path fill="white" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+						    	</path>
+						   		<circle  cx="12" cy="12" r="3"></circle>
+						   	</svg>
+                    	</div>
+                      	<p id="formattedPrice" style="font-size: 30px; color: black;"></p>
+                        <div class="product-description">
+                        <div class="border-product">
+                        	<h5 class="product-title">상품 소개</h5><br>
+                            <div style="display: flex;" onclick="fn_changeTexts('${giftAdd.productSeq}', 1)">
+                                <p style="font-size: 20px;">${giftAdd.pContent}</p>
+	                            <svg class="centered-svg" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;">
+							    	<path fill="white" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+							    	</path>
+							   		<circle  cx="12" cy="12" r="3"></circle>
+							   	</svg>
+						   	</div>
+                        </div>
+                    	<div class="border-product" >
+                        	<h5 class="product-title">가격</h5>
+                            <p style="font-size: 20px;"><fmt:formatNumber value="${giftAdd.pPrice}" pattern="#,###"/>원</p>
+                        </div>
+                        <div class="product-buttons">                            
+                       		<button type="button" id="giftDetailRevenueButton" class="btn btn-solid">상세 매출액 보기</button>
+                        	<c:choose>
+                        		<c:when test="${giftAdd.status eq 'T'}">
+                        			<button type="button" id="resumptionGiftButton" class="btn btn-solid">상품 정지 해제</button>
+                        		</c:when>
+                        		<c:otherwise>
+                        			<button type="button" id="suspendedGiftButton" class="btn btn-solid">상품 정지</button>
+                        		</c:otherwise>
+                        	</c:choose>
+                        </div>
+                        <div class="border-product"> 
+                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
 	<section class="tab-product m-0">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12 col-lg-12">
-                    <ul class="nav nav-tabs nav-material" id="top-tab" role="tablist">
-                        <li class="nav-item">
-                        	<a class="nav-link active" id="top-home-tab" data-toggle="tab" href="#top-home" role="tab" aria-selected="true" style="font-size:18px;">상세 설명</a>
-                            <div class="material-border"></div>
-                        </li>
-	                    <li class="nav-item-qna">
-	                   		<a class="nav-link active text-danger" id="review-tab" style="cursor: pointer; font-size:18px;" role="tab" aria-selected="true">상품후기</a>
-	                   		<div class="material-border"></div>
-	               		</li>
-                        <li class="nav-item-qna">                                 <!--afterSelected, productSeq 2가지 QNA화면으로 넘기는 용도의 onclick -->
-                			<a class="nav-link active text-danger"  id="top-home-tab" data-toggle="tab" onclick="fn_movePage('2', '${productSeq}')" style="cursor: pointer; font-size:18px;" role="tab" aria-selected="true">문의하기</a>   
-                            <div class="material-border"></div>
-                        </li>
-					</ul>
-					
-					
-					
-                    <div class="tab-content nav-material" id="top-tabContent">
-	                	<div style="display: flex; align-items: center; flex-direction: column;">
-		                	<c:forEach var="giftFile" items="${giftAdd.giftFileList}" varStatus="status">
-								<c:if test="${!status.first}">
-							        <img src="/resources/upload/${giftFile.fileName}" alt="NO IMAGE " style="max-width: 100%; max-height: 100%; width: auto; height: auto;">
+	    <div class="container">
+	    	<div class="row">
+	        	<div class="col-sm-12 col-lg-12">
+	            	<ul class="nav nav-tabs nav-material" id="top-tab" role="tablist">
+	                	<li class="nav-item">
+	                		<a class="nav-link active" id="top-home-tab" data-toggle="tab" href="#top-home" role="tab" aria-selected="true" style="font-size:18px;">상세 설명</a>
+	                        <div class="material-border"></div>
+	                    </li>
+	                </ul>
+	             	<div class="tab-content nav-material" id="top-tabContent">
+	               		<h4 style="color: black; margin-left: 5px; margin-top: 5px;">상품 상세 사진</h4><br>
+	               		<div style="display: flex; align-items: center; flex-direction: column;">
+		                 	<c:forEach var="giftFile" items="${giftAdd.giftFileList}" varStatus="status">
+							    <c:if test="${!status.first}">
+							        <div style="display: flex;" onclick="fn_changeImages('${giftAdd.productSeq}', ${giftFile.fileSeq})">
+							        <img src="/resources/upload/${giftFile.fileName}" alt="NO IMAGE " style="max-width: 95%; max-height: 95%; width: auto; height: auto;">
+							        	<svg class="centered-svg" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;">
+									    	<path fill="white" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+									    	</path>
+									   		<circle  cx="12" cy="12" r="3"></circle>
+									   	</svg>
+							        </div>
 							        <br>
 							    </c:if>
 							</c:forEach>
-							
-		
-							
 	               		</div>
-	               		
-	               		
-	               							                   <section id="product-review">
-                <h2 style="margin-bottom : 70px;">상품후기</h2>
-<c:if test="${!empty productReviewList}">
-                   <c:forEach var="productReviewList" items="${productReviewList}" varStatus="status">      
-                 
-<ul class="list-unstyled">
-    <li class="media mt-4" style="margin-bottom : 30px;" >
-        <img src="${productReviewList.fileName}" style="width: 75px; height:75px; object-fit:cover; border-radius:20px;" class="mr-3" alt="avata">
-        <div class="media-body" style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <h5 class="mt-0 mb-1" style="font-weight: bold; display: inline;">${productReviewList.userNickName}(${productReviewList.userId})</h5>
-                <b style="margin-top: -15px; margin-left:10px; color: lightgray; display: inline;">${productReviewList.regDate}</b>
-                <br />
-                
-                
-                <div class="review" style="display:flex;">              
-                  <c:set var="starCount" value="${productReviewList.reviewScore}" />
-      
-                  <c:choose>
-                      <c:when test="${(starCount % 2) eq 0}"> <!-- 별점이 짝수일 경우 (꽉찬별만 있을때) -->
-                         <c:forEach var="i" begin="1" end="${starCount / 2}">
-                          <img src="/resources/images/fullStar.png" style="width:25px; height:25px; border:none !important;" alt="Full Star">
-                          </c:forEach>
-                          <c:forEach var="i" begin="1" end="${5 - (starCount / 2)}">
-                          <img src="/resources/images/emptyStar.png" style="width:25px; height:25px; border:none !important;" alt="Empty Star">
-                          </c:forEach>
-                      </c:when>
-                      
-                      <c:otherwise>
-                         <c:forEach var="i" begin="1" end="${starCount / 2}"> <!-- 별점이 홀수일 경우 (반개별 필요) -->
-                          <img src="/resources/images/fullStar.png" style="width:25px; height:25px; border:none !important;" alt="Full Star">
-                          </c:forEach>
-                          <img src="/resources/images/halfStar.png" style="width:25px; height:25px; border:none !important;" alt="Half Star">
-                          <c:forEach var="i" begin="1" end="${5 - (starCount / 2)}">
-                          <img src="/resources/images/emptyStar.png" style="width:25px; height:25px; border:none !important;" alt="Empty Star">
-                          </c:forEach>
-                      </c:otherwise>
-                  </c:choose>
-               </div>     
-                
-                
-                
-                
-                
-                <b id="commentContent" style="font-size: 17px; margin-top: 3px; max-width:1000px;" value="${productReviewList.reviewContent}">${productReviewList.reviewContent}</b>
-            </div>
-        </div>
-    </li>
-</ul>
-                 
-                 </c:forEach>
-</c:if>
-                 
-<c:if test="${empty productReviewList}">          
-<h3>작성된 리뷰가 없습니다.</h3>
-</c:if>      
-                
-                
-                
-                
-                
-               </section>
-	               		
-                  	</div>
-                </div>
-            </div>
-        </div>
-        
-        
-        
-        
-        
-    </section>
-    
-    
-	<form name="orderPage" id="orderPage" method="post">
-	    <input type="hidden" name="price" value="" />
-	    <input type="hidden" name="quantity" value="" />
-	    <input type="hidden" name="totalPrice" value="" />
-	    <input type="hidden" name="giftFileName" value="" />
-	    <input type="hidden" name="giftpName" value="" />
-	    <input type="hidden" name="giftpContent" value="" />
-		<input type="hidden" name="productSeq" value="" />    
-	</form>
-	<script>
-	document.getElementById('review-tab').addEventListener('click', function() 
-	{
-	    document.getElementById('product-review').scrollIntoView({behavior: 'smooth'});
-	});
-	</script>
+	              	</div>
+	            </div>
+	        </div>
+	    </div>
+	</section>
+</div>
+   
 </body>
-<footer style="background-color: black; color: lightgray; text-align: center; margin-top:80px; padding: 30px;">
- <a style="font-size:20px; letter-spacing:5px;">《 Dayiary 》 </a> <br>
-    &copy; Copyright Dayiary Corp. All Rights Reserved. <br>
-    Always with you 🎉 여러분의 일상을 함께합니다.
-</footer> 
 </html>

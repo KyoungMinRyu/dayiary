@@ -52,8 +52,50 @@
        
   //등록하기 버튼을 눌렀을 때
    $("#btnSubmit").on("click", function()
-   {    
+   {     var fileInput = document.getElementById("giftThum");
+
+         // 파일이 선택되었는지 확인
+         if (fileInput.files.length === 0) {
+             alert("메인사진 파일을 선택하세요.");
+             return;
+         }
+       
+        if($("#giftName").val() == null || $("#giftName").val() == "")
+        {
+           alert("선물 이름를 입력하세요.");
+           $("#giftName").focus();
+           return;
+        }
+        
+        if($("#giftContent").val() == null || $("#giftContent").val() == "")
+        {
+           alert("선물 소개를 입력하세요.");
+           $("#giftContent").focus();
+           return;
+        }
+        
+        if($("#giftPrice").val() == null || $("#giftPrice").val() == "")
+        {
+           alert("선물 가격을 입력하세요.");
+           $("#giftPrice").focus();
+           return;
+        }
+        
+        if (!$("input[name='giftCategory']:checked").length) 
+          {
+             alert("선물 카테고리를 체크하세요.");
+             return;
+          }
+        
+         var detailFileInput = document.getElementById("product_detail_image");
       
+         // 파일이 선택되었는지 확인
+         if (detailFileInput.files.length === 0) {
+             alert("상세사진 파일을 선택하세요.");
+             return;
+         }
+        
+        
        //최종 선물등록 시작=============================================ㄴ
        var form = $("#giftForm")[0]; 
        //<form name="writeForm" id="writeForm" method="post" enctype="multipart/form-data">

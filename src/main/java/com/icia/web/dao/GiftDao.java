@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.icia.web.model.GiftAdd;
 import com.icia.web.model.GiftFile;
+import com.icia.web.model.RestoReview;
 
 @Repository("giftDao")
 public interface GiftDao {
@@ -15,7 +16,7 @@ public interface GiftDao {
 	public int giftInsert(GiftAdd giftAdd);
 
 	// 선물 이미지 등록
-	public short giftFileInsert(GiftFile giftFile);
+	public int giftFileInsert(GiftFile giftFile);
 
 	// 선물 리스트 조회
 	public List<GiftAdd> giftList(GiftAdd giftAdd);
@@ -32,9 +33,6 @@ public interface GiftDao {
 	// 선물 조회
 	public GiftAdd giftSelect(String productSeq);
 
-	// 선물 사진 조회
-	public GiftFile giftFileSelect(String productSeq);
-
 	// 선물 수
 	public long giftCount(GiftAdd giftAdd);
 
@@ -45,4 +43,10 @@ public interface GiftDao {
 	public int deleteProductFavorite(HashMap<String, String> hashMap);
 	
 	public List<GiftAdd> selectGiftFavoriteList(String userId);
+	
+	public GiftAdd selectAdminGiftView(String productSeq);
+
+	public List<GiftFile> selectGiftFIleList(String productSeq);  
+	
+	public List<RestoReview> productReviewList(String productSeq);
 }

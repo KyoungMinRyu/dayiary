@@ -5,186 +5,208 @@ import java.util.List;
 
 public class GiftAdd implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 1L;
 
-	private String productSeq, pName, sellerId, pPrice, pContent, regDate, status, productCategory;
+   private String productSeq, pName, sellerId, pPrice, pContent, regDate, status, productCategory;
 
-	private String searchType; // 검색타입(1:이름, 2:제목, 3:내용)
-	private String searchValue; // 검색값
-	private String searchTypeCategory; // 카테고리
-	private String orderBy; // 정렬순
-	private String productType; // 카테고리별
-	private List<GiftFile> giftFileList; // 첨부파일
-	private String fileName;
-	private short fileSeq;
+   private String searchType; // 검색타입(1:이름, 2:제목, 3:내용)
+   private String searchValue; // 검색값
+   private String searchTypeCategory; // 카테고리
+   private String orderBy; // 정렬순
+   private String productType; // 카테고리별
+   private List<GiftFile> giftFileList; // 첨부파일
+   private String fileName;
+   private short fileSeq;
 
-	private long startRow; // 시작 rownum
-	private long endRow; // 끝 rownum
+   private long startRow; // 시작 rownum
+   private long endRow; // 끝 rownum
 
-	public GiftAdd() {
+   private int reviewScore;
+   private int reviewCount;
+   
+   public GiftAdd() {
 
-		productSeq = "";
-		pName = "";
-		sellerId = "";
-		pPrice = "";
-		pContent = "";
-		productCategory = "";
-		regDate = "";
-		status = "";
-		searchType = "";
-		searchValue = "";
-		searchTypeCategory = "";
-		giftFileList = null;
-		startRow = 0;
-		endRow = 0;
-		fileName = "";
-		fileSeq = 0;
-		orderBy = "";
-		productType = "";
-	}
+      productSeq = "";
+      pName = "";
+      sellerId = "";
+      pPrice = "";
+      pContent = "";
+      productCategory = "";
+      regDate = "";
+      status = "";
+      searchType = "";
+      searchValue = "";
+      searchTypeCategory = "";
+      giftFileList = null;
+      startRow = 0;
+      endRow = 0;
+      fileName = "";
+      fileSeq = 0;
+      orderBy = "";
+      productType = "";
+      reviewScore = 0;
+      reviewCount = 0;
+   }
 
-	public String getProductType() {
-		return productType;
-	}
+   
+   public int getReviewCount() {
+      return reviewCount;
+   }
 
-	public void setProductType(String productType) {
-		this.productType = productType;
-	}
+   public void setReviewCount(int reviewCount) {
+      this.reviewCount = reviewCount;
+   }
 
-	public String getOrderBy() {
-		return orderBy;
-	}
+   public int getReviewScore() {
+      return reviewScore;
+   }
 
-	public void setOrderBy(String orderBy) {
-		this.orderBy = orderBy;
-	}
+   public void setReviewScore(int reviewScore) {
+      this.reviewScore = reviewScore;
+   }
 
-	public String getFileName() {
-		return fileName;
-	}
+   public String getProductType() {
+      return productType;
+   }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+   public void setProductType(String productType) {
+      this.productType = productType;
+   }
 
-	public long getStartRow() {
-		return startRow;
-	}
+   public String getOrderBy() {
+      return orderBy;
+   }
 
-	public void setStartRow(long startRow) {
-		this.startRow = startRow;
-	}
+   public void setOrderBy(String orderBy) {
+      this.orderBy = orderBy;
+   }
 
-	public long getEndRow() {
-		return endRow;
-	}
+   public String getFileName() {
+      return fileName;
+   }
 
-	public void setEndRow(long endRow) {
-		this.endRow = endRow;
-	}
+   public void setFileName(String fileName) {
+      this.fileName = fileName;
+   }
 
-	public String getRegDate() {
-		return regDate;
-	}
+   public long getStartRow() {
+      return startRow;
+   }
 
-	public void setRegDate(String regDate) {
-		this.regDate = regDate;
-	}
+   public void setStartRow(long startRow) {
+      this.startRow = startRow;
+   }
 
-	public String getStatus() {
-		return status;
-	}
+   public long getEndRow() {
+      return endRow;
+   }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+   public void setEndRow(long endRow) {
+      this.endRow = endRow;
+   }
 
-	public String getProductCategory() {
-		return productCategory;
-	}
+   public String getRegDate() {
+      return regDate;
+   }
 
-	public void setProductCategory(String productCategory) {
-		this.productCategory = productCategory;
-	}
+   public void setRegDate(String regDate) {
+      this.regDate = regDate;
+   }
 
-	public List<GiftFile> getGiftFileList() {
-		return giftFileList;
-	}
+   public String getStatus() {
+      return status;
+   }
 
-	public void setGiftFileList(List<GiftFile> giftFileList) {
-		this.giftFileList = giftFileList;
-	}
+   public void setStatus(String status) {
+      this.status = status;
+   }
 
-	public String getProductSeq() {
-		return productSeq;
-	}
+   public String getProductCategory() {
+      return productCategory;
+   }
 
-	public void setProductSeq(String productSeq) {
-		this.productSeq = productSeq;
-	}
+   public void setProductCategory(String productCategory) {
+      this.productCategory = productCategory;
+   }
 
-	public String getpName() {
-		return pName;
-	}
+   public List<GiftFile> getGiftFileList() {
+      return giftFileList;
+   }
 
-	public void setpName(String pName) {
-		this.pName = pName;
-	}
+   public void setGiftFileList(List<GiftFile> giftFileList) {
+      this.giftFileList = giftFileList;
+   }
 
-	public String getSellerId() {
-		return sellerId;
-	}
+   public String getProductSeq() {
+      return productSeq;
+   }
 
-	public void setSellerId(String sellerId) {
-		this.sellerId = sellerId;
-	}
+   public void setProductSeq(String productSeq) {
+      this.productSeq = productSeq;
+   }
 
-	public String getpPrice() {
-		return pPrice;
-	}
+   public String getpName() {
+      return pName;
+   }
 
-	public void setpPrice(String pPrice) {
-		this.pPrice = pPrice;
-	}
+   public void setpName(String pName) {
+      this.pName = pName;
+   }
 
-	public String getpContent() {
-		return pContent;
-	}
+   public String getSellerId() {
+      return sellerId;
+   }
 
-	public void setpContent(String pContent) {
-		this.pContent = pContent;
-	}
+   public void setSellerId(String sellerId) {
+      this.sellerId = sellerId;
+   }
 
-	public String getSearchType() {
-		return searchType;
-	}
+   public String getpPrice() {
+      return pPrice;
+   }
 
-	public void setSearchType(String searchType) {
-		this.searchType = searchType;
-	}
+   public void setpPrice(String pPrice) {
+      this.pPrice = pPrice;
+   }
 
-	public String getSearchValue() {
-		return searchValue;
-	}
+   public String getpContent() {
+      return pContent;
+   }
 
-	public void setSearchValue(String searchValue) {
-		this.searchValue = searchValue;
-	}
+   public void setpContent(String pContent) {
+      this.pContent = pContent;
+   }
 
-	public String getSearchTypeCategory() {
-		return searchTypeCategory;
-	}
+   public String getSearchType() {
+      return searchType;
+   }
 
-	public void setSearchTypeCategory(String searchTypeCategory) {
-		this.searchTypeCategory = searchTypeCategory;
-	}
+   public void setSearchType(String searchType) {
+      this.searchType = searchType;
+   }
 
-	public int getFileSeq() {
-		return fileSeq;
-	}
+   public String getSearchValue() {
+      return searchValue;
+   }
 
-	public void setFileSeq(short fileSeq) {
-		this.fileSeq = fileSeq;
-	}
+   public void setSearchValue(String searchValue) {
+      this.searchValue = searchValue;
+   }
+
+   public String getSearchTypeCategory() {
+      return searchTypeCategory;
+   }
+
+   public void setSearchTypeCategory(String searchTypeCategory) {
+      this.searchTypeCategory = searchTypeCategory;
+   }
+
+   public int getFileSeq() {
+      return fileSeq;
+   }
+
+   public void setFileSeq(short fileSeq) {
+      this.fileSeq = fileSeq;
+   }
 
 }

@@ -1,6 +1,5 @@
 package com.icia.web.controller;
 
-import static org.hamcrest.CoreMatchers.allOf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.icia.common.model.FileData;
+import com.icia.common.util.FileUtil;
 import com.icia.common.util.StringUtil;
 import com.icia.web.model.GiftAdd;
 import com.icia.web.model.GiftFile;
@@ -34,7 +34,6 @@ import com.icia.web.model.Response;
 import com.icia.web.model.RestoFile;
 import com.icia.web.model.RestoInfo;
 import com.icia.web.model.Seller;
-import com.icia.web.service.GiftService;
 import com.icia.web.service.RestoService;
 import com.icia.web.service.SellerService;
 import com.icia.web.util.CookieUtil;
@@ -56,8 +55,6 @@ public class SellerController {
 	@Autowired
 	private SellerService sellerService;
 
-	@Autowired
-	private GiftService giftService;
 	@Autowired
 	private RestoService restoService;
 
@@ -141,7 +138,7 @@ public class SellerController {
 		return ajaxResponse;
 	}
 
-// 사업자번호 중복체크 Ajax통신
+	// 사업자번호 중복체크 Ajax통신
 	@RequestMapping(value = "/seller/sellerBusinnesIdAjax", method = RequestMethod.POST)
 	@ResponseBody
 	public Response<Object> sellerBusinnesIdAjax(HttpServletRequest request, HttpServletResponse response) {
@@ -326,12 +323,6 @@ public class SellerController {
 		return "/seller/sellerlostPwd";
 	}
 
-	@RequestMapping(value = "/seller/sellerMyPage", method = RequestMethod.GET)
-	public String sellerMyPage(HttpServletRequest request, HttpServletResponse response) 
-	{
-		return "/seller/sellerMyPage";
-	}
-
 	@RequestMapping(value = "/seller/getRevenue", method = RequestMethod.POST)
 	@ResponseBody
 	public Response<Object> getRevenue(HttpServletRequest request, HttpServletResponse response) {
@@ -361,14 +352,12 @@ public class SellerController {
 	// 레스토랑 수정하기 위한 레스토랑 정보 조회
 	@RequestMapping(value = "/seller/restoUpdateForm", method = RequestMethod.GET)
 	public String updateForm(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
-		// 쿠키값 갖고와서 modelmap을 통해 user객체에 접근
-		String cookieSellerId = CookieUtil.getHexValue(request, "SELLER_ID");
 		String rSeq = HttpUtil.get(request, "rSeq", "");
 
 		RestoInfo restoInfo = null;
 
 		if (!StringUtil.isEmpty(rSeq)) {
-			restoInfo = sellerService.restoBring(rSeq);
+			restoInfo = sellerService.restoInfoBring(rSeq);
 			model.addAttribute("restoInfo", restoInfo);
 
 		}
@@ -376,112 +365,141 @@ public class SellerController {
 		return "/seller/restoupdateForm";
 	}
 
+	// 검색 조건 없음 list랑 type이랑.
 
-	   //검색 조건 없음 list랑 type이랑.
-	   
-	    @RequestMapping(value = "/seller/getMyRestoList", method = RequestMethod.POST)
-	      @ResponseBody
-	      public Response<Object> getMyRestoList(HttpServletRequest request, HttpServletResponse response) 
-	      {
-	         Response<Object> ajaxResponse = new Response<Object>();
-	         String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
-	        
-	         if(!StringUtil.isEmpty(cookieSellerId))
-	         {
-	            List<RestoInfo> list = sellerService.myResto(cookieSellerId);
-	            
-	            ajaxResponse.setResponse(0, "Success", list);
-	            
-	         }
-	         return ajaxResponse;
-	      }
-	    
-	    @RequestMapping(value = "/seller/getMyGiftList", method = RequestMethod.POST)
-	      @ResponseBody
-	      public Response<Object> getMyGiftList(HttpServletRequest request, HttpServletResponse response) 
-	      {
-	         Response<Object> ajaxResponse = new Response<Object>();
-	         String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
-	        
-	         if(!StringUtil.isEmpty(cookieSellerId))
-	         {
-	            List<GiftAdd> list = sellerService.myGift(cookieSellerId);
-	            
-	            ajaxResponse.setResponse(0, "Success", list);
-	            
-	         }
-	         return ajaxResponse;
-	      }
+	@RequestMapping(value = "/seller/getMyRestoList", method = RequestMethod.POST)
+	@ResponseBody
+	public Response<Object> getMyRestoList(HttpServletRequest request, HttpServletResponse response) {
+		Response<Object> ajaxResponse = new Response<Object>();
+		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
 
-	    
-	    
-	    
-	      
-	      //판매자 정보 수정(ajax -리턴타입 객체)
-	      @RequestMapping(value="/seller/updateProc", method=RequestMethod.POST)
-	      @ResponseBody
-	      public Response<Object> updateProc(HttpServletRequest request, HttpServletResponse response)
-	      {
-	         String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
-	         
-	         String sellerPwd = HttpUtil.get(request, "sellerPwd");
-	         String sellerShopName = HttpUtil.get(request, "sellerShopName");
-	         String sellerAddress = HttpUtil.get(request, "sellerAddress");
-	         
-	         Response<Object> ajaxResponse = new Response<Object>();
-	         
-	         if(!StringUtil.isEmpty(cookieSellerId))
-	         {
-	            Seller seller = sellerService.sellerIdSelect(cookieSellerId);
-	            
-	            if(seller!=null)
-	            {
-	               if(!StringUtil.isEmpty(sellerPwd) && !StringUtil.isEmpty(sellerShopName) && !StringUtil.isEmpty(sellerAddress))
-	               {
-	                  seller.setSellerPwd(sellerPwd);
-	                  seller.setSellerShopName(sellerShopName);
-	                  seller.setSellerAddress(sellerAddress);
-	                  
-	                  if(sellerService.sellerUpdate(seller) > 0)
-	                  {
-	                     ajaxResponse.setResponse(0, "Success");
-	                  }
-	                  else
-	                  {
-	                     ajaxResponse.setResponse(500, "Internal Server error");
-	                  }
-	               }
-	               else
-	               {
-	                  //입력 파라미터가 올바르지 않을 경우
-	                  ajaxResponse.setResponse(400, "Bad Request");
-	               }
-	            }
-	            else
-	            {
-	               //사용자정보 없을 경우
-	               CookieUtil.deleteCookie(request, response, "/", AUTH_COOKIE_NAME);
-	               ajaxResponse.setResponse(404, "Not Found");
-	            }
-	         }
-	         else
-	         {
-	            ajaxResponse.setResponse(400, "Bad Request");
-	         }
-	         
-	         if(logger.isDebugEnabled())
-	         {
-	            logger.debug("[SellerController]/seller/updateProc response\n" + JsonUtil.toJsonPretty(ajaxResponse));
-	         }
-	         
-	         return ajaxResponse;
-	         
-	      }
-	      
-	      
-	      
+		if (!StringUtil.isEmpty(cookieSellerId)) {
+			List<RestoInfo> list = sellerService.myResto(cookieSellerId);
+
+			ajaxResponse.setResponse(0, "Success", list);
+
+		}
+		return ajaxResponse;
+	}
+
+	@RequestMapping(value = "/seller/getMyGiftList", method = RequestMethod.POST)
+	@ResponseBody
+	public Response<Object> getMyGiftList(HttpServletRequest request, HttpServletResponse response) {
+		Response<Object> ajaxResponse = new Response<Object>();
+		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+
+		if (!StringUtil.isEmpty(cookieSellerId)) {
+			List<GiftAdd> list = sellerService.myGift(cookieSellerId);
+
+			ajaxResponse.setResponse(0, "Success", list);
+
+		}
+		return ajaxResponse;
+	}
+
+	// 판매자 정보 수정(ajax -리턴타입 객체)
+	@RequestMapping(value = "/seller/updateProc", method = RequestMethod.POST)
+	@ResponseBody
+	public Response<Object> updateProc(HttpServletRequest request, HttpServletResponse response) 
+	{
+		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+		String sellerPwd = HttpUtil.get(request, "sellerPwd");
+		String sellerShopName = HttpUtil.get(request, "sellerShopName");
+		String sellerAddress = HttpUtil.get(request, "sellerAddress");
+
+		Response<Object> ajaxResponse = new Response<Object>();
+
+		if (!StringUtil.isEmpty(cookieSellerId)) {
+			Seller seller = sellerService.sellerIdSelect(cookieSellerId);
+
+			if (seller != null) {
+				if (!StringUtil.isEmpty(sellerPwd) && !StringUtil.isEmpty(sellerShopName)
+						&& !StringUtil.isEmpty(sellerAddress)) {
+					seller.setSellerPwd(sellerPwd);
+					seller.setSellerShopName(sellerShopName);
+					seller.setSellerAddress(sellerAddress);
+
+					if (sellerService.sellerUpdate(seller) > 0) {
+						ajaxResponse.setResponse(0, "Success");
+					} else {
+						ajaxResponse.setResponse(500, "Internal Server error");
+					}
+				} else {
+					// 입력 파라미터가 올바르지 않을 경우
+					ajaxResponse.setResponse(400, "Bad Request");
+				}
+			} else {
+				// 사용자정보 없을 경우
+				CookieUtil.deleteCookie(request, response, "/", AUTH_COOKIE_NAME);
+				ajaxResponse.setResponse(404, "Not Found");
+			}
+		} else {
+			ajaxResponse.setResponse(400, "Bad Request");
+		}
+
+		if (logger.isDebugEnabled()) 
+		{
+			logger.debug("[SellerController]/seller/updateProc response\n" + JsonUtil.toJsonPretty(ajaxResponse));
+		}
+		return ajaxResponse;
+	}
+
+	@RequestMapping(value = "/seller/getSellerProfile", method = RequestMethod.POST)
+	@ResponseBody
+	public Response<Object> getSellerProfile(HttpServletRequest request, HttpServletResponse response) 
+	{
+		Response<Object> ajaxResponse = new Response<Object>();
+		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+		if(!StringUtil.isEmpty(cookieSellerId))
+		{
+			Seller seller = sellerService.sellerIdSelect(cookieSellerId);
+			if(StringUtil.equals(cookieSellerId, seller.getSellerId()))
+			{
+				ajaxResponse.setResponse(0, "Success", seller);
+			}
+			else
+			{
+				ajaxResponse.setResponse(404, "Not Found");
+			}
+		}
+		else
+		{
+			ajaxResponse.setResponse(400, "Bad Request");
+		}
+		return ajaxResponse;
+	}
 	
-	// 레스토랑 정보수정 하기 .. 미 완 성! ! !
+	// 레스토랑 정보 수정하기 위한 레스토랑 정보 조회
+	@RequestMapping(value = "/seller/restoBring")
+	public String restoBring(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
+		// 쿠키 값
+		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+		// 해당 레스토랑 번호
+		String restoSeq = HttpUtil.get(request, "rSeq", "");
+		RestoInfo restoInfo = null;
+		List<RestoFile> list = null;
+		List<Menu> menuList = null;
+		MenuFile menuFile = null;
+		if (!StringUtil.isEmpty(restoSeq)) {
+			restoInfo = sellerService.restoInfoBring(restoSeq);
+			list = sellerService.restoFileBring(restoSeq);
+			menuList = sellerService.menuBring(restoSeq);
+			for (int i = 0; i < menuList.size(); i++) {
+				menuList.get(i).setMenuFileList(sellerService.menuFileBring(menuList.get(i).getMenuSeq()));
+			}
+
+			model.addAttribute("menuFile", menuFile);
+			model.addAttribute("restoFileList", list);
+		}
+
+		model.addAttribute("menuList", menuList);
+		model.addAttribute("restoInfo", restoInfo);
+		model.addAttribute("cookieSellerId", cookieSellerId);
+
+		return "/seller/restoBring";
+	}
+
+	// 레스토랑 정보수정 하기
 	@RequestMapping(value = "/seller/restoUpdateProc", method = RequestMethod.POST)
 	@ResponseBody
 	public Response<Object> restoUpdateProc(MultipartHttpServletRequest request, HttpServletResponse response) {
@@ -493,120 +511,180 @@ public class SellerController {
 		String restoAdd = HttpUtil.get(request, "hiddenAdd", "");
 		String restoPh = HttpUtil.get(request, "restoPh", "");
 		String restoContent = HttpUtil.get(request, "restoContent", "");
-		String restoType = HttpUtil.get(request, "restoType");
-		String restoMenuType = HttpUtil.get(request, "restoMenuType");
-		String restoOff = HttpUtil.get(request, "hiddenRestoOff");
+		String restoType = HttpUtil.get(request, "restoType", "");
+		String restoMenuType = HttpUtil.get(request, "restoMenuType", "");
+		String restoOff = HttpUtil.get(request, "hiddenRestoOff", "");
 		FileData thumFile = HttpUtil.getFile(request, "restoThum", UPLOAD_SAVE_DIR);
 		List<FileData> fileData = HttpUtil.getFiles(request, "restoFile", UPLOAD_SAVE_DIR);
 		int restoDeposit = HttpUtil.get(request, "restoDeposit", 0);
 		String restoOpen = HttpUtil.get(request, "restoOpen", "");
 		String restoClose = HttpUtil.get(request, "restoClose", "");
-
 		int restoLimitPpl = HttpUtil.get(request, "restoLimitPpl", 0);
-
-		// 배열로 처리하되, 맥시멈 개수는 있어야함.
 		int menuCount = HttpUtil.get(request, "menuCount", 0); // 5
-
-		if (!StringUtil.isEmpty(rSeq)) {
+		int flag = -1;
+		if (!StringUtil.isEmpty(rSeq)) 
+		{
 			RestoInfo restoInfo = restoService.restoSelect(rSeq);
 
-			if (rSeq != null) {
-				if (!StringUtil.isEmpty(restoName) && !StringUtil.isEmpty(restoAdd) && !StringUtil.isEmpty(restoPh)
-						&& !StringUtil.isEmpty(restoContent) && !StringUtil.isEmpty(restoType)
-						&& !StringUtil.isEmpty(restoMenuType) && !StringUtil.isEmpty(restoOff)
-						&& !StringUtil.isEmpty(cookieSellerId)) {
+			if (!StringUtil.isEmpty(restoName) && !StringUtil.isEmpty(restoAdd) && !StringUtil.isEmpty(restoPh)
+					&& !StringUtil.isEmpty(restoContent) && !StringUtil.isEmpty(restoType)
+					&& !StringUtil.isEmpty(restoMenuType) && !StringUtil.isEmpty(cookieSellerId)) 
+			{
 
-					restoInfo.setSellerId(cookieSellerId);
-					restoInfo.setRestoName(restoName);
-					restoInfo.setRestoAddress(restoAdd);
-					restoInfo.setRestoContent(restoContent);
-					restoInfo.setRestoPh(restoPh);
-					restoInfo.setRestoType(restoType);
-					restoInfo.setFoodType(restoMenuType);
-					restoInfo.setRestoDeposit(restoDeposit);
-					restoInfo.setLimitPerson(restoLimitPpl);
-					restoInfo.setRestoOpen(restoOpen);
-					restoInfo.setRestoClose(restoClose);
-					restoInfo.setRestoOff(restoOff);
-					RestoFile restoFile;
-					List<Menu> menuList = new ArrayList<Menu>();
+				restoInfo.setSellerId(cookieSellerId);
+				restoInfo.setRestoName(restoName);
+				restoInfo.setRestoAddress(restoAdd);
+				restoInfo.setRestoContent(restoContent);
+				restoInfo.setRestoPh(restoPh);
+				restoInfo.setRestoType(restoType);
+				restoInfo.setFoodType(restoMenuType);
+				restoInfo.setRestoDeposit(restoDeposit);
+				restoInfo.setLimitPerson(restoLimitPpl);
+				restoInfo.setRestoOpen(restoOpen);
+				restoInfo.setRestoClose(restoClose);
+				restoInfo.setRestoOff(restoOff);
+				RestoFile restoFile;
 
-					for (int i = 0; i < menuCount; i++) {
-						Menu menu = new Menu(); // 각 반복에서 새로운 Menu 객체 생성
-						MenuFile menuFile1 = new MenuFile(); // 각 반복에서 새로운 MenuFile
+				List<RestoFile> restoFileList = new ArrayList<RestoFile>();
 
-						if (i == 0) {
-							String menuName = HttpUtil.get(request, "menuName");
-							String menuPrice = HttpUtil.get(request, "menuPrice");
-							String menuDescription = HttpUtil.get(request, "menuDescription");
-							FileData menuFile = HttpUtil.getFile(request, "menuFile", UPLOAD_SAVE_DIR);
-							menu.setMenuName(menuName);
-							menu.setMenuPrice(menuPrice);
-							menu.setMenuContent(menuDescription);
-							menuFile1.setFileName(menuFile.getFileName());
-							menu.setMenuFileList(menuFile1);
-						} else {
-							String menuName = HttpUtil.get(request, "menuName" + i);
-							String menuPrice = HttpUtil.get(request, "menuPrice" + i);
-							String menuDescription = HttpUtil.get(request, "menuDescription" + i);
-							FileData menuFile = HttpUtil.getFile(request, "menuFile" + i, UPLOAD_SAVE_DIR);
-							menu.setMenuName(menuName);
-							menu.setMenuPrice(menuPrice);
-							menu.setMenuContent(menuDescription);
-							menuFile1.setFileName(menuFile.getFileName());
-							menu.setMenuFileList(menuFile1);
-
-						}
-						menuList.add(menu);
-
+				if(thumFile != null && fileData != null) 
+				{
+					flag = 0;
+					if (thumFile.getFileSize() > 0) 
+					{
+						fileData.add(0, thumFile);
 					}
-
-					restoInfo.setMenuList(menuList);
-
-					if (thumFile != null && fileData != null && fileData.size() > 0 && menuCount > 0) {
-
-						// 리스트 화
-						List<RestoFile> restoFileList = new ArrayList<RestoFile>();
-
-						if (thumFile.getFileSize() > 0) {
+					for (int i = 0; i < fileData.size(); i++) 
+					{
+						if (fileData.get(i).getFileSize() > 0) 
+						{
 							restoFile = new RestoFile();
-
-							restoFile.setFileName(thumFile.getFileName());
-
+							restoFile.setrSeq(rSeq);
+							restoFile.setFileName(fileData.get(i).getFileName());
 							restoFileList.add(restoFile);
-
 						}
-
-						for (int i = 0; i < fileData.size(); i++) {
-							if (fileData.get(i).getFileSize() > 0) {
-								restoFile = new RestoFile();
-
-								restoFile.setFileName(fileData.get(i).getFileName());
-
-								restoFileList.add(restoFile);
-							}
-						}
-
-						restoInfo.setRestoFileList(restoFileList);
-
 					}
-
-					// 서비스 호출
-					try {
-						if (sellerService.restoUpdate(restoInfo) > 0) {
-							ajaxResponse.setResponse(0, "success");
-						} else {
-							ajaxResponse.setResponse(500, "Internal server error");
+					restoInfo.setRestoFileList(restoFileList);
+				} 
+				else if (thumFile != null) 
+				{
+					flag = 1;
+					restoFile = new RestoFile();
+					restoFile.setrSeq(rSeq);
+					restoFile.setFileName(thumFile.getFileName());
+					restoFile.setFileSeq(1);
+					restoInfo.setRestoFileList(restoFileList);
+					restoFileList.add(restoFile);
+				} 
+				else if (fileData != null) 
+				{
+					flag = 2;
+					for (int i = 0; i < fileData.size(); i++) 
+					{
+						if (fileData.get(i).getFileSize() > 0) 
+						{
+							restoFile = new RestoFile();
+							restoFile.setrSeq(rSeq);
+							restoFile.setFileName(fileData.get(i).getFileName());
+							restoFileList.add(restoFile);
 						}
-					} catch (Exception e) {
-						logger.error("[RestoController] restoProc Exception", e);
-						ajaxResponse.setResponse(500, "internal server error");
 					}
-				} else {
-					ajaxResponse.setResponse(400, "Bad Request");
+					restoInfo.setRestoFileList(restoFileList);
 				}
 
+				List<Menu> menuList = new ArrayList<Menu>();
+				MenuFile menuFile = null;
+				for (int i = 1; i <= menuCount; i++) 
+				{
+					// Menu menu = null; // 각 반복에서 새로운 Menu 객체 생성
+					// MenuFile menuFile1 = null; // 각 반복에서 새로운 MenuFile
+					Menu menu = new Menu();
+					// MenuFile menuFile1 = new MenuFile();
+					String menuName = HttpUtil.get(request, "menuName" + i, "");
+					String menuPrice = HttpUtil.get(request, "menuPrice" + i, "");
+					String menuDescription = HttpUtil.get(request, "menuDescription" + i, "");
+					FileData getMenuFile = HttpUtil.getFile(request, "menuFile" + i, UPLOAD_SAVE_DIR);
+					String orgMenuFileName = HttpUtil.get(request, "orgMenuFileName" + i, "");
+
+					menu.setMenuName(menuName);
+					menu.setMenuPrice(menuPrice);
+					menu.setMenuContent(menuDescription);
+					menu.setrSeq(rSeq);
+					if (getMenuFile != null) 
+					{
+						menuFile = new MenuFile();
+						menuFile.setFileName(getMenuFile.getFileName());
+						menu.setFileName(getMenuFile.getFileName());
+					} 
+					else 
+					{
+						menuFile = new MenuFile();
+						menuFile.setFileName(orgMenuFileName);
+						menu.setFileName(orgMenuFileName);
+					}
+					menu.setMenuFileList(menuFile);
+					menuList.add(menu);
+				}
+
+				restoInfo.setMenuList(menuList);
+
+				// 서비스 호출
+				try 
+				{
+					List<RestoFile> orgRestoFileList = sellerService.restoFileBring(restoInfo.getrSeq());
+					List<MenuFile> orgMenuFileList = sellerService.menuFileListBring(rSeq);
+					
+					if(sellerService.restoUpdate(restoInfo, flag) > 0) 
+					{
+						ajaxResponse.setResponse(0, "success");
+						if(flag == 1)
+						{
+							if(!StringUtil.equals(orgRestoFileList.get(0).getFileName(), "resto.jpg"))
+							{
+								FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgRestoFileList.get(0).getFileName());
+							}
+							orgRestoFileList = null;
+						}
+						else if(flag == 2)
+						{
+							orgRestoFileList.remove(0);
+						}
+						
+						if(orgRestoFileList != null && orgRestoFileList.size() > 0)
+						{
+							for(int i = 0; i < orgRestoFileList.size(); i++)
+							{
+								if(!StringUtil.equals(orgRestoFileList.get(i).getFileName(), "resto.jpg"))
+								{
+									FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgRestoFileList.get(i).getFileName());
+								}
+							}
+						}
+						
+						for(int i = 0; i < orgMenuFileList.size(); i++)
+						{
+							if(!StringUtil.equals(orgMenuFileList.get(i).getFileName(), "normalMenu.png"))
+							{
+								FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgMenuFileList.get(i).getFileName());
+							}
+						}
+					} 
+					else 
+					{
+						ajaxResponse.setResponse(500, "Internal server error");
+					}
+				} 
+				catch (Exception e) 
+				{
+					logger.error("[RestoController] restoProc Exception", e);
+					ajaxResponse.setResponse(500, "internal server error");
+				}
+			} 
+			else 
+			{
+				ajaxResponse.setResponse(400, "Bad Request");
 			}
+
 		}
 		return ajaxResponse;
 	}
@@ -619,8 +697,6 @@ public class SellerController {
 		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
 		// 해당 선물 번호
 		String productSeq = HttpUtil.get(request, "productSeq", "");
-		String fileSeq = HttpUtil.get(request, "fileSeq", "");
-		GiftFile giftFile = null;
 		GiftAdd giftAdd = null;
 		List<GiftFile> list = null;
 
@@ -636,6 +712,123 @@ public class SellerController {
 		model.addAttribute("cookieSellerId", cookieSellerId);
 
 		return "/seller/giftBring";
+	}
+
+	//선물&선물파일 정보 수정(ajax -리턴타입 객체)
+	@RequestMapping(value = "/seller/giftUpdateProc", method = RequestMethod.POST)
+	@ResponseBody
+	public Response<Object> giftUpdateProc(MultipartHttpServletRequest request, HttpServletResponse response) 
+	{
+		Response<Object> ajaxResponse = new Response<Object>();
+		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+		String productSeq = HttpUtil.get(request, "productSeq", "");
+		String giftName = HttpUtil.get(request, "giftName", "");
+		String giftPrice = HttpUtil.get(request, "giftPrice", "");
+		String giftContent = HttpUtil.get(request, "giftContent", "");
+		String giftStatus = HttpUtil.get(request, "giftStatus", "");
+		String productCategory = HttpUtil.get(request, "giftCategory", "");
+		FileData thumFile = HttpUtil.getFile(request, "giftThum", UPLOAD_SAVE_DIR);
+		List<FileData> fileData = HttpUtil.getFiles(request, "detailImage", UPLOAD_SAVE_DIR);
+		GiftFile giftFile = null;
+		int flag = -1;
+		if (!StringUtil.isEmpty(productSeq) && !StringUtil.isEmpty(giftName) && !StringUtil.isEmpty(giftPrice)
+				&& !StringUtil.isEmpty(giftContent) && !StringUtil.isEmpty(giftStatus) && !StringUtil.isEmpty(productCategory)) 
+		{ 
+			GiftAdd giftAdd = new GiftAdd();
+			giftAdd.setProductSeq(productSeq);
+			giftAdd.setSellerId(cookieSellerId);
+			giftAdd.setpName(giftName);
+			giftAdd.setpPrice(giftPrice);
+			giftAdd.setpContent(giftContent);
+			giftAdd.setStatus(giftStatus);
+			giftAdd.setProductCategory(productCategory);
+			List<GiftFile> giftFileList = new ArrayList<GiftFile>();
+			if (thumFile != null && fileData != null) 
+			{
+				flag = 0;
+				if (thumFile.getFileSize() > 0) 
+				{
+					fileData.add(0, thumFile);
+				}
+				for (int i = 0; i < fileData.size(); i++) 
+				{
+					giftFile = new GiftFile();
+					giftFile.setFileName(fileData.get(i).getFileName());
+					giftFileList.add(giftFile);
+				}
+				giftAdd.setGiftFileList(giftFileList);
+			}
+			else if (thumFile != null) 
+			{
+				flag = 1;
+				if (thumFile.getFileSize() > 0) 
+				{
+					giftFile = new GiftFile();
+					giftFile.setFileName(thumFile.getFileName());
+					giftFile.setProductSeq(productSeq);
+					giftFile.setFileSeq((short)1); 
+					giftFileList.add(giftFile);
+
+				}
+				giftAdd.setGiftFileList(giftFileList);
+			} 
+			else if (fileData != null) 
+			{
+				flag = 2;
+				for (int i = 0; i < fileData.size(); i++) 
+				{
+					giftFile = new GiftFile();
+					giftFile.setFileName(fileData.get(i).getFileName());
+					giftFileList.add(giftFile);
+				}
+
+				giftAdd.setGiftFileList(giftFileList);
+			}
+			try {
+				List<GiftFile> orgGiftFileList = sellerService.giftFileBring(productSeq);
+				if (sellerService.giftUpdate(giftAdd, flag) > 0) 
+				{
+					ajaxResponse.setResponse(0, "success");
+					if(flag == 1)
+					{
+						if(!StringUtil.equals(orgGiftFileList.get(0).getFileName(), "gift.png"))
+						{
+							FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgGiftFileList.get(0).getFileName());
+						}
+						orgGiftFileList = null;
+					}
+					else if(flag == 2)
+					{
+						orgGiftFileList.remove(0);
+					}
+					
+					if(orgGiftFileList != null && orgGiftFileList.size() > 0)
+					{
+						for(int i = 0; i < orgGiftFileList.size(); i++)
+						{
+							if(!StringUtil.equals(orgGiftFileList.get(i).getFileName(), "gift.png"))
+							{
+								FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgGiftFileList.get(i).getFileName());
+							}
+						}
+					}
+				}
+				else 
+				{
+					ajaxResponse.setResponse(500, "Internal server error");
+				}
+			}
+			catch (Exception e) 
+			{
+				logger.error("[SellerController] giftUpdateProc Exception", e);
+				ajaxResponse.setResponse(500, "internal server error");
+			}
+		} 
+		else 
+		{
+			ajaxResponse.setResponse(400, "Bad Request");
+		}
+		return ajaxResponse;
 	}
 
 	// 내가 등록한 선물 중 결제된레스토랑리스트
@@ -765,57 +958,42 @@ public class SellerController {
 			} catch (Exception e) {
 				logger.error("[UserG2Controller](writeReview)", e);
 			}
-//          }
-//          else
-//          {
-//             ajaxResponse.setResponse(404, "Not Found");
-//          }
-//       }
-//       else
-//       {
-//          ajaxResponse.setResponse(400, "Bad Request");
-//       }
-
 		}
 		return ajaxResponse;
+	}
+
+	@RequestMapping(value = "/seller/sellerMyPage", method = RequestMethod.GET)
+	public String sellerMyPage(HttpServletRequest request, HttpServletResponse response) {
+		return "/seller/sellerMyPage";
 	}
 
 	@RequestMapping(value = "/seller/getMyThings", method = RequestMethod.POST)
 	@ResponseBody
-	public Response<Object> getMyThings(HttpServletRequest request, HttpServletResponse response) 
-	{
+	public Response<Object> getMyThings(HttpServletRequest request, HttpServletResponse response) {
 		Response<Object> ajaxResponse = new Response<Object>();
 		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
 		int type = HttpUtil.get(request, "type", -1);
-		if(type == 0)
-		{
+		if (type == 0) {
 			ajaxResponse.setResponse(0, "Success", sellerService.selectMyResto(cookieSellerId));
-		}
-		else if(type == 1)
-		{
-			ajaxResponse.setResponse(0, "Success", sellerService.selectMyGift (cookieSellerId));	
-		}
-		else
-		{
+		} else if (type == 1) {
+			ajaxResponse.setResponse(0, "Success", sellerService.selectMyGift(cookieSellerId));
+		} else {
 			ajaxResponse.setResponse(400, "Bad Request");
 		}
 		return ajaxResponse;
 	}
-	
+
 	@RequestMapping(value = "/seller/getPeriodRevenue", method = RequestMethod.POST)
 	@ResponseBody
-	public Response<Object> getPeriodRevenue(HttpServletRequest request, HttpServletResponse response) 
-	{
+	public Response<Object> getPeriodRevenue(HttpServletRequest request, HttpServletResponse response) {
 		Response<Object> ajaxResponse = new Response<Object>();
 		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
 		String startDate = HttpUtil.get(request, "startDate", "");
 		String endDate = HttpUtil.get(request, "endDate", "");
 		int listType = HttpUtil.get(request, "listType", -1);
 		String searchType = HttpUtil.get(request, "searchType", "");
-		if(!StringUtil.isEmpty(searchType) && listType >= 0)
-		{
-			if(StringUtil.equals(searchType, "0"))
-			{
+		if (!StringUtil.isEmpty(searchType) && listType >= 0) {
+			if (StringUtil.equals(searchType, "0")) {
 				searchType = "";
 			}
 			HashMap<String, String> hashMap = new HashMap<String, String>();
@@ -823,49 +1001,17 @@ public class SellerController {
 			hashMap.put("endDate", endDate);
 			hashMap.put("searchType", searchType);
 			hashMap.put("cookieSellerId", cookieSellerId);
-			if(listType == 0)
-			{
+			if (listType == 0) {
 				ajaxResponse.setResponse(0, "Success", sellerService.selectRestoPeriodRevenue(hashMap));
-			}
-			else if(listType == 1)
-			{
-				ajaxResponse.setResponse(0, "Success", sellerService.selectGiftPeriodRevenue(hashMap));	
-			}
-			else
-			{
+			} else if (listType == 1) {
+				ajaxResponse.setResponse(0, "Success", sellerService.selectGiftPeriodRevenue(hashMap));
+			} else {
 				ajaxResponse.setResponse(404, "Not Found");
 			}
+		} else {
+			ajaxResponse.setResponse(400, "Bad Request");
 		}
-		else
-		{
-			ajaxResponse.setResponse(400, "Bad Request");	
-		}
-		
+
 		return ajaxResponse;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

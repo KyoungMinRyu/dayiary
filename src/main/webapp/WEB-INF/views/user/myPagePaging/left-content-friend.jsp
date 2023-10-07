@@ -580,7 +580,6 @@ function fn_list()
 </script>
 </head>
 <body>
-<%@ include file="/WEB-INF/views/include/navigation.jsp" %>
 
 <div class="snowflakes">
    <div class="wrapper" style=" padding-bottom: 500px; height: 1200px;">
@@ -628,7 +627,7 @@ function fn_list()
                   <c:choose>
                      <c:when test="${friend.relationalType eq '1'}">
                         <div class="scroll-list__item js-scroll-list-item" onclick="fn_view('${friend.userId}')">
-                           <div class="box" style="width: 750px; height: 155px; border-radius: 8px;  animation: shimmer 3s infinite; background-color: blue;">
+                           <div class="box" style="animation: shimmer 3s infinite;">
                               <span style="width: 155px; height: 100%;">
                                  <img alt="" class="rounded-div" src="${friend.fileName}" style="width: 135px; height: 135px; margin-left: 10px; margin-top: 10px;">
                               </span>
@@ -652,14 +651,14 @@ function fn_list()
                      </c:when>
                      <c:otherwise>
                         <div class="scroll-list__item js-scroll-list-item" onclick="fn_view('${friend.userId}')">   
-                           <div class="box" style="width: 750px; height: 155px">
+                           <div class="box">
                               <span style="width: 155px; height: 100%;">
                                  <img alt="" class="rounded-div" src="${friend.fileName}" style="width: 135px; height: 135px; margin-left: 10px; margin-top: 10px;">
                               </span>
                               <span class="box-span " style="margin-left: 45px; width: 250px;">
                                  <b>
                                     ${friend.userNickName}
-                                 </b>
+                                 </b> 
                               </span>
                               <span  class="box-span" style="margin-left: 20px; width: 120px;">
                                  <b>
@@ -667,7 +666,7 @@ function fn_list()
                                  </b>
                               </span>
                               <span  class="box-span" style="margin-left: 35px; width: 100px;">
-                                 <b>
+                                 <b> 
                                     ${friend.friendCnt}
                                  </b>
                               </span>
@@ -677,8 +676,12 @@ function fn_list()
                   </c:choose>
                            
                </c:forEach>
-            </c:if>      
+            </c:if>    
+            <c:if test="${list.size() > 3}">
+               <div class="scroll-list__item js-scroll-list-item"></div>
+            </c:if>  
          </div>
+         
       </div>
    </div>
 </div>

@@ -208,6 +208,7 @@ public class InquiryBoardController
       model.addAttribute("searchCategory", searchCategory);
       model.addAttribute("curPage", curPage);
       model.addAttribute("afterSelected", afterSelected);
+      model.addAttribute("productSeq", productSeq);
       model.addAttribute("orderSeq", orderSeq);
       return "/inquiry/inquiryWriteForm";
    }

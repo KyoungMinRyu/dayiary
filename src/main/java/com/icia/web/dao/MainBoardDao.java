@@ -33,6 +33,9 @@ public interface MainBoardDao
    //게시물 조회수 증가
    public int boardReadCntPlus(long boardSeq);
    
+   //게시물 삭제 시 모든 좋아요 삭제
+   public int likeDeleteAll(long boardSeq);
+   
    //게시물 그룹 순서 변경
    public int boardGroupOrderUpdate(MainBoard mainBoard);
    

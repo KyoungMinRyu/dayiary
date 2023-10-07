@@ -1,9 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ include file="/WEB-INF/views/include/taglib.jsp" %>
-
-
-
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+   pageEncoding="UTF-8"%><!DOCTYPE html>
 <html>
 <head>
 <%@ include file="/WEB-INF/views/include/head.jsp" %>
@@ -265,15 +261,9 @@ let a = "${yourFriend.relationalType}";
           </svg>
           <span>쪽지</span>
         </li>
-         <li class="item" onclick="loadleftContent('문의사항')">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
-            stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="feather feather-inbox"
-            viewBox="0 0 24 24">
-            <path d="M22 12h-6l-2 3h-4l-2-3H2" />
-            <path
-              d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-          </svg>
-          <span>문의사항</span>
+         <li class="item" onclick="loadContent('좋아요')">
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.5" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <span>좋아요</span>
         </li>
          <li class="item" onclick="loadleftContent('내 정보수정')">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -308,10 +298,7 @@ let a = "${yourFriend.relationalType}";
       </div>
       </c:otherwise>
       </c:choose>
-      <div class="label-wrapper">
-        <input class="nav-item" name="nav" type="radio" id="opt-3">
-        <label class="category" for="opt-3" onclick="loadContent('다이어리')">다이어리</label>
-      </div>
+     
       <div class="label-wrapper">
         <input class="nav-item" name="nav" type="radio" id="opt-4">
         <label class="category" for="opt-4" onclick="loadContent('좋아요')">좋아요</label>
@@ -473,7 +460,11 @@ let a = "${yourFriend.relationalType}";
         <c:choose>
             <c:when test="${item.sharedStatus eq 'Shared'}">
                 <img src="${url}" alt="member" style="width: 35px; height: 35px;">
-                <img src="${item.fileName}" alt="member" style="width: 35px; height: 35px;">
+                <img src="${yourProfileImage}" alt="member" style="width: 35px; height: 35px;">
+            </c:when>
+             <c:when test="${item.sharedStatus eq 'Not Shared'}">
+                <img src="${url}" alt="member" style="width: 35px; height: 35px;">
+               
             </c:when>
             <c:otherwise>
                 <img src="${url}" alt="member" style="width: 35px; height: 35px;">
@@ -492,6 +483,8 @@ let a = "${yourFriend.relationalType}";
            <b>등록된 일정이 없습니다.</b> 
         </div>
     </c:if>
+     
+    
 
 </div>
 

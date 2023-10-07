@@ -351,13 +351,26 @@ function searchGubun(gubunVal)
    }
    else if(gubunVal == 'health')
    {
-      gubun = '건강';
+      gubun = '식품';
    }
    else if(gubunVal == 'acc')
    {
       gubun = '악세서리';
    }
-
+   else if(gubunVal == 'fashion')
+   {
+      gubun = '패션';
+   }
+   else if(gubunVal == 'eletronics')
+   {
+      gubun = '가전';
+   }
+   else if(gubunVal == 'flower')
+   {
+      gubun = '꽃';
+   }
+   
+   
    document.bbsForm.productType.value = gubun;
    document.bbsForm.productSeq.value = "";
    document.bbsForm.searchType.value=$("#_searchType").val();
@@ -426,8 +439,11 @@ function fn_list(curPage) {
     <a id="giftCateGory" style="font-weight:bold; font-size:23px;">[카테고리] </a>
     <button id="all" onClick="searchGubun('all')" type="button"  class="button1" <c:if test="${productType eq 'all'}">style='color: #ffa300;'</c:if>>전체</button>
     <button id="beauty" onClick="searchGubun('beauty')" type="button" class="button1" <c:if test="${productType eq '뷰티'}">style='color: #ffa300;'</c:if>>뷰티</button>
-    <button id="health" onClick="searchGubun('health')" type="button" class="button1" <c:if test="${productType eq '건강'}">style='color: #ffa300;'</c:if>>건강</button>
     <button id="acc" onClick="searchGubun('acc')" type="button" class="button1" <c:if test="${productType eq '악세서리'}">style='color: #ffa300;'</c:if>>악세서리</button>
+    <button id="fashion" onClick="searchGubun('fashion')" type="button" class="button1" <c:if test="${productType eq '패션'}">style='color: #ffa300;'</c:if>>패션</button>
+    <button id="eletronics" onClick="searchGubun('eletronics')" type="button" class="button1" <c:if test="${productType eq '가전'}">style='color: #ffa300;'</c:if>>가전</button>
+    <button id="health" onClick="searchGubun('health')" type="button" class="button1" <c:if test="${productType eq '식품'}">style='color: #ffa300;'</c:if>>식품</button>
+    <button id="flower" onClick="searchGubun('flower')" type="button" class="button1" <c:if test="${productType eq '꽃'}">style='color: #ffa300;'</c:if>>꽃</button>
   </div>
   <div class="giftOrDer">
     <a id="giftOrder" style="font-weight:bold; font-size:23px;">[정 　렬] </a>
@@ -509,16 +525,47 @@ function fn_list(curPage) {
           
         <div class="product-description" style="text-align:center;">
           <p style="color:gray;">[${giftAdd.productSeq}]</p>
-          <h1 style="font-size: 23px; color:black;">${giftAdd.pName}</h1>
+          <h1 style="font-size: 20px; color:black; margin-bottom:10px;">${giftAdd.pName}</h1>
           <div style="text-align:center;">
-            <span id="pPrice" style="font-size:24px; color:black;"><fmt:formatNumber type="number" maxFractionDigits="3" value="${giftAdd.pPrice}" />원</span>
+            <span id="pPrice" style="font-size:20px; color:black; "><fmt:formatNumber type="number" maxFractionDigits="3" value="${giftAdd.pPrice}" />원</span>
           </div>
           <div id="star">
-          <img src="/resources/images/fullStar.png" style="width:20px;">
-          <img src="/resources/images/fullStar.png" style="width:20px;">
-          <img src="/resources/images/fullStar.png" style="width:20px;">
-          <img src="/resources/images/fullStar.png" style="width:20px;">
-          <img src="/resources/images/halfStar.png" style="width:20px;">
+          
+          <c:set var="starCount" value="${giftAdd.reviewScore}" />
+   
+           <c:choose>
+              <c:when test="${starCount eq 0}"> <!-- 별점이 0일 경우 (아직 리뷰가 없을때) -->
+                   <img src="/resources/images/emptyStar.png" style="width:25px; height:25px; border:none !important;" alt="Empty Star">
+                   <img src="/resources/images/emptyStar.png" style="width:25px; height:25px; border:none !important;" alt="Empty Star">
+                   <img src="/resources/images/emptyStar.png" style="width:25px; height:25px; border:none !important;" alt="Empty Star">
+                   <img src="/resources/images/emptyStar.png" style="width:25px; height:25px; border:none !important;" alt="Empty Star">
+                   <img src="/resources/images/emptyStar.png" style="width:25px; height:25px; border:none !important;" alt="Empty Star">
+                   (${giftAdd.reviewCount}건)
+               </c:when>
+           
+               <c:when test="${(starCount % 2) eq 0}"> <!-- 별점이 짝수일 경우 (꽉찬별만 있을때) -->
+                  <c:forEach var="i" begin="1" end="${starCount / 2}">
+                   <img src="/resources/images/fullStar.png" style="width:25px; height:25px; border:none !important;" alt="Full Star">
+                   </c:forEach>
+                   <c:forEach var="i" begin="1" end="${5 - (starCount / 2)}">
+                   <img src="/resources/images/emptyStar.png" style="width:25px; height:25px; border:none !important;" alt="Empty Star">
+                   </c:forEach>
+                   (${giftAdd.reviewCount}건)
+               </c:when>
+                
+               <c:when test="${(starCount % 2) eq 1}">
+                  <c:forEach var="i" begin="1" end="${starCount / 2}"> <!-- 별점이 홀수일 경우 (반개별 필요) -->
+                   <img src="/resources/images/fullStar.png" style="width:25px; height:25px; border:none !important;" alt="Full Star">
+                   </c:forEach>
+                   <img src="/resources/images/halfStar.png" style="width:25px; height:25px; border:none !important;" alt="Half Star">
+                   <c:forEach var="i" begin="1" end="${5 - (starCount / 2)}">
+                   <img src="/resources/images/emptyStar.png" style="width:25px; height:25px; border:none !important;" alt="Empty Star">
+                   </c:forEach>
+                   (${giftAdd.reviewCount}건)
+               </c:when>
+           </c:choose>
+            
+            
           </div>
         </div>
       </div>
@@ -526,7 +573,6 @@ function fn_list(curPage) {
     </c:forEach>
   </c:if>
 </div>
-
 
 
 <c:if test="${empty list}">   

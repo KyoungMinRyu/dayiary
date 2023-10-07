@@ -218,8 +218,8 @@ function getRestoTotalRevenueList(formData, listType)
         			
         				makeTag = 
         				    "<div class='item col-xs-4 col-lg-4' onclick=\"fn_restoRevenueDetailView('" + data.rSeq + "')\">" +
-        				    "<div class='thumbnail'><img class='group list-group-image' src='/resources/upload/" + data.fileName + "' alt='' style='width: 400px; height: 250px;'/>" +
-        				    "<div class='caption'><h4 class='group inner list-group-item-heading'>" + data.restoName + "</h4><p class='group inner list-group-item-text'>" +
+        				    "<div class='thumbnail'><img class='group list-group-image' src='/resources/upload/" + data.fileName + "' alt='' style='width: 500px; height: 350px;'/>" +
+        				    "<div class='caption'><h4 class='group inner list-group-item-heading' style='font-size: 14px; font-weight: bold;'>" + data.restoName + "</h4><p class='group inner list-group-item-text'>" +
         				    "총 예약건수 : " + data.restoTotalCount.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "건<br>총 예약인원 : " + data.reservPerson.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "명<br>" +
         				    "총 매출액 : " + data.restoTotalPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원<br>예약금 : " + data.restoDeposit.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원</p></div></div></div>";
 
@@ -257,11 +257,16 @@ function getRestoTotalRevenueList(formData, listType)
         }
     });
 }
+
+function fn_restoRevenueDetailView(rSeq)
+{
+	window.location.href = "/admin/adminRestoView?rSeq=" + rSeq;
+}
 </script>
 </head>
 <body style="height: 100%; background-color: #fffbf4; margin-bottom: auto">
 <%@ include file="/WEB-INF/views/include/adminNavi.jsp" %>
-<div class="container" style="margin-top: 100px;">
+<div class="container" style="margin-top: 100px; width: 1600px;">
     <div class="well well-sm">
 		<div class="btn-group" style="display: flex; justify-content: space-between; align-items: center;">
             <span>
@@ -287,9 +292,9 @@ function getRestoTotalRevenueList(formData, listType)
           	<c:forEach var="admin" items="${list}" varStatus="status">        
         		<div class="item  col-xs-4 col-lg-4" onclick="fn_restoRevenueDetailView('${admin.rSeq}')">
 		            <div class="thumbnail">
-		                <img class="group list-group-image" src="/resources/upload/${admin.fileName}" alt="" style="width: 400px; height: 250px;"/>
+		                <img class="group list-group-image" src="/resources/upload/${admin.fileName}" alt="" style="width: 500px; height: 350px;"/>
 		                <div class="caption">
-		                    <h4 class="group inner list-group-item-heading">${admin.restoName}</h4>
+		                    <h4 class="group inner list-group-item-heading" style="font-size: 14px; font-weight: bold;">${admin.restoName}</h4>
 		                    <p class="group inner list-group-item-text">
 		                        총 예약건수 : <fmt:formatNumber value="${admin.restoTotalCount}" pattern="#,###"/>건<br>
 		                        총 예약인원 : <fmt:formatNumber value="${admin.reservPerson}" pattern="#,###"/>명<br>

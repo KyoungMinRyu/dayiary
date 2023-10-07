@@ -1,6 +1,6 @@
 package com.icia.web.controller;
 
-import java.math.BigInteger;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -25,6 +25,7 @@ import com.icia.web.model.Paging;
 import com.icia.web.model.Response;
 import com.icia.web.model.Seller;
 import com.icia.web.model.UserG2;
+import com.icia.web.model.UserProfileFile;
 import com.icia.web.service.AdminService;
 import com.icia.web.util.CookieUtil;
 import com.icia.web.util.HttpUtil;
@@ -213,6 +214,52 @@ public class AdminController
       return res;
    }
    
+ //유저 프로필 사진 삭제
+   @RequestMapping(value="/admin/adminManageUserProfileDelete", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> adminManageUserProfileDelete(HttpServletRequest request, HttpServletResponse response)
+   {
+      Response<Object> ajaxResponse = new Response<Object>();
+      String userId = HttpUtil.get(request, "userId", "");
+      String fileName = HttpUtil.get(request, "fileName", "");
+      
+      
+      if(userId != "" && userId != null && fileName != "" && fileName != null)
+      {
+          UserProfileFile userProfileFile = adminService.adminManageUserProfileSelect(fileName);
+            
+          if(userProfileFile != null)
+          {
+             if((StringUtil.equals(userProfileFile.getUserId(), userId)) && (StringUtil.equals(userProfileFile.getFileName(), fileName)))
+            {
+                   if(adminService.adminManageUserProfileDelete(userId, fileName) > -1)
+                  {
+                     ajaxResponse.setResponse(0, "success");
+                  }
+                  else
+                  {
+                     ajaxResponse.setResponse(500, "server error");
+                  }
+            }
+             else
+               {
+                  ajaxResponse.setResponse(403, "server error");
+               }
+          }
+         else
+         {
+            ajaxResponse.setResponse(404, "not found");
+         }
+      }
+      else
+      {
+         ajaxResponse.setResponse(400, "bad request");
+      }
+         
+      return ajaxResponse;
+   }
+   
+   
    //판매자 관리 페이지
    @RequestMapping(value="/admin/adminManageSellerList")
    public String adminManageSellerList(ModelMap model, HttpServletRequest request, HttpServletResponse response)
@@ -365,6 +412,16 @@ public class AdminController
       return res;
    }
    
+   
+   
+   
+
+   // =============================== ADMININDEX ============================================== //
+   
+   
+   
+   
+   
    @RequestMapping(value="/index/adminIndex")
    public String adminIndex(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
    {
@@ -439,6 +496,16 @@ public class AdminController
 		
 	   	return "/index/adminIndex";
    }
+      
+   
+   
+   
+
+   // =============================== RESTO ============================================== //
+   
+   
+   
+   
    
    @RequestMapping(value="/admin/adminRestoList")
    public String adminRestoList(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
@@ -486,6 +553,250 @@ public class AdminController
 	   return ajaxResponse;
    }
    
+   @RequestMapping(value="/admin/adminRestoView")
+   public String adminRestoView(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
+   {
+	   String rSeq = HttpUtil.get(request, "rSeq", "");
+	   modelMap.addAttribute("resto", adminService.selectAdminRestoView(rSeq));
+	   return "/admin/adminRestoView";   
+   }
+   
+   @RequestMapping(value="/admin/updateRestoText", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> updateRestoText(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String cookieAdminId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+	   String changeText = HttpUtil.get(request, "changeText", "");
+	   String rSeq = HttpUtil.get(request, "rSeq", "");
+	   int type = HttpUtil.get(request, "type", -1);
+	   if(!StringUtil.isEmpty(changeText) && !StringUtil.isEmpty(rSeq) && type >= 0)
+	   {
+		   if(StringUtil.equals(cookieAdminId, "adm"))
+		   {
+			   if(type == 0 || type == 1)
+			   {
+				   HashMap<String, Object> hashMap = new HashMap<String, Object>();
+				   hashMap.put("rSeq", rSeq);
+				   hashMap.put("changeText", changeText);
+				   hashMap.put("type", type);
+				   if(adminService.updateRestoText(hashMap) > 0)
+				   {
+					   ajaxResponse.setResponse(0, "Success");
+				   }
+				   else
+				   {
+					   ajaxResponse.setResponse(500, "DB Server Error");
+				   }
+			   }
+			   else 
+			   {
+				   ajaxResponse.setResponse(400, "Bad Request");
+			   }
+		   }
+		   else
+		   {
+			   ajaxResponse.setResponse(404, "Not Found");
+		   }
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+   
+   @RequestMapping(value="/admin/updateMenuText", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> updateMenuText(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String cookieAdminId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+	   String changeText = HttpUtil.get(request, "changeText", "");
+	   String menuSeq = HttpUtil.get(request, "menuSeq", "");
+	   int type = HttpUtil.get(request, "type", -1);
+	   if(!StringUtil.isEmpty(changeText) && !StringUtil.isEmpty(menuSeq) && type >= 0)
+	   {
+		   if(StringUtil.equals(cookieAdminId, "adm"))
+		   {
+			   if(type == 0 || type == 1)
+			   {
+				   HashMap<String, Object> hashMap = new HashMap<String, Object>();
+				   hashMap.put("menuSeq", menuSeq);
+				   hashMap.put("changeText", changeText);
+				   hashMap.put("type", type);
+				   if(adminService.updateMenuText(hashMap) > 0)
+				   {
+					   ajaxResponse.setResponse(0, "Success");
+				   }
+				   else
+				   {
+					   ajaxResponse.setResponse(500, "DB Server Error");
+				   }
+			   }
+			   else 
+			   {
+				   ajaxResponse.setResponse(400, "Bad Request");
+			   }
+		   }
+		   else
+		   {
+			   ajaxResponse.setResponse(404, "Not Found");
+		   }
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+   
+   @RequestMapping(value="/admin/updateRestoImages", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> updateRestoImages(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String cookieAdminId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+	   String rSeq = HttpUtil.get(request, "rSeq", "");
+	   short fileSeq = HttpUtil.get(request, "fileSeq", (short)0);
+	   
+	   if(!StringUtil.isEmpty(rSeq) && fileSeq > 0)
+	   {
+		   if(StringUtil.equals(cookieAdminId, "adm"))
+		   {
+			   HashMap<String, Object> hashMap = new HashMap<String, Object>();
+			   hashMap.put("rSeq", rSeq);
+			   hashMap.put("fileSeq", fileSeq);
+			   
+			   if(adminService.updateRestoImages(hashMap) > 0)
+			   {
+				   ajaxResponse.setResponse(0, "Success");
+			   }
+			   else
+			   {
+				   ajaxResponse.setResponse(500, "DB Server Error");
+			   }
+		   }
+		   else
+		   {
+			   ajaxResponse.setResponse(404, "Not Found");
+		   }
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+   
+   @RequestMapping(value="/admin/updateMenuImages", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> updateMenuImages(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String cookieAdminId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+	   String menuSeq = HttpUtil.get(request, "menuSeq", "");
+	   
+	   if(!StringUtil.isEmpty(menuSeq))
+	   {
+		   if(StringUtil.equals(cookieAdminId, "adm"))
+		   {
+			   
+			   if(adminService.updateMenuImages(menuSeq) > 0)
+			   {
+				   ajaxResponse.setResponse(0, "Success");
+			   }
+			   else
+			   {
+				   ajaxResponse.setResponse(500, "DB Server Error");
+			   }
+		   }
+		   else
+		   {
+			   ajaxResponse.setResponse(404, "Not Found");
+		   }
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+   
+   @RequestMapping(value="/admin/updateAdminRestoStatus", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> updateAdminRestoStatus(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String cookieAdminId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+	   String rSeq = HttpUtil.get(request, "rSeq", "");
+	   String status = HttpUtil.get(request, "status", "");
+	   
+	   if(!StringUtil.isEmpty(rSeq) && !StringUtil.isEmpty(status))
+	   {
+		   if(StringUtil.equals(cookieAdminId, "adm"))
+		   {
+			   HashMap<String, String> hashMap = new HashMap<String, String>();
+			   hashMap.put("rSeq", rSeq);
+			   hashMap.put("status", status);
+			   
+			   if(adminService.updateAdminRestoStatus(hashMap) > 0)
+			   {
+				   ajaxResponse.setResponse(0, "Success");
+			   }
+			   else
+			   {
+				   ajaxResponse.setResponse(500, "DB Server Error");
+			   }
+		   }
+		   else
+		   {
+			   ajaxResponse.setResponse(404, "Not Found");
+		   }
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+   
+   @RequestMapping(value="/admin/selectAdminRestoRevenue", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> selectAdminRestoRevenue(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String cookieAdminId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+	   String rSeq = HttpUtil.get(request, "rSeq", "");
+	   
+	   if(!StringUtil.isEmpty(rSeq))
+	   {
+		   if(StringUtil.equals(cookieAdminId, "adm"))
+		   { 
+			   ajaxResponse.setResponse(0, "Success", adminService.selectAdminRestoRevenue(rSeq));
+		   }
+		   else
+		   {
+			   ajaxResponse.setResponse(404, "Not Found");
+		   }
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+   
+   
+   
+   
+   
+   // =============================== GIFT ============================================== //
+
+   
+   
+   
+   
    @RequestMapping(value="/admin/adminGiftList")
    public String adminGiftList(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
    {
@@ -529,6 +840,162 @@ public class AdminController
 	   Response<Object> ajaxResponse = new Response<Object>();
 	   String searchValue = HttpUtil.get(request, "searchValue", "");
 	   ajaxResponse.setResponse(0, "Success", adminService.selectGiftTotalCount(searchValue));
+	   return ajaxResponse;
+   }
+   
+   @RequestMapping(value="/admin/adminGiftView")
+   public String adminGiftView(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
+   {
+	   String productSeq = HttpUtil.get(request, "productSeq", "");
+	   modelMap.addAttribute("giftAdd", adminService.selectAdminGiftView(productSeq));
+	   return "/admin/adminGiftView";   
+   }
+   
+   
+   @RequestMapping(value="/admin/updateAdminGiftStatus", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> updateAdminGiftStatus(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String cookieAdminId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+	   String productSeq = HttpUtil.get(request, "productSeq", "");
+	   String status = HttpUtil.get(request, "status", "");
+	   
+	   if(!StringUtil.isEmpty(productSeq) && !StringUtil.isEmpty(status))
+	   {
+		   if(StringUtil.equals(cookieAdminId, "adm"))
+		   {
+			   HashMap<String, String> hashMap = new HashMap<String, String>();
+			   hashMap.put("productSeq", productSeq);
+			   hashMap.put("status", status);
+			   
+			   if(adminService.updateAdminGiftStatus(hashMap) > 0)
+			   {
+				   ajaxResponse.setResponse(0, "Success");
+			   }
+			   else
+			   {
+				   ajaxResponse.setResponse(500, "DB Server Error");
+			   }
+		   }
+		   else
+		   {
+			   ajaxResponse.setResponse(404, "Not Found");
+		   }
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+   
+   @RequestMapping(value="/admin/updateGiftText", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> updateGiftText(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String cookieAdminId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+	   String changeText = HttpUtil.get(request, "changeText", "");
+	   String productSeq = HttpUtil.get(request, "productSeq", "");
+	   int type = HttpUtil.get(request, "type", -1);
+	   if(!StringUtil.isEmpty(changeText) && !StringUtil.isEmpty(productSeq) && type >= 0)
+	   {
+		   if(StringUtil.equals(cookieAdminId, "adm"))
+		   {
+			   if(type == 0 || type == 1)
+			   {
+				   HashMap<String, Object> hashMap = new HashMap<String, Object>();
+				   hashMap.put("productSeq", productSeq);
+				   hashMap.put("changeText", changeText);
+				   hashMap.put("type", type);
+				   if(adminService.updateGiftText(hashMap) > 0)
+				   {
+					   ajaxResponse.setResponse(0, "Success");
+				   }
+				   else
+				   {
+					   ajaxResponse.setResponse(500, "DB Server Error");
+				   }
+			   }
+			   else 
+			   {
+				   ajaxResponse.setResponse(400, "Bad Request");
+			   }
+		   }
+		   else
+		   {
+			   ajaxResponse.setResponse(404, "Not Found");
+		   }
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+   
+   @RequestMapping(value="/admin/updateGiftImages", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> updateGiftImages(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String cookieAdminId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+	   String productSeq = HttpUtil.get(request, "productSeq", "");
+	   short fileSeq = HttpUtil.get(request, "fileSeq", (short)0);
+	   
+	   if(!StringUtil.isEmpty(productSeq) && fileSeq > 0)
+	   {
+		   if(StringUtil.equals(cookieAdminId, "adm"))
+		   {
+			   HashMap<String, Object> hashMap = new HashMap<String, Object>();
+			   hashMap.put("productSeq", productSeq);
+			   hashMap.put("fileSeq", fileSeq);
+			   
+			   if(adminService.updateGiftImages(hashMap) > 0)
+			   {
+				   ajaxResponse.setResponse(0, "Success");
+			   }
+			   else
+			   {
+				   ajaxResponse.setResponse(500, "DB Server Error");
+			   }
+		   }
+		   else
+		   {
+			   ajaxResponse.setResponse(404, "Not Found");
+		   }
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+   
+   @RequestMapping(value="/admin/selectAdminGiftRevenue", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> selectAdminGiftRevenue(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String cookieAdminId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+	   String productSeq = HttpUtil.get(request, "productSeq", "");
+	   
+	   if(!StringUtil.isEmpty(productSeq))
+	   {
+		   if(StringUtil.equals(cookieAdminId, "adm"))
+		   { 
+			   ajaxResponse.setResponse(0, "Success", adminService.selectAdminGiftRevenue(productSeq));
+		   }
+		   else
+		   {
+			   ajaxResponse.setResponse(404, "Not Found");
+		   }
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
 	   return ajaxResponse;
    }
 }

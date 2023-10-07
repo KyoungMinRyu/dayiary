@@ -218,8 +218,8 @@ function getGiftTotalRevenueList(formData, listType)
         			
         				makeTag = 
         				    "<div class='item col-xs-4 col-lg-4' onclick=\"fn_giftRevenueDetailView('" + data.productSeq + "')\">" +
-        				    "<div class='thumbnail'><img class='group list-group-image' src='/resources/upload/" + data.fileName + "' alt='' style='width: 400px; height: 250px;'/>" +
-        				    "<div class='caption'><h4 class='group inner list-group-item-heading'>" + data.pName + "</h4><p class='group inner list-group-item-text'>" +
+        				    "<div class='thumbnail'><img class='group list-group-image' src='/resources/upload/" + data.fileName + "' alt='' style='width: 500px; height: 350px;'/>" +
+        				    "<div class='caption'><h4 class='group inner list-group-item-heading' style='font-size: 14px; font-weight: bold;'>" + data.pName + "</h4><p class='group inner list-group-item-text'>" +
         				    "총 구매건수 : " + data.orderTotalCnt.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "건<br>총 구매개수 : " + data.giftTotalCnt.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "개<br>" +
         				    "총 매출액 : " + data.giftTotalPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원<br>가격 : " + data.pPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원</p></div></div></div>";
 
@@ -257,11 +257,16 @@ function getGiftTotalRevenueList(formData, listType)
         }
     });
 }
+
+function fn_giftRevenueDetailView(productSeq)
+{
+	window.location.href = "/admin/adminGiftView?productSeq=" + productSeq;	
+}
 </script>
 </head>
 <body style="height: 100%; background-color: #fffbf4; margin-bottom: auto">
 <%@ include file="/WEB-INF/views/include/adminNavi.jsp" %>
-<div class="container" style="margin-top: 100px;">
+<div class="container" style="margin-top: 100px; width: 1600px;">
     <div class="well well-sm">
 		<div class="btn-group" style="display: flex; justify-content: space-between; align-items: center;">
             <span>
@@ -287,9 +292,9 @@ function getGiftTotalRevenueList(formData, listType)
           	<c:forEach var="admin" items="${list}" varStatus="status">        
         		<div class="item  col-xs-4 col-lg-4" onclick="fn_giftRevenueDetailView('${admin.productSeq}')">
 		            <div class="thumbnail">
-		                <img class="group list-group-image" src="/resources/upload/${admin.fileName}" alt="" style="width: 400px; height: 250px;"/>
+		                <img class="group list-group-image" src="/resources/upload/${admin.fileName}" alt="" style="width: 500px; height: 350px;"/>
 		                <div class="caption">
-		                    <h4 class="group inner list-group-item-heading">${admin.pName}</h4>
+		                    <h4 class="group inner list-group-item-heading" style="font-size: 14px; font-weight: bold;">${admin.pName}</h4>
 		                    <p class="group inner list-group-item-text">
 		                        총 구매건수 : <fmt:formatNumber value="${admin.orderTotalCnt}" pattern="#,###"/>건<br>
 		                        총 구매개수 : <fmt:formatNumber value="${admin.giftTotalCnt}" pattern="#,###"/>개<br>

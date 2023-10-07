@@ -1,420 +1,372 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <html>
 <head>
-<%@ include file="/WEB-INF/views/include/head.jsp" %>
+<%@ include file="/WEB-INF/views/include/head.jsp"%>
 <meta name="viewport"
-   content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 <link rel="stylesheet"
-   href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 
 <script
-   src='https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/8.3.1/smooth-scrollbar.js'></script>
+	src='https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/8.3.1/smooth-scrollbar.js'></script>
 <script
-   src='https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/8.3.1/plugins/overscroll.js'></script>
- <link rel="stylesheet" href="/resources/css/myPagestyle.css">
- <link rel="stylesheet" href="/resources/css/cardstyle.css">
- 
- 
+	src='https://cdnjs.cloudflare.com/ajax/libs/smooth-scrollbar/8.3.1/plugins/overscroll.js'></script>
+<link rel="stylesheet" href="/resources/css/myPagestyle.css">
+<link rel="stylesheet" href="/resources/css/cardstyle.css">
+
+
 
 <style>
-html, body 
-{
-    overflow: hidden; /* 스크롤 비활성화 */
-    height: 100%; /* 화면 전체 높이로 설정 */
-    background-color: #565656;
-    
+html, body {
+	overflow: hidden; /* 스크롤 비활성화 */
+	height: 100%; /* 화면 전체 높이로 설정 */
+	background-color: #565656;
 }
 
-.listContainer
-{
-   width: 100%;
-   height: 100%;
-   margin-top: 100px;
-   margin-left: auto;
-   margin-right: auto;
-   border: none;
-   display: none;
+.listContainer {
+	width: 100%;
+	height: 100%;
+	margin-top: 100px;
+	margin-left: auto;
+	margin-right: auto;
+	border: none;
+	display: none;
 }
 
-.giftlistContainer
-{
-   width: 100%;
-   height: 100%;
-   margin-top: 100px;
-   margin-left: auto;
-   margin-right: auto;
-   border: none;
-   display: none;
+.giftlistContainer {
+	width: 100%;
+	height: 100%;
+	margin-top: 100px;
+	margin-left: auto;
+	margin-right: auto;
+	border: none;
+	display: none;
 }
-.listType input[type="radio"] + span 
-{
-    border: 1px solid #dadada;
-    padding: 15px;
-    width: 100%;
-    display: flex;
-    border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
+
+.listType input[type="radio"]+span {
+	border: 1px solid #dadada;
+	padding: 15px;
+	width: 100%;
+	display: flex;
+	border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
 }
 
 .listType input[type="radio"] {
-    display: none;
-    border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
+	display: none;
+	border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
 }
 
-.listType input[type="radio"] + span {
-    display: inline-block;
-    border: 1px solid #dfdfdf;
-    background-color: #ffffff;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
+.listType input[type="radio"]+span {
+	display: inline-block;
+	border: 1px solid #dfdfdf;
+	background-color: #ffffff;
+	text-align: center;
+	cursor: pointer;
+	border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
 }
 
-.listType input[type="radio"]:checked + span 
-{
-    background-color: #9dafeb;
-    color: #ffffff;
-    border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
+.listType input[type="radio"]:checked+span {
+	background-color: #9dafeb;
+	color: #ffffff;
+	border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
 }
 
-.field.listType div label 
-{
-    flex-basis: 50%;
-    border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
+.field.listType div label {
+	flex-basis: 50%;
+	border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
 }
 
-.field.listType div input[type="radio"]
-{
-    flex-basis: 50%;
-    border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
+.field.listType div input[type="radio"] {
+	flex-basis: 50%;
+	border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
 }
 
-.field.listType div
-{
-    border: 1px solid #dadada;
-    padding-left : 5px;
-    padding-right : 5px; 
-    padding-top: 8px;     
-    width: 95%;
-    height: auto;
-    margin: auto;
-    background-color: #fff;
-    display: flex;
-    flex-direction: row;
-    border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
+.field.listType div {
+	border: 1px solid #dadada;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 8px;
+	width: 95%;
+	height: auto;
+	margin: auto;
+	background-color: #fff;
+	display: flex;
+	flex-direction: row;
+	border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
 }
 
-.itemContainer
-{
-   padding: 10px;
-   width: 100%;
-   height: 805px;
+.itemContainer {
+	padding: 10px;
+	width: 100%;
+	height: 805px;
 }
 
-.listItems
-{   
-   padding: 10px;
-   width: 100%;
-   height: 100%;
-   overflow: auto;
+.listItems {
+	padding: 10px;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
 }
 
-::-webkit-scrollbar 
-{
-    width: 10px; /* 스크롤바의 너비를 조정하세요. */
+::-webkit-scrollbar {
+	width: 10px; /* 스크롤바의 너비를 조정하세요. */
 }
 
 /* 스크롤바의 슬라이더(Thumb) 디자인 */
-::-webkit-scrollbar-thumb 
-{
-    background-color: #333; /* 스크롤바의 배경색을 지정하세요. */
-    border-radius: 5px; /* 스크롤바의 모서리를 둥글게 만듭니다. */
+::-webkit-scrollbar-thumb {
+	background-color: #333; /* 스크롤바의 배경색을 지정하세요. */
+	border-radius: 5px; /* 스크롤바의 모서리를 둥글게 만듭니다. */
 }
 
-.listItem
-{
-   border-radius: 10px; /* 박스 모서리 둥글게 만들기 */
-   border: 1px solid;
-   padding: 10px;
-   width: 100%;
-   height: 250px;
-   display: flex; /* Flexbox 레이아웃을 사용하여 아이템 정렬 */   
-   margin-bottom: 10px;   
-    background-color: #fff;
+.listItem {
+	border-radius: 10px; /* 박스 모서리 둥글게 만들기 */
+	border: 1px solid;
+	padding: 10px;
+	width: 100%;
+	height: 250px;
+	display: flex; /* Flexbox 레이아웃을 사용하여 아이템 정렬 */
+	margin-bottom: 10px;
+	background-color: #fff;
 }
 
-.itemBox 
-{
-    height: 100%;
-    width: 228.67px;
-    border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
-    overflow: hidden; /* 내용이 모서리를 넘어가지 않도록 함 */
+.itemBox {
+	height: 100%;
+	width: 228.67px;
+	border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
+	overflow: hidden; /* 내용이 모서리를 넘어가지 않도록 함 */
 }
 
-.itemImg 
-{
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.itemImg {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }
 
-.itemText
-{
-   width: 100%;
-   padding: 15px;
-   
+.itemText {
+	width: 100%;
+	padding: 15px;
 }
 
-.texts 
-{
-    margin: 0; /* 마진을 제거 */
-    padding: 0; /* 패딩을 제거 */
-    font-family: "원하는 폰트", sans-serif; /* 원하는 폰트 이름으로 변경 */
+.texts {
+	margin: 0; /* 마진을 제거 */
+	padding: 0; /* 패딩을 제거 */
+	font-family: "원하는 폰트", sans-serif; /* 원하는 폰트 이름으로 변경 */
 }
 
-.atext 
-{
-    color: #65FF5E;
+.atext {
+	color: #65FF5E;
 }
 
-.impact
-{
-   font-size: 18px;
-    font-weight: bold;
+.impact {
+	font-size: 18px;
+	font-weight: bold;
 }
 
-
-.itemBtn
-{
-   width: 40%;
-   height: 40px;
-    border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
-    border: none;
-    background-color: #000000;
-    font-size: 20px;
-    color: #ffffff;
-    float: right;
+.itemBtn {
+	width: 40%;
+	height: 40px;
+	border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
+	border: none;
+	background-color: #000000;
+	font-size: 20px;
+	color: #ffffff;
+	float: right;
 }
 
-.textBox .btnBox
-{
-   width: 100%;   
-   display: flex; 
-   flex-wrap: nowrap; /* 이 부분을 추가하여 줄 바꿈을 막습니다. */
-   overflow: hidden; /* 필요한 경우 텍스트가 넘칠 때 가릴 수 있도록 오버플로우를 숨깁니다. */
-   white-space: nowrap; /* 텍스트가 줄 바꿈 되지 않도록 합니다. */
+.textBox .btnBox {
+	width: 100%;
+	display: flex;
+	flex-wrap: nowrap; /* 이 부분을 추가하여 줄 바꿈을 막습니다. */
+	overflow: hidden; /* 필요한 경우 텍스트가 넘칠 때 가릴 수 있도록 오버플로우를 숨깁니다. */
+	white-space: nowrap; /* 텍스트가 줄 바꿈 되지 않도록 합니다. */
 }
 
-.searchBox
-{
-   width: 100%;
-   display: flex;
+.searchBox {
+	width: 100%;
+	display: flex;
 }
 
-.selectBox
-{
-   padding: 10px;
-   width: 100%;
-   height: 76px;
-   display: flex;
+.selectBox {
+	padding: 10px;
+	width: 100%;
+	height: 76px;
+	display: flex;
 }
 
-#_searchType 
-{
-    width: auto; /* 필요한 만큼의 너비를 가집니다. */
-    height: 100%;
-    border-radius: 10px; /* 테두리를 둥글게 만듭니다. */
-    margin-right: 10px; /* 선택 상자 사이의 간격을 조정합니다. */
+#_searchType {
+	width: auto; /* 필요한 만큼의 너비를 가집니다. */
+	height: 100%;
+	border-radius: 10px; /* 테두리를 둥글게 만듭니다. */
+	margin-right: 10px; /* 선택 상자 사이의 간격을 조정합니다. */
 }
-#_searchType1 
-{
-    width: auto; /* 필요한 만큼의 너비를 가집니다. */
-    height: 100%;
-    border-radius: 10px; /* 테두리를 둥글게 만듭니다. */
-    margin-right: 10px; /* 선택 상자 사이의 간격을 조정합니다. */
+
+#_searchType1 {
+	width: auto; /* 필요한 만큼의 너비를 가집니다. */
+	height: 100%;
+	border-radius: 10px; /* 테두리를 둥글게 만듭니다. */
+	margin-right: 10px; /* 선택 상자 사이의 간격을 조정합니다. */
 }
 /* 검색 입력란(input) 스타일 수정 */
-#_searchValue 
-{
-    width: auto; /* 고정된 너비를 가집니다. */
-    height: 100%;
-    border-radius: 10px; /* 테두리를 둥글게 만듭니다. */
-    margin-right: 10px; /* 입력란과 검색 버튼 사이의 간격을 조정합니다. */
-}
-#_searchValue1
-{
-    width: auto; /* 고정된 너비를 가집니다. */
-    height: 100%;
-    border-radius: 10px; /* 테두리를 둥글게 만듭니다. */
-    margin-right: 10px; /* 입력란과 검색 버튼 사이의 간격을 조정합니다. */
+#_searchValue {
+	width: auto; /* 고정된 너비를 가집니다. */
+	height: 100%;
+	border-radius: 10px; /* 테두리를 둥글게 만듭니다. */
+	margin-right: 10px; /* 입력란과 검색 버튼 사이의 간격을 조정합니다. */
 }
 
-
-
-
-h2
-{
-   font-family : 'SUIT-Regular', sans-serif;
+#_searchValue1 {
+	width: auto; /* 고정된 너비를 가집니다. */
+	height: 100%;
+	border-radius: 10px; /* 테두리를 둥글게 만듭니다. */
+	margin-right: 10px; /* 입력란과 검색 버튼 사이의 간격을 조정합니다. */
 }
-p
-{
-   font-family : 'SUIT-Regular', sans-serif;
+
+h2 {
+	font-family: 'SUIT-Regular', sans-serif;
 }
+
+p {
+	font-family: 'SUIT-Regular', sans-serif;
+}
+
 .item span {
-   font-size: 15px;
-}
-.task-box-profile{
-   position: relative;
-  border-radius: 12px;
-  width: 50%;
-  margin: 20px 0;
-  padding: 16px;
-  cursor: pointer;
-  box-shadow: 2px 2px 4px 0px #ebebeb;
+	font-size: 15px;
 }
 
+.task-box-profile {
+	position: relative;
+	border-radius: 12px;
+	width: 50%;
+	margin: 20px 0;
+	padding: 16px;
+	cursor: pointer;
+	box-shadow: 2px 2px 4px 0px #ebebeb;
+}
 
-h2
-{
-   font-family : 'SUIT-Regular', sans-serif;
+h2 {
+	font-family: 'SUIT-Regular', sans-serif;
 }
-p
-{
-   font-family : 'SUIT-Regular', sans-serif
+
+p {
+	font-family: 'SUIT-Regular', sans-serif
 }
+
 .item span {
-   font-size: 15px;
+	font-size: 15px;
 }
 
-.task-box-profile{
-   position: relative;
-  border-radius: 12px;
-  width: 50%;
-  margin: 20px 0;
-  padding: 16px;
-  cursor: pointer;
-  box-shadow: 2px 2px 4px 0px #ebebeb;
+.task-box-profile {
+	position: relative;
+	border-radius: 12px;
+	width: 50%;
+	margin: 20px 0;
+	padding: 16px;
+	cursor: pointer;
+	box-shadow: 2px 2px 4px 0px #ebebeb;
 }
 
-.contain
-{
-display: flex;
-  width: 100%;
-  height: 700px;
+.contain {
+	display: flex;
+	width: 100%;
+	height: 700px;
 }
-
 
 .card-myId {
- 
-  margin: auto;
-  overflow-y: auto;
-  position: relative;
- 
-  background-color: white;
-  transition: 0.3s;
-  flex-direction: column;
-  border-radius: 10px;
-  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2);
-  height: 700px;
-  margin-top: 20px;
-  width:100%;
-  height: 100%;
+	margin: auto;
+	overflow-y: auto;
+	position: relative;
+	background-color: white;
+	transition: 0.3s;
+	flex-direction: column;
+	border-radius: 10px;
+	box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2);
+	height: 700px;
+	margin-top: 20px;
+	width: 100%;
+	height: 100%;
 }
 
-
-.card-header
-{
-   	background-image: url('/resources/images/revenue.png');
+.card-header {
+	background-image: url('/resources/images/revenue.png');
 	object-fit: cover;
 	width: 100%;
 	height: 380px;
 	background-repeat: no-repeat;
-	
 }
+
 .left-content {
-    padding: 40px;
-    margin-top: 0px;
-    width: 250px; /* 넓이를 조절할 값 */
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+	padding: 40px;
+	margin-top: 0px;
+	width: 250px; /* 넓이를 조절할 값 */
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 }
-
-.sellerinfocontainer{
-
-   display:none;
-}
-
-.layerpopup{
-}
-
-
 
 /***** CSS Magic to Highlight Stars on Hover *****/
-
 .container {
-            display: flex;
-            align-items: center;
-        }
-        .container h3 {
-            margin-right: 10px;
-        }
-        select {
-            width: 150px;
-            margin-right: 10px;
-        }
-        input[type="text"] {
-            width: 200px;
-        }
+	display: flex;
+	align-items: center;
+}
 
+.container h3 {
+	margin-right: 10px;
+}
 
-.rating > input:checked ~ label, /* show gold star when clicked */
-.rating:not(:checked) > label:hover, /* hover current star */
-.rating:not(:checked) > label:hover ~ label 
-{ 
-   color: #FFD700;  
+select {
+	width: 150px;
+	margin-right: 10px;
+}
+
+input[type="text"] {
+	width: 200px;
+}
+
+.rating>input:checked ~ label, /* show gold star when clicked */ .rating:not(:checked)>label:hover,
+	/* hover current star */ .rating:not(:checked)>label:hover ~ label {
+	color: #FFD700;
 } /* hover previous stars in list */
-
-.rating > input:checked + label:hover, /* hover current star when changing rating */
-.rating > input:checked ~ label:hover,
-.rating > label:hover ~ input:checked ~ label, /* lighten current selection */
-.rating > input:checked ~ label:hover ~ label 
-{ 
-   color: #FFED85;  
-} 
-
-#buttonContainer 
-{
-    display: flex;
-   margin-top: 10px;
+.rating>input:checked+label:hover,
+	/* hover current star when changing rating */ .rating>input:checked ~
+	label:hover, .rating>label:hover ~ input:checked ~ label,
+	/* lighten current selection */ .rating>input:checked ~ label:hover ~
+	label {
+	color: #FFED85;
 }
 
-#submitButton, #cancelButton 
-{
-    height: 50px;
-    border: none;
-    border-radius: 25px;
-    padding: 10px 20px;
-    cursor: pointer;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    font-weight: bold;
-    font-size: 16px;
-    flex: 1; /* 이 부분이 중요합니다. */
+#buttonContainer {
+	display: flex;
+	margin-top: 10px;
 }
 
-#submitButton 
-{
-    background-color: #3498db; /* 파란색 */
-    color: white;
-    margin-right: 5px; /* 오른쪽 마진 추가 */
+#submitButton, #cancelButton {
+	height: 50px;
+	border: none;
+	border-radius: 25px;
+	padding: 10px 20px;
+	cursor: pointer;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	font-weight: bold;
+	font-size: 16px;
+	flex: 1; /* 이 부분이 중요합니다. */
 }
 
-#cancelButton 
-{
-    background-color: #e74c3c; /* 빨간색 */
-    color: white;
+#submitButton {
+	background-color: #3498db; /* 파란색 */
+	color: white;
+	margin-right: 5px; /* 오른쪽 마진 추가 */
 }
+
+#cancelButton {
+	background-color: #e74c3c; /* 빨간색 */
+	color: white;
+}
+
 </style>
+<script
+	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script type="text/javascript">
 
 let searchType = "";
@@ -427,122 +379,26 @@ let deliveryCompany = "";
 let orderNum="";
 let orderSeq = "";
 let selectedValue = "";
+
 $(document).ready(function() 
 {
-     //왼쪽 판매자정보수정 버튼 클릭 시 ..  
-     $(".item1").on("click", function(){
-     aboutMe();
-     });
+    
    
-
-     $("#hiddenAdd").val($("#roadAddress").val() + " " + $("#detailAddress").val());    
-
-     
-     //회원정보수정 완료 버튼 누를 시 ..
-     $("#btnUpdate").on("click", function() {
-         
-         // 모든 공백 체크 정규식
-         var emptCheck = /\s/g;
-         // 영문 대소문자, 숫자로만 이루어진 4~12자리 정규식
-         var pwCheck = /^[a-zA-Z0-9]{4,12}$/;
-               
-        if($.trim($("#sellerPwd1").val()).length<=0)
-        {
-           alert("비밀번호를 입력하세요.");
-           $("#sellerPwd1").val("");
-           $("#sellerPwd1").focus();
-           return;
-        }
-         
-        if(emptCheck.test($("#sellerPwd1").val()))
-        {
-           alert("비밀번호는 공백을 포함할 수 없습니다.");
-           $("#sellerPwd1").focus();
-           return;
-        } 
+	//운송장번호 입력 취소 
+    $("#cancelButton").click(function() {
+        $("#deliveryContainer").fadeOut();
+        // deliveryNumber 초기화
+        $("#deliveryNumber").val("");
         
-        if(!pwCheck.test($("#sellerPwd1").val()))
-        {
-           alert("비밀번호는 영문대소문자와 숫자로 4~12자리 입니다.");
-           $("#sellerPwd1").focus();
-           return;
-        }
-        
-        if($("#sellerPwd1").val() != $("#sellerPwd2").val())
-        {
-           alert("비밀번호가 일치하지 않습니다.");
-           $("#sellerPwd2").focus();
-           return;
-        }
-        
-       
-        
-         $.ajax({
-            type:"POST",
-            url:"/seller/updateProc",
-            data:{
-               sellerPwd:$("#sellerPwd1").val(),
-               sellerShopName:$("#shopName").val(),
-               sellerAddress:$("#hiddenAdd").val()
-            },   
-            datatype:"JSON",
-            beforeSend:function(xhr)
-            {
-               xhr.setRequestHeader("AJAX", "true");
-            },
-            success:function(response)
-            {
-               if(response.code==0)
-                {
-                  alert("판매자 정보가 수정되었습니다.");
-                  location.href="/";
-                }
-               else if(response.code == 400)
-               {
-                  alert("파라미터 값이 올바르지 않습니다.");
-                  $("#sellerPwd1").focus();
-               }
-               else if(response.code == 404)
-               {
-                  alert("판매자 정보가 존재하지 않습니다.");
-                  location.href="/";
-               }
-               else if(response.code == 500)
-               {
-                  alert("판매자 정보 수정 중 오류가 발생하였습니다.");
-                  $("#sellerPwd1").focus();
-               }
-               else
-               {
-                  alert("판매자 수정 중 오류 발생");
-                  
-               }
-            },
-            error:function(xhr, status, error)
-            {
-               icia.common.error(error);
-            }
-         });
-      });
-     
-   //운송장번호 입력 취소 
-   $("#cancelButton").click(function() {
-       $("#deliveryContainer").fadeOut();
-       // deliveryNumber 초기화
-       $("#deliveryNumber").val("");
-       
-       // 선택된 옵션 초기화 (0번째 옵션을 선택하도록 설정)
-       $(".delivery select").val("0");
-   
-       // 나머지 변수 초기화 (필요에 따라서 초기화)
-       orderNum = "";
-       orderSeq = "";
-   
-   
-   });
-
-   
-   
+        // 선택된 옵션 초기화 (0번째 옵션을 선택하도록 설정)
+        $(".delivery select").val("0");
+    
+        // 나머지 변수 초기화 (필요에 따라서 초기화)
+        orderNum = "";
+        orderSeq = "";
+    
+    
+    });
 
    //운송장번호 입력 시 ..
       $("#submitButton").click(function() 
@@ -706,57 +562,180 @@ $(document).ready(function()
 });
 
 //aboutMe 메서드 실행
-function aboutMe() {
-   
-    var omg = document.querySelector(".sellerinfocontainer");
-    //var omg2 = document.querySelector(".content-categories");
-   var omg3 = document.querySelector(".myPageIndex");
-   omg.style.display = "block";
+function aboutMe() 
+{
+	$.ajax
+    ({
+        type: "POST",
+        url: "/seller/getSellerProfile",
+        success: function(response)
+        {
+			if(response.code == 0)
+			{
+	        	$(".page-content").html("");
+	           	let json = response.data;
+	           	let makeTag = 
+	           	    "<div class='sellerinfocontainer' style='padding: 50px;'>" +
+	           	    "<h2>판매자 정보 수정</h2>" +
+	           	    "<div>" +
+	           	    "<div style='margin-top: 20px;'>" +
+	           	    "<label for='sellerid' style='font-size: 20px'>아이디 : &nbsp;</label>" +
+	           	    "<span style='font-size: 20px;'>" + json.sellerId + "</span>" +
+	           	    "</div>" +
+	           	    "<div>" +
+	           	    "<label for='sellerid' style='font-size: 20px'>가입일 : &nbsp;</label>" +
+	           	    "<span style='font-size: 20px;'>" + json.regDate + "</span>" +
+	           	    "</div>" +
+	           	    "<div>" +
+	           	    "<label for='sellerid' style='font-size: 20px'>이메일 : &nbsp;</label>" +
+	           	    "<span style='font-size: 20px;'>" + json.sellerEmail + "</span>" +
+	           	    "</div>" +
+	           	    "<div>" +
+	           	    "<label for='sellerid' style='font-size: 20px'>사업자번호 : &nbsp;</label>" +
+	           	    "<span style='font-size: 20px;'>" + json.sellerBusinessId + "</span>" +
+	           	    "</div>" +
+	           	    "<div>" +
+	           	    "<label for='sellerid' style='font-size: 20px'>전화번호 : &nbsp;</label>" +
+	           	    "<span style='font-size: 20px;'> " + json.sellerPh + "</span>" +
+	           	    "</div>" +
+	           	    "<form>" +
+	           	    "<div style='margin-top: 20px; display: flex; justify-content: flex-start;'>" +
+	           	    "<label for='sellerpwd' style='font-size: 20px;'>비밀번호 : &nbsp;</label>" +
+	           	    "<input style='width: 77.5%;' type='password' class='form-control' id='sellerPwd1' name='sellerPwd1' value=" + json.sellerPwd + " placeholder='비밀번호'/>" +
+	           	    "</div>" +
+	           	    "<div style='margin-top: 20px; display: flex; justify-content: flex-start;'>" +
+	           	    "<label for='sellerpwd' style='font-size: 20px'>비밀번호 확인 : &nbsp;</label>" +
+	           	    "<input style='width: 74.3%;' type='password' class='form-control' id='sellerPwd2' name='sellerPwd2' value='" + json.sellerPwd + "' placeholder='비밀번호 확인' />" +
+	           	    "</div>" +
+	           	    "<div style='margin-top: 20px; display: flex; justify-content: flex-start;'>" +
+	           	    "<label for='shopname' style='font-size: 20px'>판매자 상호명 : &nbsp;</label>" +
+	           	    "<input style='width: 74.3%;' type='text' class='form-control' id='shopName' name='shopName' value='" + json.sellerShopName + "' placeholder='상호명' />" +
+	           	    "</div>" +
+	           	    "<div style='margin-top: 20px;'>" +
+	           	    "<br>" +
+	           	    "<label for='selleradd' style='font-size: 25px'>판매자 주소</label>" +
+	           	    "<div class='field'>" +
+	           	    "<input type='button' onclick='getDaumPostcode()' value='우편번호 찾기' style='height: 38px; background-color: #000; color: white; font-size: 15px;'>" +
+	           	    "</div>" +
+	           	    "<div style='display: flex; justify-content: flex-start; margin-top: 15px;'>" +
+	           	    "<input type='text' name='postcode' id='postcode' style='width: 20%; height: 38px; margin-right: 10px;; background-color: #FFF;' placeholder='우편번호' disabled> " +
+	           	    "<input type='text' name='roadAddress' id='roadAddress' style='width: 64%; height: 38px; background-color: #FFF;' value='" + json.sellerAddress + "' placeholder='도로명주소' disabled>" +
+	           	    "</div>" +
+	           	    "<div>" +
+	           	    "<input type='text' name='detailAddress' id='detailAddress' style='width: 84.8%; height: 38px; margin-top: 15px;' placeholder='상세주소'>" +
+	           	    "</div>" +
+	           	    "</div>" +
+	           	    "<button style='font-size: 20px; width: 20%; margin-top: 15px;' type='button' id='btnUpdate' class='btn btn-primary'>수정</button>" +
+	           	    "<input type='hidden' name='hiddenAdd' id='hiddenAdd'>" +
+	           	    "</form>" +
+	           	    "</div>" +
+	           	    "</div>";
+	           	    
+	           	$(".page-content").html(makeTag);
+	           	
+	           	$("#hiddenAdd").val($("#roadAddress").val() + " " + $("#detailAddress").val());    
 
-           
-            
-            if (omg3.style.display === "block") {
-                omg3.style.display = "none";
-            }          
+	            //회원정보수정 완료 버튼 누를 시 ..
+	           	$("#btnUpdate").on("click", function() 
+	       		{
+	                // 모든 공백 체크 정규식
+	               	var emptCheck = /\s/g;
+	               // 영문 대소문자, 숫자로만 이루어진 4~12자리 정규식
+	               	var pwCheck = /^[a-zA-Z0-9]{4,12}$/;
+	                      
+	               	if($.trim($("#sellerPwd1").val()).length<=0)
+	               	{
+	               		alert("비밀번호를 입력하세요.");
+	                  	$("#sellerPwd1").val("");
+	                  	$("#sellerPwd1").focus();
+	                  	return;
+	               	}
+	                
+	               	if(emptCheck.test($("#sellerPwd1").val()))
+	               	{
+	                	alert("비밀번호는 공백을 포함할 수 없습니다.");
+	                  	$("#sellerPwd1").focus();
+	                  	return;
+	               	} 
+	               
+	               	if(!pwCheck.test($("#sellerPwd1").val()))
+	               	{
+	                  	alert("비밀번호는 영문대소문자와 숫자로 4~12자리 입니다.");
+	                  	$("#sellerPwd1").focus();
+	                  	return;
+	               	}
+	               
+	               	if($("#sellerPwd1").val() != $("#sellerPwd2").val())
+	               	{
+	                  	alert("비밀번호가 일치하지 않습니다.");
+	                  	$("#sellerPwd2").focus();
+	                  	return;
+	               	}
+	               
+	       			$.ajax
+	       			({
+	                	type:"POST",
+	                   	url:"/seller/updateProc",
+	                   	data:
+	                   	{
+	                    	sellerPwd:$("#sellerPwd1").val(),
+	                      	sellerShopName:$("#shopName").val(),
+	                      	sellerAddress:$("#hiddenAdd").val()
+	                   	},   
+	                   	datatype:"JSON",
+	                   	success:function(response)
+	                   	{
+	                      	if(response.code==0)
+	                       	{
+	                         	alert("판매자 정보가 수정되었습니다.");
+	                         	aboutMe();
+	                       	}
+	                      	else if(response.code == 400)
+	                      	{
+	                         	alert("파라미터 값이 올바르지 않습니다.");
+	                         	$("#sellerPwd1").focus();
+	                      	}
+	                      	else if(response.code == 404)
+	                      	{
+	                         	alert("판매자 정보가 존재하지 않습니다.");
+	                         	location.href="/seller/logout";
+	                      	}
+	                      	else if(response.code == 500)
+	                      	{
+	                         	alert("판매자 정보 수정 중 오류가 발생하였습니다.");
+	                         	$("#sellerPwd1").focus();
+	                      	}
+	                      	else
+	                      	{
+	                         	alert("판매자 수정 중 오류 발생");
+	                      	}
+	                   	},
+	                   	error:function(xhr, status, error)
+	                   	{
+	                      	icia.common.error(error);
+	                   	}
+	          		});
+	          	});
+			}
+			else
+			{
+                location.href="/seller/logout";
+			}
+        },
+        error: function(xhr, status, error) 
+        {
+            console.log(error);
+        }
+    });  
 }
 
-//선물 배송, 레스토랑 예약 내역에서 셀렉할까봐 (예정) 
-      
-      $("#btnSearch").on("click", function() 
-      {
-            searchType = $("#_searchType").val();
-            searchValue = $("#_searchValue").val();
-            
-            let formData = 
-             {
-            searchType: searchType,
-            searchValue: searchValue
-             };
-
-            $(".listItems").html("");
-            
-            if(listType == 0)
-            {
-                  fn_getRestoList("/user/getMoreRestoList", formData);
-            }
-            else if(listType == 1)
-            {
-
-               
-            }
-            else
-            {
-               return;
-            }
-         });   
-         
-      function fn_writeDeliveryNum(seq) 
-      {
-         deliveryContainer.style.display = "flex";
-         orderSeq = seq;
-         console.log(orderSeq);
-         $("#deliveryContainer").fadeIn();
-      }
+function fn_writeDeliveryNum(seq) 
+{
+   deliveryContainer.style.display = "flex";
+   orderSeq = seq;
+   console.log(orderSeq);
+   $("#deliveryContainer").fadeIn();
+}
 
       
    
@@ -802,12 +781,25 @@ function fn_restoList(url)
                     "</div></a><div class='itemText'>" + json[i].regDate;
                makeTag +=      
                     "<p class='texts impact' style='margin-top: 5px; font-size:20px;'><b>" + json[i].restoName + "</b></p><br>" +
-                    "<p class='texts impact' style='font-size:20px;' ><b>레스토랑 주소 : "  + json[i].restoAddress + "</b></p><br>" +
-                    "<p class='texts impact' style='font-size:20px;'><b>레스토랑 휴무일: " + json[i].restoOff + "</b></p><br><br>" +
-  
-                     "<a href='/seller/restoUpdateForm?rSeq=" +  json[i].rSeq + "' >수정하기</a>";
-            
-            makeTag += "</div></div>";
+                    "<p class='texts impact' style='font-size:20px;  font-weight: 310;' ><b> 레스토랑  주소 : "  + json[i].restoAddress + "</b></p><br>" ;
+                  
+               makeTag += "<p class='texts impact' style='font-size:20px; font-weight: 310;'><b>레스토랑 휴무일: ";
+
+               if (json[i].restoOff !== null && json[i].restoOff !== "") {
+                  makeTag += json[i].restoOff;
+               } else {
+                  makeTag += "연중무휴";
+               }
+               makeTag += "</b></p><br><br>";
+               
+               if (json[i].status === 'T') {
+                  makeTag += "<span style='font-size: 18px; color: red;'> 매장 상태 정지입니다. 관리자에게 문의하세요. ( mail:dbrudals85@gmail.com / phone:010-9604-7420 )</span>";
+               }
+               if (json[i].status !== 'T') {
+                  makeTag += "<a href='/seller/restoBring?rSeq=" + json[i].rSeq +"' style='font-size: 18px; color: blue;'>수정하기</a>";
+               }
+
+            	makeTag += "</div></div>";
               show += makeTag;
 
               makeTag = "";
@@ -831,23 +823,31 @@ function fn_giftList(url)
         url: url,
         success: function(response)
         {
-           	console.log(response.data); 
-           	let json = response.data;
-           	let makeTag = "";
-           	let show = "";
-           	for(let i = 0; i < json.length; i++)
-           	{
-           		makeTag = 
+           console.log(response.data); 
+           let json = response.data;
+           let makeTag = "";
+           let show = "";
+            for(let i = 0; i < json.length; i++)
+           {
+              makeTag = 
                     "<div class='listItem'><a href='/gift/giftview?productSeq=" + json[i].productSeq + "'>" +
                     "<div class='itemBox'><img class='itemImg' src='/resources/upload/" + json[i].fileName + "'>" +
                     "</div></a><div class='itemText'>" + json[i].regDate;
-               makeTag +=      
+              makeTag +=      
                     "<p class='texts impact' style='margin-top: 5px; font-size:20px;'><b>" + json[i].pName + "</b></p><br>" +
                     "<p class='texts impact' style='font-size:20px;'><b>선물 가격: " + json[i].pPrice + "원</b></p><br>" +
-                    "<p class='texts impact' style='font-size:20px;'><b>선물 공개여부: " + json[i].status + "</b></p><br><br>" +
-                     "<a href='/seller/giftBring?productSeq=" +  json[i].productSeq + "' >수정하기</a>";
+                    "<p class='texts impact' style='font-size:20px;'><b>선물 공개여부: " + json[i].status + "</b></p><br><br>" ;
+                    
+                    
+                    if (json[i].status === 'T') {
+                       makeTag += "<span style='font-size: 18px; color: red;'>선물 상태 정지입니다. 관리자에게 문의하세요. ( mail:dbrudals85@gmail.com / phone:010-9604-7420 )</span>";
+                    }
+                    if (json[i].status !== 'T') {
+                       makeTag += "<a href='/seller/giftBring?productSeq=" +  json[i].productSeq +"' style='font-size: 18px; color: blue;'>수정하기</a>";
+                    }      
+         
             
-            makeTag += "</div></div>";
+              makeTag += "</div></div>";
               show += makeTag;
 
               makeTag = "";
@@ -883,8 +883,6 @@ function orderRestoGiftList(type)
       return;
    }
 }
-
-
 
 //식당 예약 리스트 클릭 시.
 function fn_restoList2(url, formData) {
@@ -931,47 +929,6 @@ function fn_restoList2(url, formData) {
         }
     });
 }
-
-//식당 예약 취소 버튼을 눌렀을 때 실행되는 함수 정의
-function cancelRestoOrder(orderSeq, status) {
-
-   $(".page-content").html("");
-   
-   let formData =
-      {
-         orderSeq : orderSeq,
-         status: status
-      };
-   
-   $.ajax
-    ({
-        type: "POST",
-        url: "/seller/sellerCancelReserv",
-        data: formData,
-        success: function(response)
-        {
-           if(response.code == 0)
-         {
-              alert("예약 취소가 완료되었습니다.");
-              orderRestoGiftList("1");
-   
-           }
-           else if(response.code == 500)
-           {
-              alert(response.data);
-           }
-           else
-           {
-              alert("알 수 없는 오류가 발생하였습니다.");
-           }
-        },
-        error: function(xhr, status, error) 
-        {
-            console.log(error);
-        }
-    });  
-}
-
 
 //선물배송리스트 클릭 시 
 function fn_giftList2(url, formData) {
@@ -1169,102 +1126,11 @@ function orderRestoList()
    location.href = '/seller/sellerRestoCheck';
 }
 
-function myRestoNPresent(type)
-{
-   let formData = 
-    {
-      type: type
-    };
-   
-   listType = type;
-   
-   
-   $.ajax
-    ({
-        type: "POST",
-        url: "/user/getTotalCount",
-        data: formData,
-        success: function(response)
-        {
-           totalCount = response.data;
-           startRow = 1;
-           endRow = 10;
-           console.log(totalCount);
-           console.log(startRow);
-           console.log(endRow);
-           formData = 
-          {
-            startRow: startRow,
-            endRow: endRow
-          };
-          
-           if(totalCount > 0)
-           {
-               $(".listItems").html("");
-             fn_getRestoList("/user/getMoreRestoList", formData);
-           }
-        },
-        error: function(xhr, status, error) 
-        {
-            console.log(error);
-        }
-    });  
-}
-
-function fn_getRevenue(type)
-{
-	let formData = 
-    {
-      type: type
-    };
-	
-	let sellerContainer = $("#sellerContainer");
-	
-	$.ajax
-    ({
-        type: "POST",
-        url: "/seller/getRevenue",
-        data: formData,
-        success: function(response)
-        {
-        	if(response.code == 0)
-         	{
-        		console.log(response.data);
-        		let makeTag = "";
-        		sellerContainer.html("");
-        		if(type == 0)
-        		{
-        			makeTag = 
-        				"<div class='profilecard-name' style='text-align: center;'><b style='font-size : 20px;'>예약완료건수 : " + response.data.totalReservCnt +
-        				"건</b></div><div class='profilecard-name' style='text-align: center;'><b style='font-size : 20px;'>총 매출 : " + response.data.totalRevenue + "원</b></div>";
-        		}
-        		else if(type == 1)
-        		{
-        			
-        		}
-        		else
-        		{
-        			return;	
-        		}
-        		sellerContainer.html(makeTag);
-         	}
-        	else
-        	{
-        		return;
-        	}
-           
-        },
-        error: function(xhr, status, error) 
-        {
-            console.log(error);
-        }
-    });  
-}
-
 function fn_movePage()
 {
-	window.location.href = "/seller/sellerMyPage";
+   window.location.href = "/seller/sellerMyPage";
 }
+
 
 function fn_getMyThings(type)
 {
@@ -1335,99 +1201,144 @@ function fn_getMyThings(type)
 
 </head>
 <body>
-<link href="https://fonts.googleapis.com/css?family=DM+Sans:400,500,700&display=swap" rel="stylesheet">
-<%@ include file="/WEB-INF/views/include/navigation.jsp" %>
+	<link
+		href="https://fonts.googleapis.com/css?family=DM+Sans:400,500,700&display=swap"
+		rel="stylesheet">
+	<%@ include file="/WEB-INF/views/include/navigation.jsp"%>
 
-<div id="deliveryContainer" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); height:600px; width:40%; display: none; flex-direction: column; align-items: center; justify-content: center; background: white; border-radius: 25px;">
-   
-    <h3 style="display: inline-block; margin: 20px 10px 0 0;">운송장 입력</h3>
-    <span class="delivery" style="display: inline-block;">
-   <select>
-        <option value="0">DHL</option><option value="1">Sagawa</option>
-        <option value="2">Kuroneko Yamato</option><option value="3">Japan Post</option>
-        <option value="4">천일택배</option><option value="5">CJ대한통운</option>
-        <option value="6">CU 편의점택배</option><option value="7">GS Postbox 택배</option>
-        <option value="8">CWAY (Woori Express)</option><option value="9">대신택배</option>
-        <option value="10">우체국 택배</option><option value="11">한의사랑택배</option>
-        <option value="12">한진택배</option><option value="13">합동택배</option>
-        <option value="14">홈픽</option><option value="15">한서호남택배</option>
-        <option value="16">일양로지스</option><option value="17">경동택배</option>
-        <option value="18">건영택배</option><option value="19">로젠택배</option>
-        <option value="20">롯데택배</option><option value="21">SLX</option>
-        <option value="22">성원글로벌카고</option><option value="23">TNT</option>
-        <option value="24">EMS</option><option value="25">Fedex</option>
-        <option value="26">UPS</option><option value="27">USPS</option>
-    </select>
-   </span>
+	<div id="deliveryContainer"
+		style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 600px; width: 40%; display: none; flex-direction: column; align-items: center; justify-content: center; background: white; border-radius: 25px;">
 
-   <h4 style="margin-bottom: 15px;">송장번호</h4>
-    <input type="text" id="deliveryNumber" maxlength="12" name="deliveryNumber" placeholder="최대 12자리까지 입력 가능합니다"  />
+		<h3 style="display: inline-block; margin: 20px 10px 0 0;">운송장 입력</h3>
+		<span class="delivery" style="display: inline-block;"> <select>
+				<option value="0">DHL</option>
+				<option value="1">Sagawa</option>
+				<option value="2">Kuroneko Yamato</option>
+				<option value="3">Japan Post</option>
+				<option value="4">천일택배</option>
+				<option value="5">CJ대한통운</option>
+				<option value="6">CU 편의점택배</option>
+				<option value="7">GS Postbox 택배</option>
+				<option value="8">CWAY (Woori Express)</option>
+				<option value="9">대신택배</option>
+				<option value="10">우체국 택배</option>
+				<option value="11">한의사랑택배</option>
+				<option value="12">한진택배</option>
+				<option value="13">합동택배</option>
+				<option value="14">홈픽</option>
+				<option value="15">한서호남택배</option>
+				<option value="16">일양로지스</option>
+				<option value="17">경동택배</option>
+				<option value="18">건영택배</option>
+				<option value="19">로젠택배</option>
+				<option value="20">롯데택배</option>
+				<option value="21">SLX</option>
+				<option value="22">성원글로벌카고</option>
+				<option value="23">TNT</option>
+				<option value="24">EMS</option>
+				<option value="25">Fedex</option>
+				<option value="26">UPS</option>
+				<option value="27">USPS</option>
+		</select>
+		</span>
 
-   <div id="buttonContainer">
-       <input type="button" value="등록" id="submitButton">
-       <input type="button" value="취소" id="cancelButton" style="margin-left: 10px;">
-   </div>
-</div>
+		<h4 style="margin-bottom: 15px;">송장번호</h4>
+		<input type="text" id="deliveryNumber" maxlength="12"
+			name="deliveryNumber" placeholder="최대 12자리까지 입력 가능합니다" />
 
-<div class="task-manager">
-  <div class="left-bar">
-    <div class="upper-part">
-      <div class="actions">
-        <div class="circle"></div>
-        <div class="circle-2"></div>
-      </div>
-    </div>
-    <div class="left-content">
-     <h6>판매자 메인페이지</h6> 
-     <button class="small-button" onclick="location.href='/index/sellerIndex'" style="height : 36px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9"/><path d="M9 22V12h6v10M2 10.6L12 2l10 8.6"/></svg>
-      </button>
-      
-    <ul class="profile-section">
-        <div class="profile-section1">
-         
-      </div>
-        <hr class="profile-divider">  <!-- This is the separating line -->
-   
-    </ul>
-    <div class="content-item">
+		<div id="buttonContainer">
+			<input type="button" value="등록" id="submitButton"> <input
+				type="button" value="취소" id="cancelButton"
+				style="margin-left: 10px;">
+		</div>
+	</div>
 
-      <ul class="action-list">
-      	<li class="item" onclick="fn_movePage()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-          <span style="font-size: 18px;">내 정보</span>
-        </li>
-        <li class="item" onClick="restoGiftList('1')">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-          <span style="font-size: 18px;">내 레스토랑</span>
-        </li>
-         <li class="item" onclick="restoGiftList('2')">
-         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          <span style="font-size: 18px;">내 선물</span>
-        </li>
-        <li class="item" onclick="orderRestoGiftList('1')">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h0M2 9.5h20"/></svg>
-          <span style="font-size: 18px;">식당 예약내역</span>
-        </li>    
-        <li class="item" onclick="orderRestoGiftList('2')">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h0M2 9.5h20"/></svg>
-          <span style="font-size: 18px;">선물 배송내역</span>
-        </li>
-         <li class="item1" onclick="aboutMe()" >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </svg>
-            <span style="font-size: 18px;">   내 정보수정</span>
-          </li>
-      </ul>
+	<div class="task-manager">
+		<div class="left-bar">
+			<div class="upper-part">
+				<div class="actions">
+					<div class="circle"></div>
+					<div class="circle-2"></div>
+				</div>
+			</div>
+			<div class="left-content">
+				<h6>판매자 메인페이지</h6>
+				<button class="small-button"
+					onclick="location.href='/index/sellerIndex'" style="height: 36px;">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+						viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2"
+						stroke-linecap="butt" stroke-linejoin="bevel">
+						<path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9" />
+						<path d="M9 22V12h6v10M2 10.6L12 2l10 8.6" /></svg>
+				</button>
 
-      </div>
-      
-    </div>
-  </div>
+				<ul class="profile-section">
+					<div class="profile-section1"></div>
+					<hr class="profile-divider">
+					<!-- This is the separating line -->
 
-  
-  <div class="page-content" style="padding: 10px;">
-  
+				</ul>
+				<div class="content-item">
+
+					<ul class="action-list">
+						<li class="item" onclick="fn_movePage()"><svg
+								xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+								viewBox="0 0 24 24" fill="none" stroke="#000000"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path
+									d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+								<rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> <span
+							style="font-size: 18px;">내 정보</span></li>
+						<li class="item" onClick="restoGiftList('1')"><svg
+								xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+								viewBox="0 0 24 24" fill="none" stroke="#000000"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path
+									d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+								<rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> <span
+							style="font-size: 18px;">내 레스토랑</span></li>
+						<li class="item" onclick="restoGiftList('2')"><svg
+								xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+								viewBox="0 0 24 24" fill="none" stroke="#000000"
+								stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel">
+								<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+								<line x1="16" y1="2" x2="16" y2="6"></line>
+								<line x1="8" y1="2" x2="8" y2="6"></line>
+								<line x1="3" y1="10" x2="21" y2="10"></line></svg> <span
+							style="font-size: 18px;">내 선물</span></li>
+						<li class="item" onclick="orderRestoGiftList('1')"><svg
+								xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+								viewBox="0 0 24 24" fill="none" stroke="#000000"
+								stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel">
+								<rect x="2" y="4" width="20" height="16" rx="2" />
+								<path d="M7 15h0M2 9.5h20" /></svg> <span style="font-size: 18px;">식당
+								예약내역</span></li>
+						<li class="item" onclick="orderRestoGiftList('2')"><svg
+								xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+								viewBox="0 0 24 24" fill="none" stroke="#000000"
+								stroke-width="2" stroke-linecap="butt" stroke-linejoin="bevel">
+								<rect x="2" y="4" width="20" height="16" rx="2" />
+								<path d="M7 15h0M2 9.5h20" /></svg> <span style="font-size: 18px;">선물
+								배송내역</span></li>
+						<li class="item1" onclick="aboutMe()"><svg
+								xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+								viewBox="0 0 24 24" fill="none" stroke="#000000"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<circle cx="12" cy="12" r="3"></circle>
+								<path
+									d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg> <span style="font-size: 18px;"> 내 정보수정</span></li>
+					</ul>
+
+				</div>
+
+			</div>
+		</div>
+		<div class="page-content" style="padding: 10px;">
+
+			
+
+			
     <div class="page-contentmain">
     
     
@@ -1478,14 +1389,13 @@ function fn_getMyThings(type)
     
     
     </div>
-  </div>
-  
- 
 
 
 
+		</div>
 
-<!-- partial -->
+
+
 
 </body>
-</html>   
+</html>

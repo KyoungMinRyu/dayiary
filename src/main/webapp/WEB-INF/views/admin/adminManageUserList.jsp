@@ -113,7 +113,58 @@ function fn_pageInit()      //검색타입, 검색값 초기화 함수
    fn_search();      
 }
 
-
+   
+//유저 기본 프로필로 변경
+function userProfileDelete(userId, fileName)
+{
+   
+   if(confirm("기본 프로필 사진으로 변경 하시겠습니까?"))   
+    {   
+      
+      if(fileName !== "" && fileName !== null & userId !== "" && userId !== null)        
+      {   
+           icia.ajax.post
+           ({
+                 url:"/admin/adminManageUserProfileDelete",   
+                 data:
+                 {
+                    userId:userId,
+                    fileName:fileName
+                 },
+                 datatype:"JSON",
+                 
+                 success:function(response)
+                 {
+                    if(response.code == 0)
+                    {
+                       alert("기본 프로필 사진으로 변경이 완료되었습니다.");
+                       document.bbsForm.action = "/admin/adminManageUserList";
+                       document.bbsForm.submit();
+                    }
+                    else if(response.code == 400)
+                    {
+                       alert("입력 값이 올바르지 않습니다.");
+                    }
+                    else if(response.code == 404)
+                    {
+                       alert("등록된 프로필 사진이 없습니다.");
+                    } 
+                    else
+                    {
+                        alert("오류가 발생하였습니다.");
+                    }   
+                 },
+                 error:function(xhr, status, error)
+                 {
+                    icia.common.error(error);   
+                 }
+                 
+                });
+        
+        }
+      
+    }
+}
 
 </script>
 </head>
@@ -147,6 +198,7 @@ function fn_pageInit()      //검색타입, 검색값 초기화 함수
          <table class="table table-hover" style="border:2px solid #c4c2c2; font-size:18px;">
             <thead style="border-bottom: 1px solid #c4c2c2;">
             <tr class="table-thead-main">
+               <th scope="col" style="width:5%;"></th>
                <th scope="col" style="width:15%;">아이디</th>
                <th scope="col">이름</th>
                <th scope="col">닉네임</th>
@@ -159,11 +211,14 @@ function fn_pageInit()      //검색타입, 검색값 초기화 함수
          <c:if test="${!empty list}">
           <c:forEach items="${list}" var="user" varStatus="status">
             <tr>
-                <th scope="row" class="table-thead-sub" style="border: 1px solid #c4c2c2;"><a href="/admin/adminManageUserUpdate?userId=${user.userId}" name="adminManageUserUpdate">${user.userId}</a></th>             
-                <td>${user.userName}</td>
-                <td>${user.userNickName}</td>
-                <td><c:if test="${user.status == 'Y' }">정상</c:if><c:if test="${user.status == 'N'}">정지</c:if></td>
-                <td>${user.regDate}</td>
+               <th><img src="${user.fileName}" alt="" onclick="userProfileDelete('${user.userId}', '${user.fileName}')" style="width: 60px; height: 50px;  cursor: pointer; border-radius:15px;"></th>
+                <th scope="row" class="table-thead-sub" style="border: 1px solid #c4c2c2; padding-top:24px;">
+                <a href="/admin/adminManageUserUpdate?userId=${user.userId}" name="adminManageUserUpdate">${user.userId}</a>
+                </th>             
+                <td style="padding-top:24px;">${user.userName}</td>
+                <td style="padding-top:24px;">${user.userNickName}</td>
+                <td style="padding-top:24px;"><c:if test="${user.status == 'Y' }">정상</c:if><c:if test="${user.status == 'N'}">정지</c:if></td>
+                <td style="padding-top:24px;">${user.regDate}</td>
             </tr>
             </c:forEach>
          </c:if>
@@ -199,5 +254,10 @@ function fn_pageInit()      //검색타입, 검색값 초기화 함수
          </div>
       </div>
    </div>
+<form name="bbsForm" id="bbsForm" method="post">            
+   <input type="hidden" name="searchType" value="${searchType}" />
+   <input type="hidden" name="searchValue" value="${searchValue}" />
+   <input type="hidden" name="curPage" value="${curPage}" />
+</form>
 </body>
 </html>

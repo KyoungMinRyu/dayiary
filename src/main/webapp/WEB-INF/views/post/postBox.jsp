@@ -483,7 +483,7 @@ function toggleDiscussionColor(element, i) {
 </c:if> 
  
 <c:if test="${empty currentList}">
-        <div class="discussion")>
+        <div class="discussion">
           <div class="desc-contact">
             <p class="message">아직 주고받은 쪽지가 없습니다.</p>
           </div>

@@ -190,6 +190,11 @@ else if(cookieSeller != null)
     transform: translateY(2000%) rotate(1440deg);
   }
 }
+
+b
+{
+   font-family: 'sans-serif' !important;
+}
 </style>
 <%      
 if(cookieUser != null)

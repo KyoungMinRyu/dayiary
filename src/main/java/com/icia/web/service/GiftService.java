@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.icia.web.dao.GiftDao;
 import com.icia.web.model.GiftAdd;
 import com.icia.web.model.GiftFile;
+import com.icia.web.model.RestoReview;
 
 @Service("giftService")
 public class GiftService {
@@ -35,7 +36,7 @@ public class GiftService {
 
 			for (int i = 0; i < giftFileList.size(); i++) {
 				giftAdd.getGiftFileList().get(i).setProductSeq(productSeq);
-				giftDao.giftFileInsert(giftAdd.getGiftFileList().get(i));
+				giftDao.giftFileInsert(giftFileList.get(i));
 			}
 
 		}
@@ -58,32 +59,19 @@ public class GiftService {
 	}
 
 	// 선물 조회(첨부파일 포함, 포함)
-	public GiftAdd giftView(String productSeq) {
+	public GiftAdd giftView(String productSeq) 
+	{
 		GiftAdd giftAdd = null;
-
-		try {
-
-			giftAdd = giftDao.giftSelect(productSeq);
-
-		} catch (Exception e) {
-			logger.error("[giftService] giftView Exception", e);
+		try 
+		{
+			giftAdd = giftDao.selectAdminGiftView(productSeq);
+			giftAdd.setGiftFileList(giftDao.selectGiftFIleList(productSeq));
 		}
-
+		catch (Exception e) 
+		{
+	         logger.error("[GiftService](giftView)", e);
+		}
 		return giftAdd;
-	}
-
-	// 선물 2번째 사진 이상부터 뿌리기
-	public GiftFile giftFileView(String productSeq) {
-		GiftFile giftFile = null;
-
-		try {
-			giftFile = giftDao.giftFileSelect(productSeq);
-
-		} catch (Exception e) {
-			logger.error("[giftService] giftFileView Exception", e);
-		}
-
-		return giftFile;
 	}
 
 	// 총 선물 수 조회
@@ -159,6 +147,22 @@ public class GiftService {
 		return list;
 	}
 	
+	   // 선물 리뷰 리스트
+    public List<RestoReview> productReviewList(String productSeq)
+    {
+       List<RestoReview> productReviewList = null;
+
+       try 
+       {
+          productReviewList = giftDao.productReviewList(productSeq);
+       } 
+       catch (Exception e)
+       {
+          logger.error("[GiftService] productReviewList Exception", e);
+       }
+
+       return productReviewList;
+    }
 }
 
 

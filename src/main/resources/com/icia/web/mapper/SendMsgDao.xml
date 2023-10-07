@@ -59,17 +59,17 @@ SELECT A.TO_USER_ID AS TO_USER_ID,
        A.MSG_CONTENT AS MSG_CONTENT,
        A.SEND_DATE AS SEND_DATE,
        B.USER_NICKNAME AS USER_NICKNAME,
-       C.FILE_NAME AS FILE_NAME,
+       NVL(C.FILE_NAME, '/resources/images/profile.png') AS FILE_NAME,
        A.STATUS
-  FROM SEND_MSG A, G2_USER B, USER_PROFILE_FILE C
- WHERE ((A.FROM_USER_ID = #{value} AND A.TO_USER_ID = B.USER_ID) OR
-        (A.TO_USER_ID = #{value} AND A.FROM_USER_ID = B.USER_ID))
-   AND A.SEND_DATE = (SELECT MAX(SEND_DATE)
-                        FROM SEND_MSG C
-                       WHERE ((C.FROM_USER_ID = A.FROM_USER_ID AND C.TO_USER_ID = A.TO_USER_ID) OR
-                             (C.TO_USER_ID = A.FROM_USER_ID AND C.FROM_USER_ID = A.TO_USER_ID)))
-   AND ((A.TO_USER_ID = #{value} AND A.FROM_USER_ID = C.USER_ID) OR 
-        (A.FROM_USER_ID = #{value} AND A.TO_USER_ID = C.USER_ID))
+  FROM SEND_MSG A
+       INNER JOIN G2_USER B ON (A.FROM_USER_ID = #{value} AND A.TO_USER_ID = B.USER_ID) OR
+                               (A.TO_USER_ID = #{value} AND A.FROM_USER_ID = B.USER_ID)
+       LEFT JOIN USER_PROFILE_FILE C ON ((A.TO_USER_ID = #{value} AND A.FROM_USER_ID = C.USER_ID) OR 
+                                         (A.FROM_USER_ID = #{value} AND A.TO_USER_ID = C.USER_ID))
+ WHERE A.SEND_DATE = (SELECT MAX(SEND_DATE)
+                        FROM SEND_MSG D
+                       WHERE ((D.FROM_USER_ID = A.FROM_USER_ID AND D.TO_USER_ID = A.TO_USER_ID) OR
+                             (D.TO_USER_ID = A.FROM_USER_ID AND D.FROM_USER_ID = A.TO_USER_ID)))
 ORDER BY A.SEND_DATE DESC
 </select>
 
@@ -87,7 +87,7 @@ SELECT
         WHERE USER_ID = #{fromUserId}
     ) AS USER_NICKNAME,
     (
-        SELECT FILE_NAME
+        SELECT NVL(FILE_NAME, '/resources/images/profile.png')
         FROM USER_PROFILE_FILE
         WHERE USER_ID = #{fromUserId}
     ) AS FILE_NAME

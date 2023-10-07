@@ -152,7 +152,7 @@ public class RestoController {
 			reviewList = restoService.reviewList(rSeq);
 			HashMap<String, String> hashMap = new HashMap<String, String>();
 			hashMap.put("userId", cookieUserId);
-			hashMap.put("rSeq", rSeq);		
+			hashMap.put("rSeq", rSeq);
 			model.addAttribute("checkFavorite", restoService.selectCheckFavorite(hashMap));
 		}
 
@@ -289,7 +289,7 @@ public class RestoController {
 
 		// 총금액을 30,000 형식으로 변환
 		DecimalFormat decimalFormat = new DecimalFormat("#,###");
-		String totalAmount2 = decimalFormat.format(totalAmount);	
+		String totalAmount2 = decimalFormat.format(totalAmount);
 		model.addAttribute("itemName", itemName);
 		model.addAttribute("quantity", quantity);
 		model.addAttribute("totalAmount2", totalAmount2);
@@ -332,36 +332,29 @@ public class RestoController {
 	// 매장 정보 등록
 	@RequestMapping(value = "/resto/restoProc", method = RequestMethod.POST)
 	@ResponseBody
-	public Response<Object> restoProc(MultipartHttpServletRequest request, HttpServletResponse response) {
-		logger.debug("restocontroller/restoproc시작");
-
+	public Response<Object> restoProc(MultipartHttpServletRequest request, HttpServletResponse response) 
+	{
 		Response<Object> ajaxResponse = new Response<Object>();
-		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+		String cookieSellerId = CookieUtil.getHexValue(request, "SELLER_ID");
 		String restoName = HttpUtil.get(request, "restoName", "");
 		String restoAdd = HttpUtil.get(request, "hiddenAdd", "");
 		String restoPh = HttpUtil.get(request, "restoPh", "");
 		String restoContent = HttpUtil.get(request, "restoContent", "");
-		String restoType = HttpUtil.get(request, "restoType");
-		String restoMenuType = HttpUtil.get(request, "restoMenuType");
-		String restoOff = HttpUtil.get(request, "hiddenRestoOff");
+		String restoType = HttpUtil.get(request, "restoType", "");
+		String restoMenuType = HttpUtil.get(request, "restoMenuType", "");
+		String restoOff = HttpUtil.get(request, "hiddenRestoOff", "");
 		FileData thumFile = HttpUtil.getFile(request, "restoThum", UPLOAD_SAVE_DIR);
 		List<FileData> fileData = HttpUtil.getFiles(request, "restoFile", UPLOAD_SAVE_DIR);
 		int restoDeposit = HttpUtil.get(request, "restoDeposit", 0);
 		String restoOpen = HttpUtil.get(request, "restoOpen", "");
 		String restoClose = HttpUtil.get(request, "restoClose", "");
-
 		int restoLimitPpl = HttpUtil.get(request, "restoLimitPpl", 0);
-
-		// 배열로 처리하되, 맥시멈 개수는 있어야함.
 		int menuCount = HttpUtil.get(request, "menuCount", 0); // 5
-
 
 		if (!StringUtil.isEmpty(restoName) && !StringUtil.isEmpty(restoAdd) && !StringUtil.isEmpty(restoPh)
 				&& !StringUtil.isEmpty(restoContent) && !StringUtil.isEmpty(restoType)
-				&& !StringUtil.isEmpty(restoMenuType) && !StringUtil.isEmpty(restoOff)
-				&& !StringUtil.isEmpty(cookieSellerId)) {
+				&& !StringUtil.isEmpty(restoMenuType) && !StringUtil.isEmpty(cookieSellerId)) {
 			RestoInfo restoInfo = new RestoInfo();
-
 			restoInfo.setSellerId(cookieSellerId);
 			restoInfo.setRestoName(restoName);
 			restoInfo.setRestoAddress(restoAdd);
@@ -376,25 +369,18 @@ public class RestoController {
 			restoInfo.setRestoOff(restoOff);
 			RestoFile restoFile;
 			List<Menu> menuList = new ArrayList<Menu>();
-
-			logger.debug("저긴통과해?");
-
-			logger.debug("menuCount = " + menuCount);
-
 			for (int i = 0; i < menuCount; i++) {
 				Menu menu = new Menu(); // 각 반복에서 새로운 Menu 객체 생성
 				MenuFile menuFile1 = new MenuFile(); // 각 반복에서 새로운 MenuFile
-
 				if (i == 0) {
-					String menuName = HttpUtil.get(request, "menuName");
-					String menuPrice = HttpUtil.get(request, "menuPrice");
-					String menuDescription = HttpUtil.get(request, "menuDescription");
+					String menuName = HttpUtil.get(request, "menuName", "");
+					String menuPrice = HttpUtil.get(request, "menuPrice", "");
+					String menuDescription = HttpUtil.get(request, "menuDescription", "");
 					FileData menuFile = HttpUtil.getFile(request, "menuFile", UPLOAD_SAVE_DIR);
 					menu.setMenuName(menuName);
 					menu.setMenuPrice(menuPrice);
 					menu.setMenuContent(menuDescription);
 					menuFile1.setFileName(menuFile.getFileName());
-					System.out.println(menuFile1.getFileName());
 					menu.setMenuFileList(menuFile1);
 				} else {
 					String menuName = HttpUtil.get(request, "menuName" + i);
@@ -405,31 +391,18 @@ public class RestoController {
 					menu.setMenuPrice(menuPrice);
 					menu.setMenuContent(menuDescription);
 					menuFile1.setFileName(menuFile.getFileName());
-					System.out.println(menuFile1.getFileName());
 					menu.setMenuFileList(menuFile1);
-
 				}
 				menuList.add(menu);
-				System.out.println(menuList.get(i).getMenuFileList().getFileName());
-
 			}
-
 			restoInfo.setMenuList(menuList);
-
 			if (thumFile != null && fileData != null && fileData.size() > 0 && menuCount > 0) {
-
-				// 리스트 화
 				List<RestoFile> restoFileList = new ArrayList<RestoFile>();
-
 				if (thumFile.getFileSize() > 0) {
 					restoFile = new RestoFile();
-
 					restoFile.setFileName(thumFile.getFileName());
-
 					restoFileList.add(restoFile);
-
 				}
-
 				for (int i = 0; i < fileData.size(); i++) {
 					if (fileData.get(i).getFileSize() > 0) {
 						restoFile = new RestoFile();
@@ -439,16 +412,11 @@ public class RestoController {
 						restoFileList.add(restoFile);
 					}
 				}
-
 				restoInfo.setRestoFileList(restoFileList);
-
 			}
-
-			// 서비스 호출
 			try {
 				if (restoService.restoListInsert(restoInfo) > 0) {
 					ajaxResponse.setResponse(0, "success");
-					logger.debug("22222222222222222222222222222222222222");
 				} else {
 					ajaxResponse.setResponse(500, "Internal server error");
 				}
@@ -462,103 +430,22 @@ public class RestoController {
 		return ajaxResponse;
 
 	}
-	
-	@RequestMapping(value = "/resto/reversalFavorite", method = RequestMethod.POST)
-	@ResponseBody
-	public Response<Object> reversalFavorite(HttpServletRequest request, HttpServletResponse response) 
-	{
-		Response<Object> ajaxResponse = new Response<Object>();
-		String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
-		int checkFavorite = HttpUtil.get(request, "checkFavorite", -1);
-		String rSeq = HttpUtil.get(request, "rSeq", "");
-		if(checkFavorite >= 0 && !StringUtil.isEmpty(rSeq))
-		{
-			HashMap<String, String>hashMap = new HashMap<String, String>();
-			hashMap.put("userId", cookieUserId);
-			hashMap.put("rSeq", rSeq);
-			if(checkFavorite == 0)
-			{
-				if(restoService.insertRestoFavorite(hashMap) > 0)
-				{
-					hashMap.put("cnt", "1");
-					hashMap.remove("userId");
-					ajaxResponse.setResponse(0, "Success", hashMap);
-				}
-				else
-				{
-					ajaxResponse.setResponse(500, "DB Sever Error");
-				}
-			}
-			else if(checkFavorite == 1)
-			{
-				if(restoService.deleteRestoFavorite(hashMap) > 0)
-				{
-					hashMap.put("cnt", "0");
-					hashMap.remove("userId");
-					ajaxResponse.setResponse(0, "Success", hashMap);
-				}
-				else
-				{
-					ajaxResponse.setResponse(500, "DB Sever Error");
-				}
-			}
-			else
-			{
-				ajaxResponse.setResponse(400, "Bad Request");
-			}
-		}
-		else
-		{
-			ajaxResponse.setResponse(400, "Bad Request");
-		}
-		
-		return ajaxResponse;
-	}
-	
+
 	@RequestMapping(value = "/resto/restoFavoriteList", method = RequestMethod.POST)
 	@ResponseBody
-	public Response<Object> restoFavoriteList(HttpServletRequest request, HttpServletResponse response) 
-	{
+	public Response<Object> restoFavoriteList(HttpServletRequest request, HttpServletResponse response) {
 		Response<Object> ajaxResponse = new Response<Object>();
 		String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
-		if(!StringUtil.isEmpty(cookieUserId))
-		{
+		if (!StringUtil.isEmpty(cookieUserId)) {
 			List<RestoInfo> list = restoService.selectRestoFavoriteList(cookieUserId);
 			ajaxResponse.setResponse(0, "Success", list);
-		}
-		else
-		{
+		} else {
 			ajaxResponse.setResponse(404, "Not Found");
 		}
 		return ajaxResponse;
 	}
-	
+
 	@RequestMapping(value = "/resto/noneUserRestoReservationProc")
-	public void noneUserRestoReservationProc(HttpServletRequest request, HttpServletResponse response) 
-	{}
+	public void noneUserRestoReservationProc(HttpServletRequest request, HttpServletResponse response) {
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

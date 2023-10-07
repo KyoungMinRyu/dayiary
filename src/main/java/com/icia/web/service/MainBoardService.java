@@ -196,6 +196,7 @@ public class MainBoardService {
 			List<MainBoardComment> mainBoardCommentList = mainBoardDao.commentList(boardSeq);
 			if (mainBoardCommentList != null) {
 				mainBoardDao.commentDeleteAll(boardSeq); // 댓글이 존재하면 댓글도 삭제
+				mainBoardDao.likeDeleteAll(boardSeq); // 좋아요 모두 삭제
 			}
 
 			logger.debug("체크1111111111111111");
@@ -213,6 +214,7 @@ public class MainBoardService {
 									+ mainBoardFileList.get(i).getFileName());
 						}
 					}
+
 				}
 
 			}

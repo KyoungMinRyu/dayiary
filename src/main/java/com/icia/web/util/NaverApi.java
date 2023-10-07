@@ -98,7 +98,7 @@ public class NaverApi
 			final CloseableHttpResponse response;
 			response = httpClient.execute(request);
 			msg = getResponse(response);
-//			System.out.println(msg);
+			logger.debug(msg);
 		}
 		catch (Exception e) 
 		{
@@ -257,8 +257,6 @@ public class NaverApi
             wr.flush();
             wr.close();
             int responseCode = con.getResponseCode();
-
-            BufferedReader br;
 
             if(responseCode==200) { // Normal call
                 System.out.println(con.getResponseMessage());

@@ -118,11 +118,11 @@ public class PublicDataApi
 		String weatherDate = "";
 		String data = "";
 		String category = "";
-//		NaverApi naverApi = new NaverApi();
+		NaverApi naverApi = new NaverApi();
 		GeoLocation geoLocation = null;
 //		geoLocation = naverApi.geoLocation(HttpUtil.getIP(request)); // 원래 외부에서 들어올 수 있는 서버라면 이코드가 들어가야하지만 지금 내부에서만 들어오기 떄문에 따른 공인 아이피를 넣어줘야함
-//		geoLocation = naverApi.geoLocation(requestRestApi("https://api.ip.pe.kr/", "GET")); // 우리가 접속 할 떄는 127.0.0.1로 나오기 떄문에 다른 api를 호출하여 공인ip주소를 얻어야함
-    	if(geoLocation == null)
+		geoLocation = naverApi.geoLocation(requestRestApi("https://api.ip.pe.kr/", "GET")); // 우리가 접속 할 떄는 127.0.0.1로 나오기 떄문에 다른 api를 호출하여 공인ip주소를 얻어야함
+    	if(geoLocation != null)
     	{
 			StringBuilder urlBuilder = makeURL(0);
 	    	stringAppend(urlBuilder, "pageNo", "1"); // 페이지 번호

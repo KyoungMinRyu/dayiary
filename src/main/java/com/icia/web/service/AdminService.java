@@ -6,20 +6,37 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.icia.web.model.Admin;
+import com.icia.web.model.GiftAdd;
+import com.icia.web.model.RestoInfo;
 import com.icia.web.model.Seller;
 import com.icia.web.model.UserG2;
+import com.icia.web.model.UserProfileFile;
+import com.icia.common.util.FileUtil;
 import com.icia.web.dao.AdminDao;
+import com.icia.web.dao.GiftDao;
+import com.icia.web.dao.RestoDao;
 
 @Service("adminService")
 public class AdminService 
 {
    private static Logger logger = LoggerFactory.getLogger(AdminService.class);
    
+   //파일 저장 경로
+   @Value("#{env['upload.save.dir']}")
+   private String UPLOAD_SAVE_DIR;      //저장 경로
+   
    @Autowired
    private AdminDao adminDao;
+   
+   @Autowired
+   private GiftDao giftDao;
+   
+   @Autowired
+   private RestoDao restoDao;
    
    //사용자 리스트
    public List<UserG2> userList(UserG2 user)
@@ -91,6 +108,68 @@ public class AdminService
       return count;
    }
       
+ //사용자(유저) 프로필 사진 삭제
+   public int adminManageUserProfileDelete(String userId, String fileName) 
+   {
+      int count = -1;
+      
+      try
+      {
+         UserProfileFile userProfileFile = adminDao.adminManageUserProfileSelect(fileName);
+         
+         if(userProfileFile != null)
+         {
+            count = adminDao.adminManageUserProfileDelete(userId);
+         
+            if(count > 0)
+            {
+               UserProfileFile delUserProfileFile = new UserProfileFile();
+               
+               //  UUID 앞에 경로 잘라서 담음
+               String fullFilePath = userProfileFile.getFileName();
+                   int lastSlashIndex = fullFilePath.lastIndexOf('/');
+                   
+                   if (lastSlashIndex != -1) 
+                   {
+                       String desiredFileName = fullFilePath.substring(lastSlashIndex + 1);
+                   
+                  
+                       delUserProfileFile.setFileName(desiredFileName);
+                  
+                  if(delUserProfileFile != null)
+                  {
+                     FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + delUserProfileFile.getFileName());
+                  }
+                   }
+            }
+         }
+      }      
+      catch(Exception e)
+      {
+         logger.error("[AdminService] adminManageUserProfileDelete Exception", e);
+         return -1;
+      }  
+          
+      return count;
+   }      
+   
+   //사용자(유저) 프로필 사진 조회
+   public UserProfileFile adminManageUserProfileSelect(String fileName)
+   {
+      UserProfileFile userProfileFile = null;
+      
+      try
+      {
+         userProfileFile = adminDao.adminManageUserProfileSelect(fileName);
+      }
+      catch(Exception e)
+      {
+         logger.error("[AdminService] adminManageUserProfileSelect Exception", e);
+      }
+      
+      return userProfileFile;
+   }
+   
    //판매자 수 리스트
    public List<Seller> sellerList(Seller seller)
    {   
@@ -278,4 +357,196 @@ public class AdminService
 		}
 		return count;
 	}
+	
+	public GiftAdd selectAdminGiftView(String productSeq)
+	{
+		GiftAdd giftAdd = null;
+		try 
+		{
+			giftAdd = giftDao.selectAdminGiftView(productSeq);
+			giftAdd.setGiftFileList(giftDao.selectGiftFIleList(productSeq));
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](selectAdminGiftView)", e);
+		}
+		return giftAdd;
+	}
+	
+	public RestoInfo selectAdminRestoView(String rSeq)
+	{
+		RestoInfo restoInfo = null;
+		try 
+		{
+			restoInfo = restoDao.restoSelect(rSeq);
+			restoInfo.setRestoFileList(restoDao.restoFileSelect(rSeq));
+			restoInfo.setMenuList(restoDao.menuSelect(rSeq));
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](selectAdminRestoView)", e);
+		}
+		return restoInfo;
+	}
+	
+	public int updateRestoText(HashMap<String, Object> hashMap)
+	{
+		int count = 0;
+		try 
+		{
+			count = adminDao.updateRestoText(hashMap);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](updateRestoText)", e);
+		}
+		return count;
+	}
+	
+	public int updateMenuText(HashMap<String, Object> hashMap)
+	{
+		int count = 0;
+		try 
+		{
+			count = adminDao.updateMenuText(hashMap);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](updateMenuText)", e);
+		}
+		return count;
+	}
+	
+	public int updateRestoImages(HashMap<String, Object> hashMap)
+	{
+		int count = 0;
+		try 
+		{
+			count = adminDao.updateRestoImages(hashMap);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](updateRestoImages)", e);
+		}
+		return count;
+	}
+	
+	public int updateMenuImages(String menuSeq)
+	{
+		int count = 0;
+		try 
+		{
+			count = adminDao.updateMenuImages(menuSeq);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](updateMenuImages)", e);
+		}
+		return count;
+	}
+
+	public int updateAdminRestoStatus(HashMap<String, String> hashMap)
+	{
+		int count = 0;
+		try 
+		{
+			count = adminDao.updateAdminRestoStatus(hashMap);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](updateAdminRestoStatus)", e);
+		}
+		return count;
+	}
+	
+	public List<Admin> selectAdminGiftRevenue(String productSeq)
+	{
+		List<Admin> list = null;
+		try 
+		{
+			list = adminDao.selectAdminGiftRevenue(productSeq);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](selectAdminGiftRevenue)", e);
+		}
+		return list;
+	}
+
+	public List<Admin> selectAdminRestoRevenue(String rSeq)
+	{
+		List<Admin> list = null;
+		try 
+		{
+			list = adminDao.selectAdminRestoRevenue(rSeq);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](selectAdminRestoRevenue)", e);
+		}
+		return list;
+	}
+
+	public int updateAdminGiftStatus(HashMap<String, String> hashMap)
+	{
+		int count = 0;
+		try 
+		{
+			count = adminDao.updateAdminGiftStatus(hashMap);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](updateAdminGiftStatus)", e);
+		}
+		return count;
+	}
+	
+	public int updateGiftText(HashMap<String, Object> hashMap) 
+	{
+		int count = 0;
+		try 
+		{
+			count = adminDao.updateGiftText(hashMap);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](updateGiftText)", e);
+		}
+		return count;
+	}
+
+	public int updateGiftImages(HashMap<String, Object> hashMap)
+	{
+		int count = 0;
+		try 
+		{
+			count = adminDao.updateGiftImages(hashMap);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](updateGiftImages)", e);
+		}
+		return count;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

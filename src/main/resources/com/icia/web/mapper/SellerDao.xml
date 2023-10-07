@@ -379,9 +379,9 @@ SELECT R_SEQ,
     RESTO_OPEN,
     RESTO_CLOSE,
     RESTO_DEPOSIT,
-    LIMIT_PERSON,
+    LIMIT_PERSON
 FROM RESTO_INFO
-WHERE R_SEQ = #{rSeq}
+WHERE R_SEQ = #{value}
 </select>
 
 <select id="restoFileBring" parameterType="String" resultMap="myRestoFileResultMap">
@@ -389,7 +389,7 @@ SELECT R_SEQ,
       FILE_SEQ,
       FILE_NAME
 FROM RESTO_FILE
-WHERE R_SEQ = #{rSeq}
+WHERE R_SEQ = #{value}
 </select>
 
 <select id="menuBring" parameterType="String" resultMap="myMenuListResultMap">
@@ -397,27 +397,86 @@ SELECT MENU_SEQ,
       R_SEQ,
       MENU_NAME,
       MENU_PRICE,
-      MENU_CONTENT,
+      MENU_CONTENT
 FROM MENU
-WHERE R_SEQ = #{rSeq}
+WHERE R_SEQ = #{value}
 </select>
 
-<!-- 아마도 트랜젝션 처리..? -->
+
 <select id="menuFileBring" parameterType="String" resultMap="myMenuFileResultMap">
 SELECT MENU_SEQ,
 FILE_SEQ,
 FILE_NAME
 FROM MENU_FILE
-WHERE MENU_SEQ = #{mSeq}
+WHERE MENU_SEQ = #{value}
 </select>
 
+<select id="menuFileListBring" parameterType="String" resultMap="myMenuFileResultMap">
+SELECT 
+    MENU_SEQ,
+    FILE_SEQ,
+    FILE_NAME
+FROM 
+    MENU_FILE
+WHERE 
+    MENU_SEQ IN
+                (
+                    SELECT 
+                        MENU_SEQ
+                    FROM
+                        MENU
+                    WHERE
+                        R_SEQ = #{value}
+                )
+</select>
+
+<insert id="menuInsert" parameterType="com.icia.web.model.Menu">
+<selectKey resultType="string" keyProperty="menuSeq" order="BEFORE">
+SELECT DAYIARY_SEQ.NEXTVAL FROM DUAL
+</selectKey>
+INSERT INTO MENU
+(
+MENU_SEQ,
+R_SEQ,
+MENU_NAME,
+MENU_PRICE,
+MENU_CONTENT
+)
+VALUES
+(
+'M'||TRIM(TO_CHAR(#{menuSeq}, '999999999999')),
+#{rSeq},
+#{menuName},
+#{menuPrice},
+#{menuContent}
+)
+</insert>
+
+<insert id="insertMenuFile" parameterType="com.icia.web.model.MenuFile">
+<selectKey resultType="short" keyProperty="fileSeq" order="BEFORE">
+SELECT NVL(MAX(FILE_SEQ), 0) + 1 FROM MENU_FILE WHERE MENU_SEQ = #{menuSeq}
+</selectKey>
+INSERT INTO MENU_FILE 
+(
+   FILE_SEQ,
+   MENU_SEQ,
+   FILE_NAME
+) 
+VALUES 
+(
+    #{fileSeq},
+    #{menuSeq},
+    #{fileName}
+)
+</insert>
 
 
 <!-- 레스토랑 정보수정 -->
 
  <update id = "restoUpdate" parameterType = "com.icia.web.model.RestoInfo">
     UPDATE RESTO_INFO
-       SET RESTO_ADDRESS =  #{restoAddress},
+       SET RESTO_NAME = #{restoName},
+       RESTO_ADDRESS =  #{restoAddress},
          RESTO_PH = #{restoPh},
          RESTO_CONTENT = #{restoContent},
          RESTO_TYPE = #{restoType},
@@ -430,6 +489,16 @@ WHERE MENU_SEQ = #{mSeq}
      WHERE R_SEQ = #{rSeq}
  </update>
 
+<delete id = "restoFileDelete" parameterType = "hashmap">
+DELETE FROM 
+    RESTO_FILE
+WHERE
+    R_SEQ = #{rSeq}
+    <if test="flag == 1">
+       AND FILE_SEQ <![CDATA[>=]]> 2
+    </if>
+</delete>
+
 
 <update id = "restoFileUpdate" parameterType = "com.icia.web.model.RestoFile">
 UPDATE RESTO_FILE 
@@ -437,6 +506,31 @@ UPDATE RESTO_FILE
   WHERE R_SEQ = #{rSeq}
     AND FILE_SEQ = #{fileSeq}
 </update>
+
+<delete id = "menuDelete" parameterType = "String">
+DELETE FROM 
+    MENU
+WHERE
+    R_SEQ = #{value}   
+</delete>
+
+<delete id = "menuFileDelete" parameterType = "String">
+DELETE FROM
+    MENU_FILE
+WHERE
+    MENU_SEQ IN 
+                (
+                    SELECT 
+                        MENU_SEQ
+                    FROM
+                        MENU
+                    WHERE
+                        R_SEQ = #{value}
+                )
+</delete>
+
+
+
 
 <update id = "menuUpdate" parameterType = "com.icia.web.model.Menu">
  UPDATE MENU
@@ -491,16 +585,64 @@ UPDATE PRODUCT_INFO
  WHERE PRODUCT_SEQ = #{productSeq}
 </update>
 
+<update id="updateGiftFile" parameterType="com.icia.web.model.GiftFile">
 
+UPDATE PRODUCT_FILE 
+   SET FILE_NAME = #{fileName}
+  WHERE PRODUCT_SEQ = #{productSeq}
+    AND FILE_SEQ = #{fileSeq}
+
+
+</update>
 <!-- 선물파일 삭제 -->
 
  <delete id="giftFileDelete" parameterType="hashmap">
      DELETE FROM PRODUCT_FILE
-           WHERE PRODUCT_SEQ = #{value}
-             AND FILE_SEQ = #{value}
+     WHERE PRODUCT_SEQ = #{productSeq}
+       <if test="flag == 1">
+       AND FILE_SEQ <![CDATA[>=]]> 2
+    </if>
  </delete>
 
 
+
+
+<!-- giftFileInsert -->
+<insert id="insertGiftFile" parameterType="com.icia.web.model.GiftFile">
+<selectKey resultType="short" keyProperty="fileSeq" order="BEFORE">
+SELECT NVL(MAX(FILE_SEQ), 0) + 1 FROM PRODUCT_FILE WHERE PRODUCT_SEQ = #{productSeq}
+</selectKey>
+INSERT INTO PRODUCT_FILE 
+(
+   PRODUCT_SEQ,
+   FILE_SEQ,
+   FILE_NAME
+) 
+VALUES 
+(
+    #{productSeq},
+    #{fileSeq},
+    #{fileName}
+)
+</insert>
+
+<insert id="insertRestoFile" parameterType="com.icia.web.model.RestoFile">
+<selectKey resultType="short" keyProperty="fileSeq" order="BEFORE">
+SELECT NVL(MAX(FILE_SEQ), 0) + 1 FROM RESTO_FILE WHERE R_SEQ = #{rSeq}
+</selectKey>
+INSERT INTO RESTO_FILE 
+(
+   R_SEQ,
+   FILE_SEQ,
+   FILE_NAME
+) 
+VALUES 
+(
+    #{rSeq},
+    #{fileSeq},
+    #{fileName}
+)
+</insert>
 <!-- 내가 등록한 레스토랑 중 결제된 이후의 리스트 갖고오기  -->
 <select id="myRestoOrder"  parameterType="com.icia.web.model.OrderList"  resultMap="orderRestoListResultMap">
 SELECT 
@@ -568,16 +710,6 @@ FROM(
 </select> 
 
 
-<!-- 결제된 레스토랑 취소  -->
-
-<update id="sellerCancelReserv">
-UPDATE 
-    ORDER_LIST
-SET
-    STATUS = 'N'
-WHERE
-    ORDER_SEQ = #{value}
-</update>
 
 <!-- 내가 등록한 선물 중 결제된 이후의 리스트 갖고오기  -->
 <select id="myGiftOrder"  parameterType="com.icia.web.model.OrderList"  resultMap="orderListResultMap">
@@ -689,6 +821,9 @@ UPDATE DELIVERY
        SET DELIVERY_STATUS = '2'
      WHERE ORDER_SEQ = #{orderSeq}
  </update>
+ 
+ 
+ 
 
 <select id="selectMyGift" parameterType="String" resultMap="orderListResultMap">
 SELECT 

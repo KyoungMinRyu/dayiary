@@ -68,17 +68,18 @@ function R(M,m) { return m+(M-m)*Math.random(); };
 
 h2
 {
-	font-family : 'SUIT-Regular', sans-serif;
+   font-family : 'SUIT-Regular', sans-serif;
 }
 p
 {
-	font-family : 'SUIT-Regular', sans-serif
+   font-family : 'SUIT-Regular', sans-serif
 }
+
 .item span {
-	font-size: 15px;
+   font-size: 15px;
 }
 .task-box-profile{
-	position: relative;
+   position: relative;
   border-radius: 12px;
   width: 50%;
   margin: 20px 0;
@@ -90,18 +91,18 @@ p
 
 h2
 {
-	font-family : 'SUIT-Regular', sans-serif;
+   font-family : 'SUIT-Regular', sans-serif;
 }
 p
 {
-	font-family : 'SUIT-Regular', sans-serif
+   font-family : 'SUIT-Regular', sans-serif
 }
 .item span {
-	font-size: 15px;
+   font-size: 15px;
 }
 
 .task-box-profile{
-	position: relative;
+   position: relative;
   border-radius: 12px;
   width: 50%;
   margin: 20px 0;
@@ -161,16 +162,19 @@ display: flex;
 }
 
 .card-content{
-	border: 2px solid pink; /* 테두리 추가 */
+   border: 2px solid pink; /* 테두리 추가 */
     background-color: #f9f9f9; /* 배경색 추가 */
     padding: 0; /* 패딩 추가 */
     margin: 0; /* 마진 제거 */
     border-radius: 15px;
-    background-color: pink;
+    background-color: #ffc0cb9c;
 
 }
 
-
+.card-content-2{
+   
+   font-size : 50px;
+}
 
 
 #hearContainer {
@@ -252,11 +256,11 @@ display: flex;
 </head>
 <body>
 <div class="page-contentmain">
-   	 <div class="contain">
+       <div class="contain">
     <div class="card card-myId" data-state="#about">
   <div class="card-header">
   <c:choose>
-  	<c:when test="${myGen eq '0'}">
+     <c:when test="${myGen eq '0'}">
     <div class="card-cover" style="background-color: #4cc0f1d6;"></div>
     </c:when>
     <c:otherwise>
@@ -292,13 +296,14 @@ display: flex;
 
 <div class="card-content-2" style="text-align: center;">
 
-<b style="font-size : 20px;">만난 날 : ${coupleAnniversary.startDate}</b><br />
-<b style="font-size : 20px ">D-100 : ${coupleAnniversary.day100}</b><br />
-<b style="font-size : 20px ">D-200 : ${coupleAnniversary.day200}</b><br />
-<b style="font-size : 20px ">D-300 : ${coupleAnniversary.day300}</b><br />
+<b style="font-size : 20px;">커플이 된 날 : ${coupleAnniversary.startDate}</b><br />
+<b style="font-size : 20px; ">💖 D-100 💖: ${coupleAnniversary.day100}</b><br />
+<b style="font-size : 20px; ">💖 D-200 💖: ${coupleAnniversary.day200}</b><br />
+<b style="font-size : 20px; ">💖 D-300 💖: ${coupleAnniversary.day300}</b><br />
+<br/>
 
 </div>
-</p>
+
 
 
 </div>

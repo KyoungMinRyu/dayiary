@@ -25,13 +25,19 @@
     
 
     //상세 주소 입력시 도로명주소+상세주소 합쳐지는 거
-     $("#detailAddress").on("input", function() 
-    {
-       $("#restoAddMsg").html("&nbsp;");
-       $("#hiddenAdd").val($("#roadAddress").val() + " " + $("#detailAddress").val());    
-       //console.log(document.getElementById("roadAddress").value);
-    });   
-    
+    $("#detailAddress").on("input", function() 
+   {
+       //var roadAddress = $("#roadAddress").val();
+       //var detailAddress = $("#detailAddress").val();
+
+     // roadAddress가 null이 아닌 경우 roadAddress와 detailAddress를 결합
+     $("#hiddenAdd").val( $("#roadAddress").val() + " " + $("#detailAddress").val());
+       
+   });   
+   
+   
+     
+     
    //메뉴 추가하기 펑션
     $("#menuPlus").on("click", function() {
            
@@ -53,7 +59,7 @@
         $(".field9").append(div);
   
         menuCount++;
-     
+        console.log(menuCount);
         $("#menuCount").val(menuCount);
     });
     
@@ -73,10 +79,145 @@
         });
     
 
-    
+        $("#menuCount").val(menuCount);
     //등록하기 버튼을 눌렀을 때
    $("#btnSubmit").on("click", function()
    {            
+       var fileInput = document.getElementById("restoThum");
+
+       // 파일이 선택되었는지 확인
+       if (fileInput.files.length === 0) {
+           alert("메인사진 파일을 선택하세요.");
+           return;
+       }
+     
+      if($("#restoName").val() == null || $("#restoName").val() == "")
+       {
+          alert("매장 이름를 입력하세요.");
+          $("#restoName").focus();
+          return;
+       }
+       
+       if($("#roadAddress").val() == null || $("#roadAddress").val() == "")
+       {
+          alert("우번편호 찾기 버튼을 통해 주소를 입력해주세요.");
+          $("#roadAddress").focus();
+          return;
+       }
+       
+       if($("#restoPh").val() == null || $("#restoPh").val() == "")
+       {
+          alert("매장 번호를 입력하세요.");
+          $("#restoPh").focus();
+          return;
+       }
+
+       
+       if($("#restoContent").val() == null || $("#restoContent").val() == "")
+       {
+          alert("매장 내용을 입력하세요.");
+          $("#restoContent").focus();
+          return;
+       }
+       
+       if($("#restoDeposit").val() == null || $("#restoDeposit").val() == "")
+       {
+          alert("예약금을 입력하세요.");
+          $("#restoDeposit").focus();
+          return;
+       }
+       
+       if($("#restoLimitPpl").val() == null || $("#restoLimitPpl").val() == "" )
+       {
+          alert("시간당 수용 인원을 입력하세요.");
+          $("#restoLimitPpl").focus();
+          return;
+       }
+       
+       var detailFileInput = document.getElementById("restoFile");
+
+       // 파일이 선택되었는지 확인
+       if (detailFileInput.files.length === 0) {
+           alert("상세사진 파일을 선택하세요.");
+           return;
+       }
+       
+       
+       if (!$("input[name='restoType']:checked").length) 
+       {
+          alert("매장 타입을 체크하세요.");
+          return;
+       }
+       
+       if (!$("input[name='restoMenuType']:checked").length)  
+       {
+          alert("음식타입을 체크하세요.");
+          return;
+       }
+       
+       
+       
+       //여기서부터 menu 시작 
+    
+
+           for (var i = 0 ; i < menuCount ; i++) 
+           { 
+             
+               if(i == 0)
+               {
+                  var menuNameInput = document.getElementById("menuName");
+                  var menuPriceInput = document.getElementById("menuPrice" );
+                  var menuDescriptionInput = document.getElementById("menuDescription");
+                  var menuFileInput = document.getElementById("menuFile" );
+   
+               }
+               else
+               {
+                  var menuNameInput = document.getElementById("menuName" + i);
+                  var menuPriceInput = document.getElementById("menuPrice" + i);
+                  var menuDescriptionInput = document.getElementById("menuDescription" + i);
+                  var menuFileInput = document.getElementById("menuFile" + i);
+                  
+               }
+               
+
+               if (menuNameInput.value === "" || menuNameInput.value === null) {
+                   alert("메뉴 이름을 입력하세요.");
+                   menuNameInput.focus();
+                   return false;
+               }
+
+               if (menuPriceInput.value === "" || menuPriceInput.value === null) {
+                   alert("메뉴 가격을 입력하세요.");
+                   menuPriceInput.focus();
+                   return false;
+               }
+
+               if (menuDescriptionInput.value === "" || menuDescriptionInput.value === null) {
+                   alert("메뉴 설명을 입력하세요.");
+                   menuDescriptionInput.focus();
+                   return false;
+               }
+
+               if (menuFileInput.files.length === 0) {
+                   alert("메뉴 사진 파일을 선택하세요.");
+                   return false;
+               }
+               
+           }
+     
+
+           if ($("input[name='restoOpen']").val() === "") {
+               alert("오픈 시간을 입력하세요.");
+               return;
+           }
+
+           if ($("input[name='restoClose']").val() === "") {
+               alert("마감 시간을 입력하세요.");
+               return;
+           }
+        
+      
       //휴무일 하루, 이틀일 때 처리
       var selectRestoOff = [];
       $(".restoOff input:checked").each(function() {
@@ -116,32 +257,22 @@
       success:function(response)
       {
          if(response.code == 0)
-           { // insert 성공
-             alert("매장 등록에 성공하셨습니다.");
-              location.href = "/index/sellerIndex";
-           }
-           else if(response.code == 400)
-           { // 파라미터 오류
-            
-             alert("매장 등록에 실패하셨습니다.");
-              location.href = "/";   
-           }
-           else if(response.code == 100)
-           { // 회원이 이미 존재함
-
-             alert("매장 등록에 실패하셨습니다.1");
-              location.href = "/";   
-           }
-           else if(response.code == 500)
-           { // 서버 에러
-             alert("매장 등록에 실패하셨습니다.2");
-              location.href = "/";   
-           }
-           else
-           { // 알 수 없는 오류
-             alert("매장 등록에 실패하셨습니다.3");
-              location.href = "/";   
-           }
+            { // insert 성공
+              alert("매장 등록에 성공하셨습니다.");
+               location.href = "/resto/restoList";
+         }
+         else if(response.code == 400)
+         { 
+           alert("입력값이 잘못되었습니다.");
+         }
+         else if(response.code == 500)
+         { // 서버 에러
+           alert("서버에 장애가 발생하였습니다.");
+         }
+         else
+         { // 알 수 없는 오류
+           alert("알 수 없는 오류가 발생하였습니다."); 
+         }
       },
       error:function(error)
       {
@@ -200,10 +331,12 @@
                 document.getElementById('postcode').value = data.zonecode;
                 document.getElementById("roadAddress").value = addr2;
                  
-                console.log($("#roadAddress").val());
+                $("#hiddenAdd").val( $("#roadAddress").val());
                 
                  // 커서를 상세주소 필드로 이동한다.
                 $("#detailAddress").focus();
+                 
+                 
               }
          
        }).open();

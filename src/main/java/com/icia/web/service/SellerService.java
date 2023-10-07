@@ -1,12 +1,15 @@
 package com.icia.web.service;
 
 import java.util.HashMap;
+
+
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,11 @@ public class SellerService {
 	@Autowired
 	private SellerDao sellerDao;
 
+	// 파일 저장 경로
+    @Value("#{env['upload.save.dir']}")
+    private String UPLOAD_SAVE_DIR;
+ 
+	
 	// 판매자 id 체크
 	public Seller sellerIdSelect(String sellerId) {
 		Seller seller = null;
@@ -50,7 +58,7 @@ public class SellerService {
 		return seller;
 	}
 
-// 판매자 입력
+	// 판매자 입력
 	public int sellerInsert(Seller seller) {
 		int count = 0;
 
@@ -161,56 +169,156 @@ public class SellerService {
 		return count;
 	}
 
-	// 식당 하나에 대한 정보 보기
-	public RestoInfo restoBring(String rSeq) {
+	// 레스토랑 하나에 대한 정보
+	public RestoInfo restoInfoBring(String rSeq) {
 		RestoInfo restoInfo = null;
 		try {
 			logger.debug("아아");
-			restoInfo = sellerDao.restoBring(rSeq);
+			restoInfo = sellerDao.restoInfoBring(rSeq);
 		} catch (Exception e) {
-			logger.error("[SellerService] restoBring Exception", e);
+			logger.error("[SellerService] restoInfoBring Exception", e);
 		}
 		return restoInfo;
 	}
 
-	// 식당 내용 수정
-
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public int restoUpdate(RestoInfo restoInfo) throws Exception {
-
-		int count = 0;
-		count = sellerDao.restoUpdate(restoInfo);
-
-		List<RestoFile> restoFileList = restoInfo.getRestoFileList();
-		List<Menu> menuList = restoInfo.getMenuList();
-
-		if (count > 0 && restoFileList != null && menuList != null) {
-			logger.debug("[sellerservice] restoUpdate");
-
-			for (int i = 0; i < restoFileList.size(); i++) {
-				sellerDao.restoFileUpdate(restoInfo.getRestoFileList().get(i));
-			}
-
-			MenuFile menuFile;
-			for (int i = 0; i < menuList.size(); i++) {
-				Menu menu = menuList.get(i);
-				menuFile = menu.getMenuFileList(); // 각 반복에서 새로운 MenuFile 객체 생성
-
-				sellerDao.menuUpdate(menu);
-
-				System.out.println(menuFile.getFileName());
-				logger.debug("[sellerservice] restoUpdate2");
-
-				sellerDao.menuFileUpdate(menuFile);
-
-			}
-
+	// 레스토랑 하나에 대한 파일 정보
+	public List<RestoFile> restoFileBring(String rSeq) {
+		List<RestoFile> list = null;
+		try {
+			list = sellerDao.restoFileBring(rSeq);
+		} catch (Exception e) {
+			logger.error("[SellerService] menuBring Exception", e);
 		}
-
-		return count;
-
+		return list;
 	}
 
+	// 레스토랑 에 대한 메뉴 정보
+	public List<Menu> menuBring(String rSeq) {
+		List<Menu> list = null;
+		try {
+			logger.debug("아아");
+			list = sellerDao.menuBring(rSeq);
+		} catch (Exception e) {
+			logger.error("[SellerService] restoFileBring Exception", e);
+		}
+		return list;
+	}
+
+	// 레스토랑 에 대한 메뉴 파일 정보 ...
+	public MenuFile menuFileBring(String menuSeq) {
+		MenuFile list = null;
+		try {
+			list = sellerDao.menuFileBring(menuSeq);
+		} catch (Exception e) {
+			logger.error("[SellerService] menuFileBring Exception", e);
+		}
+		return list;
+	}
+
+	// 식당 내용 수정
+
+
+	public List<MenuFile> menuFileListBring(String rSeq)
+	{
+		List<MenuFile> list = null;
+		try 
+		{
+			list = sellerDao.menuFileListBring(rSeq);
+		} 
+		catch (Exception e) 
+		{
+			logger.error("[SellerService](menuFileListBring)", e);
+		}
+		return list;
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public int restoUpdate(RestoInfo restoInfo, int flag) throws Exception 
+	{
+		int count = 0;
+		count = sellerDao.restoUpdate(restoInfo);
+		List<RestoFile> restoFileList = null;
+		restoFileList = restoInfo.getRestoFileList();
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		hashMap.put("rSeq", restoInfo.getrSeq());
+		if(flag == 0) 
+		{
+			hashMap.put("flag", 0);
+			sellerDao.restoFileDelete(hashMap);
+			for(int i = 0; i < restoFileList.size(); i++) 
+			{
+				count = sellerDao.insertRestoFile(restoFileList.get(i));
+			}			
+		} 
+		else if(flag == 1) 
+		{
+			count = sellerDao.restoFileUpdate(restoFileList.get(0));
+		} 
+		else if(flag == 2) 
+		{
+			hashMap.put("flag", 1);
+			sellerDao.restoFileDelete(hashMap);
+			for(int i = 0; i < restoFileList.size(); i++) 
+			{
+				count = sellerDao.insertRestoFile(restoFileList.get(i));
+			}
+		}
+		List<Menu> menuList = restoInfo.getMenuList();
+		MenuFile menuFile = null;
+		sellerDao.menuFileDelete(restoInfo.getrSeq());
+		sellerDao.menuDelete(restoInfo.getrSeq());
+		for (int i = 0; i < menuList.size(); i++) 
+		{
+			sellerDao.menuInsert(menuList.get(i));
+			menuFile = menuList.get(i).getMenuFileList();
+			menuFile.setMenuSeq("M" + menuList.get(i).getMenuSeq());
+			count = sellerDao.insertMenuFile(menuFile);
+		}
+		return count;
+	}
+
+	
+	
+	// 선물
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public int giftUpdate(GiftAdd giftAdd, int flag) throws Exception 
+	{
+		int count = 0;
+		count = sellerDao.giftUpdate(giftAdd);
+		List<GiftFile> giftFileList = null;
+		String productSeq = giftAdd.getProductSeq();
+		giftFileList = giftAdd.getGiftFileList();
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();
+		hashMap.put("productSeq", productSeq);
+		if (flag == 0) 
+		{
+			count = sellerDao.giftFileDelete(hashMap);
+			for (int i = 0; i < giftFileList.size(); i++) 
+			{
+				giftFileList.get(i).setProductSeq(productSeq);
+				count = sellerDao.insertGiftFile(giftFileList.get(i));
+			}
+		}
+		else if (flag == 1) 
+		{
+			giftFileList.get(0).setProductSeq(productSeq);
+			count = sellerDao.updateGiftFile(giftFileList.get(0));
+		} 
+		else if (flag == 2) 
+		{
+			hashMap.put("flag", 1);
+			count = sellerDao.giftFileDelete(hashMap);
+			for (int i = 0; i < giftFileList.size(); i++) 
+			{
+				giftFileList.get(i).setProductSeq(productSeq);
+				count = sellerDao.insertGiftFile(giftFileList.get(i));
+			}
+		}
+		return count;
+	}
+
+	
+	
 	// 선물 하나에 대한 정보
 	public GiftAdd giftInfoBring(String productSeq) {
 		GiftAdd giftAdd = null;
@@ -227,6 +335,7 @@ public class SellerService {
 	public List<GiftFile> giftFileBring(String productSeq) {
 		List<GiftFile> list = null;
 		try {
+			logger.debug("아아");
 			list = sellerDao.giftFileBring(productSeq);
 		} catch (Exception e) {
 			logger.error("[SellerService] giftFileBring Exception", e);
@@ -290,60 +399,42 @@ public class SellerService {
 		count = sellerDao.confirmGiftOrder2((String) hashMap.get("orderSeq"));
 		return count;
 	}
-	
 
-	public List<OrderList> selectMyGift(String sellerId)
-	{
+	public List<OrderList> selectMyGift(String sellerId) {
 		List<OrderList> list = null;
-		try 
-		{
+		try {
 			list = sellerDao.selectMyGift(sellerId);
-		}
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			logger.error("[SellerService](selectMyGift)", e);
 		}
 		return list;
 	}
 
-	public List<OrderList> selectMyResto(String sellerId)
-	{
+	public List<OrderList> selectMyResto(String sellerId) {
 		List<OrderList> list = null;
-		try 
-		{
+		try {
 			list = sellerDao.selectMyResto(sellerId);
-		}
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			logger.error("[SellerService](selectMyResto)", e);
 		}
 		return list;
 	}
-	
 
-	public List<OrderList> selectRestoPeriodRevenue(HashMap<String, String> hashMap)
-	{
+	public List<OrderList> selectRestoPeriodRevenue(HashMap<String, String> hashMap) {
 		List<OrderList> list = null;
-		try 
-		{
+		try {
 			list = sellerDao.selectRestoPeriodRevenue(hashMap);
-		}
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			logger.error("[SellerService](selectRestoPeriodRevenue)", e);
 		}
 		return list;
 	}
-	
-	public List<OrderList> selectGiftPeriodRevenue(HashMap<String, String> hashMap)
-	{
+
+	public List<OrderList> selectGiftPeriodRevenue(HashMap<String, String> hashMap) {
 		List<OrderList> list = null;
-		try 
-		{
+		try {
 			list = sellerDao.selectGiftPeriodRevenue(hashMap);
-		}
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			logger.error("[SellerService](selectGiftPeriodRevenue)", e);
 		}
 		return list;

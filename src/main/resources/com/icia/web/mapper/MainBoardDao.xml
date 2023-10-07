@@ -510,7 +510,11 @@ SELECT COALESCE(
 FROM DUAL
 </select>
 
-
+<!-- 게시물 삭제 시 모든 좋아요 삭제 -->
+<delete id="likeDeleteAll" parameterType="long">
+DELETE FROM MAIN_BOARD_REACTION
+ WHERE BOARD_SEQ = #{boardSeq}
+</delete>
 
 
 

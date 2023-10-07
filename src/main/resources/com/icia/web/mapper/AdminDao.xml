@@ -3,7 +3,6 @@
 <mapper namespace="com.icia.web.dao.AdminDao">
 
 <!-- 유저 관리 -->
-
 <resultMap type="com.icia.web.model.UserG2" id="userResultMap"> 
    <id column="USER_ID" property="userId" /> 
    <result column="USER_PWD" property="userPwd" />
@@ -17,7 +16,15 @@
    <result column="REG_DATE" property="regDate" />
    <result column="UPDATE_DATE" property="updateDate" />
    <result column="USER_ADDRESS" property="userAddress" />
+   <result column="FILE_NAME" property="fileName" />
 </resultMap>
+
+ <!--유저 사진 조회 resultMap -->
+<resultMap id="UserProfileResultMap" type="com.icia.web.model.UserProfileFile">
+   	<id column="USER_ID" property="userId" />
+	<id column="FILE_NAME" property="fileName" />
+</resultMap>
+
 
 <select id="userList" parameterType="com.icia.web.model.UserG2" resultMap="userResultMap">
 SELECT USER_ID,
@@ -31,7 +38,8 @@ SELECT USER_ID,
        STATUS,
        REG_DATE,
        UPDATE_DATE,
-       USER_ADDRESS
+       USER_ADDRESS,
+       FILE_NAME
   FROM (SELECT ROWNUM AS RNUM,
                USER_ID,
                USER_PWD,
@@ -44,31 +52,33 @@ SELECT USER_ID,
                STATUS,
                REG_DATE,
                UPDATE_DATE,
-               USER_ADDRESS
-          FROM (SELECT USER_ID,
-                       NVL(USER_PWD, '') AS USER_PWD,
-                       NVL(USER_EMAIL, '') AS USER_EMAIL,
-                       NVL(USER_NAME, '') AS USER_NAME,
-                       NVL(USER_NICKNAME, '') AS USER_NICKNAME,
-                       NVL(USER_PH, '') AS USER_PH,
-                       NVL(USER_GEN, '') AS USER_GEN,
-                       NVL(USER_BIR, '') AS USER_BIR,
-                       NVL(STATUS, 'N') STATUS,
-                       NVL(TO_CHAR(REG_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS REG_DATE,
-                       NVL(TO_CHAR(UPDATE_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS UPDATE_DATE,
-                       NVL(USER_ADDRESS, '') AS USER_ADDRESS
-                  FROM G2_USER
-                 WHERE 1 = 1
+               USER_ADDRESS,
+               FILE_NAME
+          FROM (SELECT A.USER_ID,
+                       NVL(A.USER_PWD, '') AS USER_PWD,
+                       NVL(A.USER_EMAIL, '') AS USER_EMAIL,
+                       NVL(A.USER_NAME, '') AS USER_NAME,
+                       NVL(A.USER_NICKNAME, '') AS USER_NICKNAME,
+                       NVL(A.USER_PH, '') AS USER_PH,
+                       NVL(A.USER_GEN, '') AS USER_GEN,
+                       NVL(A.USER_BIR, '') AS USER_BIR,
+                       NVL(A.STATUS, 'N') STATUS,
+                       NVL(TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS REG_DATE,
+                       NVL(TO_CHAR(A.UPDATE_DATE, 'YYYY.MM.DD HH24:MI:SS'), '') AS UPDATE_DATE,
+                       NVL(A.USER_ADDRESS, '') AS USER_ADDRESS,
+                       NVL(B.FILE_NAME, '/resources/images/profile.png') AS FILE_NAME
+                  FROM G2_USER A, USER_PROFILE_FILE B
+                 WHERE A.USER_ID = B.USER_ID(+)
                  <if test='userId != null and userId != ""'>
-                   AND USER_ID LIKE '%' || #{userId} || '%'
+                   AND A.USER_ID LIKE '%' || #{userId} || '%'
                    </if>
                    <if test='userName != null and userName != ""'>
-                   AND USER_NAME LIKE '%' || #{userName} || '%'
+                   AND A.USER_NAME LIKE '%' || #{userName} || '%'
                  </if>  
                  <if test='status != "null" and status != ""'>
-                   AND STATUS LIKE '%' || #{status} || '%'
+                   AND A.STATUS LIKE '%' || #{status} || '%'
                  </if>
-                 ORDER BY REG_DATE DESC))
+                 ORDER BY A.REG_DATE DESC))
     WHERE RNUM <![CDATA[>=]]> #{startRow}
     AND RNUM <![CDATA[<=]]> #{endRow}
 </select>
@@ -116,8 +126,26 @@ UPDATE G2_USER
 </update>
 
 
-<!-- 판매자 관리 -->
+<!-- 유저 프로필 사진 삭제 -->
 
+<delete id="adminManageUserProfileDelete" parameterType="String">
+DELETE FROM USER_PROFILE_FILE
+ WHERE USER_ID = #{value}
+</delete>
+
+<!-- 유저 프로필 사진 조회 -->
+<select id="adminManageUserProfileSelect" parameterType="String" resultMap="UserProfileResultMap">
+SELECT USER_ID,
+       FILE_NAME
+  FROM USER_PROFILE_FILE
+ WHERE FILE_NAME = #{value}
+</select>
+
+
+
+
+
+<!-- 판매자 관리 -->
 <resultMap type="com.icia.web.model.Seller" id="sellerResultMap"> 
    <id column="SELLER_ID" property="sellerId" /> 
    <result column="BUSINESS_ID" property="sellerBusinessId" />
@@ -440,4 +468,162 @@ WHERE
     	AND P_NAME LIKE '%' || #{searchValue} || '%'
     </if>
 </select>
+
+<update id="updateRestoText" parameterType="hashMap">
+UPDATE 
+    RESTO_INFO
+SET
+	<choose>
+		<when test="type == 0">
+    		RESTO_NAME = #{changeText}
+		</when>
+		<otherwise>
+    		RESTO_CONTENT = #{changeText}
+		</otherwise>
+	</choose>
+WHERE
+    R_SEQ = #{rSeq}
+</update>
+
+<update id="updateMenuText" parameterType="hashMap">
+UPDATE 
+    MENU
+SET
+	<choose>
+		<when test="type == 0">
+    		MENU_NAME = #{changeText}
+		</when>
+		<otherwise>
+    		MENU_CONTENT = #{changeText}
+		</otherwise>
+	</choose>
+WHERE
+    MENU_SEQ = #{menuSeq}
+</update>
+
+<update id="updateRestoImages" parameterType="hashMap">
+UPDATE 
+    RESTO_FILE
+SET
+    FILE_NAME = 'resto.jpg'
+WHERE
+    R_SEQ = #{rSeq}
+    AND FILE_SEQ = #{fileSeq}
+</update>
+
+<update id="updateMenuImages" parameterType="String">    
+UPDATE 
+    MENU_FILE
+SET
+    FILE_NAME = 'normalMenu.png'
+WHERE
+    MENU_SEQ = #{value}
+</update>
+
+<update id="updateAdminRestoStatus" parameterType="hashMap">
+UPDATE 
+    RESTO_INFO
+SET
+    STATUS = #{status}
+WHERE
+    R_SEQ = #{rSeq}
+</update>
+
+<select id="selectAdminRestoRevenue" parameterType="String" resultMap="adminResultMap">
+SELECT
+    TO_CHAR(O.REG_DATE, 'YYYYMM') AS RESTO_REG_DATE,
+    SUM(RESERV_PERSON) AS RESTO_TOTAL_COUNT,
+    SUM(RESTO_DEPOSIT * RESERV_PERSON) AS RESTO_TOTAL_PRICE,
+    COUNT(ORDER_SEQ) AS ORDER_TOTAL_CNT,
+    R.RESTO_NAME AS RESTO_NAME
+FROM
+    ORDER_LIST O, 
+    RESTO_INFO R
+WHERE
+	R.R_SEQ = #{value}
+    AND O.R_SEQ = R.R_SEQ
+    AND O.STATUS = 'Y'
+GROUP BY
+    TO_CHAR(O.REG_DATE, 'YYYYMM'),
+    R.RESTO_NAME
+ORDER BY
+    TO_CHAR(O.REG_DATE, 'YYYYMM') DESC
+</select>
+
+<select id="selectAdminGiftRevenue" parameterType="String" resultMap="adminResultMap">
+SELECT
+    P.P_NAME AS P_NAME,
+    TO_CHAR(O.REG_DATE, 'YYYYMM') AS GIFT_REG_DATE,
+    COUNT(O.ORDER_SEQ) AS ORDER_TOTAL_CNT,
+    SUM(TOTAL_CNT) AS GIFT_TOTAL_CNT,
+    SUM(TOTAL_PRICE) AS GIFT_TOTAL_PRICE
+FROM 
+    ORDER_LIST O,
+    PRODUCT_INFO P,
+    PAY_LIST PL
+WHERE
+    P.PRODUCT_SEQ = #{value}
+    AND O.PRODUCT_SEQ = P.PRODUCT_SEQ
+    AND O.ORDER_SEQ = PL.ORDER_ID
+    AND O.STATUS = 'Y'
+GROUP BY
+    TO_CHAR(O.REG_DATE, 'YYYYMM'),
+    P.P_NAME
+ORDER BY
+    TO_CHAR(O.REG_DATE, 'YYYYMM') DESC
+</select>
+
+<update id="updateAdminGiftStatus" parameterType="hashmap">
+
+UPDATE 
+    PRODUCT_INFO
+SET
+    STATUS = #{status}
+WHERE
+    PRODUCT_SEQ = #{productSeq}
+</update>
+
+<update id="updateGiftText" parameterType="hashMap">
+UPDATE 
+    PRODUCT_INFO
+SET
+	<choose>
+		<when test="type == 0">
+    		P_NAME = #{changeText}
+		</when>
+		<otherwise>
+    		P_CONTENT = #{changeText}
+		</otherwise>
+	</choose>
+WHERE
+    PRODUCT_SEQ = #{productSeq}  
+</update>
+
+<update id="updateGiftImages" parameterType="hashMap">
+UPDATE 
+    PRODUCT_FILE
+SET
+    FILE_NAME = 'gift.png'
+WHERE
+    PRODUCT_SEQ = #{productSeq}  
+    AND FILE_SEQ = #{fileSeq}  
+</update>
+
+
 </mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

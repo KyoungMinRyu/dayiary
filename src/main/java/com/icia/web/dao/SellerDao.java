@@ -67,9 +67,6 @@ public interface SellerDao {
 	// 레스토랑 결제리스트
 	public List<OrderList> myRestoOrder(OrderList orderList);
 
-	// 레스토랑 취소
-	public int sellerCancelReserv(String orderSeq);
-
 	// 선물 결제리스트
 	public List<OrderList> myGiftOrder(OrderList orderList);
 
@@ -85,6 +82,24 @@ public interface SellerDao {
 	// 배송중상태로 변경하기
 	public int confirmGiftOrder2(String orderSeq);
 
+	// 하나의 레스토랑 정보
+	public RestoInfo restoInfoBring(String rSeq);
+
+	// 하나의 레스토랑에 대한 파일들 정보
+	public List<RestoFile> restoFileBring(String rSeq);
+
+	// 하나의 레스토랑의 메뉴 정보
+	public List<Menu> menuBring(String rSeq);
+
+	// 하나의 선물에 대한 파일들 정보
+	public MenuFile menuFileBring(String rSeq);
+
+	public List<MenuFile> menuFileListBring(String rSeq);
+
+	public int menuInsert(Menu menu);
+
+	public int insertMenuFile(MenuFile menuFile);
+
 	// 하나의 선물 정보
 	public GiftAdd giftInfoBring(String productSeq);
 
@@ -96,12 +111,25 @@ public interface SellerDao {
 
 	// 하나의 선물 사진 정보 삭제 int boardFileDelete(long hiBbsSeq);
 	public int giftFileDelete(HashMap<String, Object> hashMap);
-	
+
+	public int updateGiftFile(GiftFile giftFile);
+
+	// 선물 이미지 재등록
+	public int insertGiftFile(GiftFile giftFile);
+
+	public int restoFileDelete(HashMap<String, Object> hashMap);
+
+	public int insertRestoFile(RestoFile restoFile);
+
+	public int menuDelete(String rSeq);
+
+	public int menuFileDelete(String menuSeq);
+
 	public List<OrderList> selectMyGift(String sellerId);
 
 	public List<OrderList> selectMyResto(String sellerId);
-	
-	public List<OrderList> selectRestoPeriodRevenue(HashMap<String, String> hashMap); 
-	
+
+	public List<OrderList> selectRestoPeriodRevenue(HashMap<String, String> hashMap);
+
 	public List<OrderList> selectGiftPeriodRevenue(HashMap<String, String> hashMap);
-} 
+}

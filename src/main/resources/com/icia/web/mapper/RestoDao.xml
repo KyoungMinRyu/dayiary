@@ -96,7 +96,8 @@ SELECT R_SEQ,
        RESTO_OPEN,
        RESTO_CLOSE,
        RESTO_DEPOSIT,
-       LIMIT_PERSON
+       LIMIT_PERSON,
+       FILE_NAME
   FROM (SELECT ROWNUM RNM,
                R_SEQ,
                RESTO_NAME,
@@ -112,25 +113,29 @@ SELECT R_SEQ,
                RESTO_OPEN,
                RESTO_CLOSE,
                RESTO_DEPOSIT,
-               LIMIT_PERSON
+               LIMIT_PERSON,
+               FILE_NAME
           FROM (SELECT ROWNUM RNM,
-                       R_SEQ,
-                        RESTO_NAME,
-                        SELLER_ID,
-                        RESTO_ADDRESS,
-                        RESTO_PH,
-                        RESTO_CONTENT,
-                        REG_DATE,
-                        STATUS,
-                        RESTO_TYPE,
-                        FOOD_TYPE,
-                        RESTO_OFF,
-                        RESTO_OPEN,
-                        RESTO_CLOSE,
-                        RESTO_DEPOSIT,
-                        LIMIT_PERSON
-                    FROM RESTO_INFO
-                 WHERE 1 = 1
+                        A.R_SEQ AS R_SEQ,
+                        A.RESTO_NAME AS RESTO_NAME,
+                        A.SELLER_ID AS SELLER_ID,
+                        A.RESTO_ADDRESS AS RESTO_ADDRESS,
+                        A.RESTO_PH AS RESTO_PH,
+                        A.RESTO_CONTENT AS RESTO_CONTENT,
+                        A.REG_DATE AS REG_DATE,
+                        A.STATUS AS STATUS,
+                        A.RESTO_TYPE AS RESTO_TYPE,
+                        A.FOOD_TYPE AS FOOD_TYPE,
+                        A.RESTO_OFF AS RESTO_OFF,
+                        A.RESTO_OPEN AS RESTO_OPEN,
+                        A.RESTO_CLOSE AS RESTO_CLOSE,
+                        A.RESTO_DEPOSIT AS RESTO_DEPOSIT,
+                        A.LIMIT_PERSON AS LIMIT_PERSON,
+                        B.FILE_NAME AS FILE_NAME
+                    FROM RESTO_INFO A, RESTO_FILE B
+                   WHERE A.R_SEQ = B.R_SEQ
+                     AND B.FILE_SEQ = 1
+                     AND A.STATUS = 'Y'
 <if test=' searchTypeLocation != null and searchTypeLocation != "" '>
                     AND SUBSTR(RESTO_ADDRESS, 1, 2) = #{searchTypeLocation}
 </if>
@@ -143,11 +148,10 @@ SELECT R_SEQ,
 <if test=' searchTypeDate != null and searchTypeDate != "" '>
                   AND (RESTO_OFF NOT LIKE '%' || #{searchTypeDate} || '%' OR RESTO_OFF IS NULL)
 </if>
-              ORDER BY RESTO_ADDRESS ASC))
+              ORDER BY A.REG_DATE DESC))
  WHERE RNM <![CDATA[>=]]> #{startRow}
    AND RNM <![CDATA[<=]]> #{endRow}  
 </select>
-<!--  꺽쇠부분을 태그로 인식해서...  <![CDATA[>=]]> 문법 사용 -->
 
 
 <!-- 총 레스토랑 수 -->
@@ -213,7 +217,7 @@ SELECT A.MENU_SEQ,
   FROM MENU A, MENU_FILE B
  WHERE A.MENU_SEQ = B.MENU_SEQ
    AND R_SEQ = #{value}
-ORDER BY MENU_PRICE DESC
+ORDER BY MENU_SEQ ASC
 </select>
 
 <!-- 해당 레스토랑의 리뷰 조회 -->
@@ -324,19 +328,6 @@ VALUES
 </insert>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- restoInfo -->
 <insert id="restoListInsert" parameterType="com.icia.web.model.RestoInfo">
 <selectKey resultType="string" keyProperty="rSeq" order="BEFORE">
@@ -354,7 +345,11 @@ INSERT INTO RESTO_INFO
     STATUS,
     RESTO_TYPE,
     FOOD_TYPE,
-    RESTO_OFF
+    RESTO_OFF,
+    RESTO_OPEN,
+    RESTO_CLOSE,
+    RESTO_DEPOSIT,
+    LIMIT_PERSON
 ) 
 VALUES 
 (
@@ -368,7 +363,11 @@ VALUES
     'Y',
     #{restoType},
     #{foodType},
-    #{restoOff}
+    #{restoOff},
+    #{restoOpen},
+    #{restoClose},
+    #{restoDeposit},
+    #{limitPerson}
 )
 </insert>
 
@@ -432,6 +431,7 @@ VALUES
     #{fileName}
 )
 </insert>
+
 
 
 

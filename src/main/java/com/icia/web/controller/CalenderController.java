@@ -68,6 +68,7 @@ public class CalenderController
 		String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
 		String year = HttpUtil.get(request, "year", publicDataApi.getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy")));
 		String month = HttpUtil.get(request, "month", publicDataApi.getLocalDateTime().format(DateTimeFormatter.ofPattern("MM")));
+		System.out.println(month);
         Map<String, List<String>> map = (Map<String, List<String>>)session.getAttribute(year);
 		List<String> day = new ArrayList<String>();
 		day.addAll(getList(month, 0));

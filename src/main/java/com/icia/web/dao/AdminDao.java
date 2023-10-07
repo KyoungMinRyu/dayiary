@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.icia.web.model.Admin;
 import com.icia.web.model.Seller;
 import com.icia.web.model.UserG2;
+import com.icia.web.model.UserProfileFile;
 
 @Repository("adminDao")
 public interface AdminDao {
@@ -22,6 +23,12 @@ public interface AdminDao {
 
 	// 사용자 수정
 	public int userUpdate(UserG2 user);
+
+	// 사용자(유저) 프로필 사진 삭제
+	public int adminManageUserProfileDelete(String userId);
+
+	// 사용자(유저) 프로필 사진 조회
+	public UserProfileFile adminManageUserProfileSelect(String fileName);
 
 	// 판매자 리스트
 	public List<Seller> sellerList(Seller seller);
@@ -51,4 +58,23 @@ public interface AdminDao {
 
 	public int selectGiftTotalCount(String searchValue);
 
+	public int updateRestoText(HashMap<String, Object> hashMap);
+
+	public int updateMenuText(HashMap<String, Object> hashMap);
+
+	public int updateRestoImages(HashMap<String, Object> hashMap);
+
+	public int updateMenuImages(String menuSeq);
+
+	public int updateAdminRestoStatus(HashMap<String, String> hashMap);
+
+	public List<Admin> selectAdminGiftRevenue(String productSeq);
+
+	public List<Admin> selectAdminRestoRevenue(String rSeq);
+	
+	public int updateAdminGiftStatus(HashMap<String, String> hashMap);
+	
+	public int updateGiftText(HashMap<String, Object> hashMap);
+
+	public int updateGiftImages(HashMap<String, Object> hashMap);
 }

@@ -25,6 +25,7 @@ import com.icia.web.model.GiftAdd;
 import com.icia.web.model.GiftFile;
 import com.icia.web.model.Paging;
 import com.icia.web.model.Response;
+import com.icia.web.model.RestoReview;
 import com.icia.web.model.UserG2;
 import com.icia.web.service.GiftService;
 import com.icia.web.service.UserG2Service;
@@ -122,7 +123,7 @@ public class GiftController {
 					ajaxResponse.setResponse(500, "Internal server error");
 				}
 			} catch (Exception e) {
-				logger.error("[RestoController] restoProc Exception", e);
+				logger.error("[GiftController] giftInsert Exception", e);
 				ajaxResponse.setResponse(500, "internal server error");
 			}
 		} else {
@@ -171,23 +172,13 @@ public class GiftController {
 		}
 
 		totalCount = giftService.giftCount(search);
-		// totalCount = restoService.restoCount(search);
-		logger.debug("토탈카운트:" + totalCount);
 
 		if (totalCount > 0) {
 			paging = new Paging("/gift/giftList", totalCount, LIST_COUNT, PAGE_COUNT, curPage, "curPage");
 
 			search.setStartRow(paging.getStartRow());
 			search.setEndRow(paging.getEndRow());
-
 			list = giftService.giftList(search);
-
-			logger.debug("=============================paging:" + paging.getStartRow());
-			logger.debug("=============================paging:" + paging.getEndRow());
-			logger.debug("=============================search:" + search.getStartRow());
-			logger.debug("=============================search:" + search.getEndRow());
-
-			// logger.debug("=============================list count:" + list.size());
 		}
 
 		model.addAttribute("productSeq", productSeq);
@@ -199,13 +190,9 @@ public class GiftController {
 		model.addAttribute("orderBy", orderBy);
 		model.addAttribute("productType", productType);
 		return "/gift/giftList";
-
 	}
 
 	// 선물 상세페이지
-
-	// 선물 상세페이지
-
 	@RequestMapping(value = "/gift/giftView")
 	public String giftView(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
 		// 쿠키 값
@@ -225,6 +212,8 @@ public class GiftController {
 		GiftAdd giftAdd = null;
 		GiftFile giftFile = null;
 
+		List<RestoReview> productReviewList = new ArrayList<RestoReview>();
+
 		if (!StringUtil.isEmpty(productSeq)) {
 
 			HashMap<String, String> hashMap = new HashMap<String, String>();
@@ -232,8 +221,13 @@ public class GiftController {
 			hashMap.put("productSeq", productSeq);
 			model.addAttribute("checkFavorite", giftService.selectCheckFavorite(hashMap));
 			giftAdd = giftService.giftView(productSeq);
-			giftFile = giftService.giftFileView(productSeq);
 			model.addAttribute("giftFile", giftFile);
+			productReviewList = giftService.productReviewList(productSeq);
+
+		} 
+		else 
+		{
+			return "/gift/giftList";
 		}
 
 		// model.addAttribute("boardMe", boardMe);
@@ -244,9 +238,9 @@ public class GiftController {
 		model.addAttribute("curPage", curPage);
 		model.addAttribute("cookieUserId", cookieUserId);
 		model.addAttribute("productSeq", productSeq);
+		model.addAttribute("productReviewList", productReviewList);
 
 		// 리스트
-
 
 		return "/gift/giftView";
 	}

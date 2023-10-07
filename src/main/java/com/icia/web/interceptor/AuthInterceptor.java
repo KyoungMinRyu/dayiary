@@ -169,7 +169,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 			}
 			
 			// 인증 체크
-			if(CookieUtil.getCookie(request, AUTH_COOKIE_NAME) != null || CookieUtil.getCookie(request, "SELLER_ID") != null )
+			if(CookieUtil.getCookie(request, AUTH_COOKIE_NAME) != null || CookieUtil.getCookie(request, "SELLER_ID") != null)
 			{
 				String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
 
@@ -188,11 +188,42 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
                   
 					if(userG2 != null && StringUtil.equals(userG2.getStatus(), "Y"))
 					{
-						bFlag = true;
+						if(!StringUtil.equals(cookieUserId, "adm"))
+						{
+							if(url.indexOf("/admin/") == -1 && url.indexOf("/seller/") == -1 && !StringUtil.equals("/notice/noticeWriteForm", url) && !StringUtil.equals("/index/adminIndex", url) && !StringUtil.equals("/index/sellerIndex", url))
+							{
+								bFlag = true;
+							}	
+							else
+							{
+								logger.debug("유저 : " + cookieUserId + "가 허용되지 않은 " + url + "접속");
+								bFlag = false;
+							}
+						}
+						else
+						{
+							if(url.indexOf("/seller/") == -1 && url.indexOf("/msg/") == -1 && url.indexOf("/post/") == -1 && url.indexOf("/friend/") == -1 && url.indexOf("/anniversary/") == -1  && url.indexOf("/user/") == -1 && !StringUtil.equals("/index/sellerIndex", url))
+							{
+								bFlag = true;
+							}
+							else
+							{
+								logger.debug("관리자 : " + cookieUserId + "가 허용되지 않은 " + url + "접속");
+								bFlag = false;
+							}
+						}
 					}
 					else if(seller != null && StringUtil.equals(seller.getStatus(), "Y"))
 					{
-						bFlag = true;
+						if(url.indexOf("/admin/") == -1 && url.indexOf("/msg/") == -1 && url.indexOf("/post/") == -1 && url.indexOf("/friend/") == -1 && url.indexOf("/anniversary/") == -1  && url.indexOf("/user/") == -1 && !StringUtil.equals("/notice/noticeWriteForm", url) && !StringUtil.equals("/index/adminIndex", url) && !StringUtil.equals("/index/index", url))
+						{
+							bFlag = true;
+						}
+						else
+						{
+							logger.debug("판매자 : " + cookieSellerId + "가 허용되지 않은 " + url + "접속");
+							bFlag = false;
+						}
 					}
 					else
 					{
@@ -242,6 +273,8 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 				}
 				else
 				{
+					CookieUtil.deleteCookie(request, response, "/", AUTH_COOKIE_NAME);
+					CookieUtil.deleteCookie(request, response, "/", "SELLER_ID");
 					response.sendRedirect("/");
 				}
 			}
@@ -279,11 +312,17 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 	 */
 	private boolean isExcludeUrl(String url)
 	{
+		if(StringUtil.equals(url, "/index/adminIndex") || StringUtil.equals(url, "/index/sellerIndex"))
+		{
+			return false;
+		}
+		
 		if(authExcludeUrlList != null && authExcludeUrlList.size() > 0 && !StringUtil.isEmpty(url))
 		{
+			String chkUrl = "";
 			for(int i=0; i<authExcludeUrlList.size(); i++)
 			{
-				String chkUrl = StringUtil.trim(StringUtil.nvl(authExcludeUrlList.get(i)));
+				chkUrl = StringUtil.trim(StringUtil.nvl(authExcludeUrlList.get(i)));
 				
 				if(!StringUtil.isEmpty(chkUrl) && chkUrl.length() <= url.length())
 				{

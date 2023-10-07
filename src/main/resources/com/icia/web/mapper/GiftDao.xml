@@ -23,6 +23,8 @@
     <result column="PRODUCT_CATEGORY" property="productCategory"/>
     <result column="FILE_NAME" property="fileName"/>
     <result column="FILE_SEQ" property="fileSeq"/>
+    <result column="REVIEW_SCORE" property="reviewScore"/>
+    <result column="REVIEW_COUNT" property="reviewCount"/>
 </resultMap>
 
 <!-- GiftFile resultMap -->
@@ -32,6 +34,18 @@
     <result column="FILE_NAME" property="fileName" />
 </resultMap>
 
+<!-- RestoReview 안에 Productseq추가한거 -->
+<resultMap type="com.icia.web.model.RestoReview" id="productReviewResultMap">
+   <result column="ORDER_SEQ" property="orderSeq" />
+   <result column="REVIEW_CONTENT" property="reviewContent" />
+   <result column="REVIEW_SCORE" property="reviewScore" />
+   <result column="USER_ID" property="userId" />
+   <result column="FILE_NAME" property="fileName" />
+   <result column="USER_NICKNAME" property="userNickName" />
+   <result column="PRODUCT_SEQ" property="productSeq" />
+   <result column="REG_DATE" property="regDate" />
+   
+</resultMap>
 
 <!-- giftAdd -->
 <insert id="giftInsert" parameterType="com.icia.web.model.GiftAdd">
@@ -83,77 +97,95 @@ VALUES
 
 
 <!-- 선물 리스트 -->
+<!-- 선물 리스트 -->
 <select id="giftList" parameterType="com.icia.web.model.GiftAdd" resultMap="giftListResultMap">
 SELECT PRODUCT_SEQ, 
-            P_NAME, SELLER_ID, 
-            P_PRICE, 
-            P_CONTENT, 
-            REG_DATE, 
-            STATUS, 
-            PRODUCT_CATEGORY,
-            FILE_NAME, 
-            FILE_SEQ 
+       P_NAME, SELLER_ID, 
+       P_PRICE, 
+       P_CONTENT, 
+       REG_DATE, 
+       STATUS, 
+       PRODUCT_CATEGORY,
+       FILE_NAME, 
+       FILE_SEQ,
+       REVIEW_SCORE,
+       REVIEW_COUNT
   FROM (SELECT ROWNUM AS RNUM,
-                        PRODUCT_SEQ, 
-                        P_NAME, SELLER_ID, 
-                        P_PRICE, 
-                        P_CONTENT, 
-                        REG_DATE, 
-                        STATUS, 
-                        PRODUCT_CATEGORY,
-                        FILE_NAME, 
-                        FILE_SEQ 
-              FROM (SELECT A.PRODUCT_SEQ, 
-                                    NVL(A.P_NAME,'') AS P_NAME, 
-                                    NVL(A.SELLER_ID,'') AS SELLER_ID, 
-                                    NVL(A.P_PRICE,'') AS P_PRICE, 
-                                    NVL(A.P_CONTENT,'') AS P_CONTENT, 
-                                    TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH:MM:SS') AS REG_DATE,
-                                    NVL(A.STATUS,'') AS STATUS,
-                                    NVL(A.PRODUCT_CATEGORY,'') AS PRODUCT_CATEGORY, 
-                                    NVL(B.FILE_NAME,'') AS FILE_NAME, 
-                                    NVL(B.FILE_SEQ,1) AS FILE_SEQ
-                          FROM PRODUCT_INFO A, PRODUCT_FILE B  
-                        WHERE B.FILE_SEQ = 1
-                            AND A.PRODUCT_SEQ = B.PRODUCT_SEQ
+               PRODUCT_SEQ, 
+               P_NAME, 
+               SELLER_ID, 
+               P_PRICE, 
+               P_CONTENT, 
+               REG_DATE, 
+               STATUS, 
+               PRODUCT_CATEGORY,
+               FILE_NAME, 
+               FILE_SEQ,
+               REVIEW_SCORE,
+               REVIEW_COUNT
+          FROM (SELECT A.PRODUCT_SEQ, 
+                       NVL(A.P_NAME, '') AS P_NAME, 
+                       NVL(A.SELLER_ID, '') AS SELLER_ID, 
+                       NVL(A.P_PRICE, '') AS P_PRICE,
+                       DBMS_LOB.SUBSTR(A.P_CONTENT, 4000, 1) AS P_CONTENT, 
+                       TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH:MM:SS') AS REG_DATE,
+                       NVL(A.STATUS,'') AS STATUS,
+                       NVL(A.PRODUCT_CATEGORY,'') AS PRODUCT_CATEGORY, 
+                       NVL(B.FILE_NAME,'') AS FILE_NAME, 
+                       NVL(B.FILE_SEQ,1) AS FILE_SEQ,
+                       NVL(AVG(REVIEW_SCORE), 0) AS REVIEW_SCORE,
+                       NVL(COUNT(REVIEW_SCORE), 0) AS REVIEW_COUNT
+                  FROM PRODUCT_INFO A, PRODUCT_FILE B, ORDER_LIST D, ORDER_REVIEW C
+                 WHERE A.PRODUCT_SEQ = B.PRODUCT_SEQ
+                   AND B.FILE_SEQ = 1
+                   AND A.PRODUCT_SEQ = D.PRODUCT_SEQ(+)
+                   AND D.ORDER_SEQ = C.ORDER_SEQ(+)
 <if test=' productType != null and productType != "" '>                            
-                            AND A.PRODUCT_CATEGORY = #{productType}
+                   AND A.PRODUCT_CATEGORY = #{productType}
 </if>
 
 <if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>
     <choose>
         <when test='searchType == "1"'>
-                            AND A.P_NAME LIKE '%'||#{searchValue}||'%'
+                   AND A.P_NAME LIKE '%'||#{searchValue}||'%'
         </when>
         <when test='searchType == "2"'>
-                            AND A.P_CONTENT LIKE '%'||#{searchValue}||'%'
+                   AND A.P_CONTENT LIKE '%'||#{searchValue}||'%'
         </when>
     </choose>
 </if>
 
+              GROUP BY A.PRODUCT_SEQ, 
+                           A.P_NAME, A.SELLER_ID, 
+                           A.P_PRICE, 
+                           DBMS_LOB.SUBSTR(A.P_CONTENT, 4000, 1), 
+                           A.REG_DATE, 
+                           A.STATUS, 
+                           A.PRODUCT_CATEGORY,
+                           B.FILE_NAME, 
+                           B.FILE_SEQ
+
 <if test=' orderBy != null and orderBy != "" '>  
     <choose>
       <when test='orderBy == "regDesc"'>
-                      ORDER BY A.REG_DATE DESC 
+                  ORDER BY A.REG_DATE DESC 
       </when>
       <when test='orderBy == "priceDesc"'>
-                      ORDER BY TO_NUMBER(A.P_PRICE) DESC 
+                  ORDER BY TO_NUMBER(A.P_PRICE) DESC 
        </when>
         <when test='orderBy == "priceAsc"'>
-                      ORDER BY TO_NUMBER(A.P_PRICE) ASC
+                  ORDER BY TO_NUMBER(A.P_PRICE) ASC
        </when>            
        <otherwise>
-                    ORDER BY A.REG_DATE ASC
+                  ORDER BY A.REG_DATE ASC
        </otherwise>
    </choose>   
 </if>
-                        
                         ))
  WHERE RNUM <![CDATA[>=]]> #{startRow}
    AND RNUM <![CDATA[<=]]> #{endRow} 
  
 </select>
-
 <!-- 총 선물 수 -->
 <select id="giftCount" parameterType="com.icia.web.model.GiftAdd" resultType="long">
 SELECT COUNT(A.PRODUCT_SEQ) AS CNT
@@ -199,16 +231,6 @@ SELECT
          AND A.PRODUCT_SEQ = #{value}
 </select>
 
-
-
-<select id="giftFileSelect" parameterType="String" resultMap="giftFileResultMap">
-SELECT PRODUCT_SEQ,
-       FILE_SEQ,
-       NVL(FILE_NAME, '') AS FILE_NAME
-  FROM PRODUCT_FILE
- WHERE PRODUCT_SEQ = #{value}
- AND FILE_SEQ = 2
-</select>
 
 <select id="selectCheckFavorite" parameterType="hashmap" resultType="int">
 SELECT
@@ -266,6 +288,54 @@ WHERE
 ORDER BY 
     F.REG_DATE DESC   
 </select>
+
+<select id="selectAdminGiftView" parameterType="String" resultMap="giftResultMap">
+SELECT
+    PRODUCT_SEQ,
+    P_NAME,
+    SELLER_ID,
+    P_PRICE,
+    P_CONTENT,
+    TO_CHAR(REG_DATE, 'YYYY"년" MM"월" DD"일"') AS REG_DATE,
+    STATUS,
+    PRODUCT_CATEGORY
+FROM
+    PRODUCT_INFO 
+WHERE
+    PRODUCT_SEQ = #{value}
+</select>
+
+<select id="selectGiftFIleList" parameterType="String" resultMap="giftFileResultMap">
+SELECT
+    FILE_NAME,
+    FILE_SEQ
+FROM
+    PRODUCT_FILE
+WHERE
+    PRODUCT_SEQ = #{value}
+ORDER BY
+    FILE_SEQ ASC
+</select>
+
+<select id="productReviewList" parameterType="String" resultMap="productReviewResultMap">
+SELECT NVL(A.ORDER_SEQ, '') AS ORDER_SEQ,
+       NVL(A.REVIEW_CONTENT, '') AS REVIEW_CONTENT,
+       NVL(A.REVIEW_SCORE, 0) AS REVIEW_SCORE,
+       NVL(B.PRODUCT_SEQ, '') AS PRODUCT_SEQ,
+       NVL(B.USER_ID, '') AS USER_ID,
+       NVL(C.FILE_NAME, '/resources/images/profile.png') AS FILE_NAME,
+       NVL(D.USER_NICKNAME, '') USER_NICKNAME,
+       TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH24:MI:SS') AS REG_DATE
+  FROM ORDER_REVIEW A, ORDER_LIST B, USER_PROFILE_FILE C, G2_USER D
+ WHERE A.ORDER_SEQ = B.ORDER_SEQ
+   AND B.USER_ID = C.USER_ID(+)
+   AND C.USER_ID(+) = D.USER_ID
+   AND B.USER_ID = D.USER_ID
+   AND B.PRODUCT_SEQ = #{value}
+ORDER BY A.REG_DATE DESC
+
+</select> 
+
 </mapper>
 
 
