@@ -86,24 +86,19 @@ $(function() {
           { // 사용가능 아이디
                                  $("#userNickNameMsg").text("사용가능한 닉네임입니다.");
                                    $("#userNickNameMsg").css("color", "blue");
-                                   //console.log("사용가능한 아이디");
-                                   //console.log($("#userId").val());
                                      $("#hiddenNickName").val(String($("#userNickName").val())); 
-                                     console.log("히든? : " + $("#hiddenNickName").val());
                              }
                              else if(response.code == 100)
                                  { // 중복 아이디
                                    $("#userNickNameMsg").text("사용할 수 없는 닉네임입니다.");
                                    $("#userNickNameMsg").css("color", "red");
                                    $("#hiddenNickName").val("");
-                                   //console.log("사용불가한 아이디");
                              }
                              else
                              { // 파라미터 오류
                                    $("#userNickNameMsg").text("입력 값이 잘못되었습니다.");
                                    $("#userNickNameMsg").css("color", "red");
                                    $("#hiddenNickName").val("");
-                                   //console.log("사용불가한 아이디");
                              }
             },
             error: function(xhr, status, error) {
@@ -119,9 +114,7 @@ $(function() {
             if (!getNickName.test(inputText)) 
             {
                 messageElement.text("닉네임은 영어 대소문자, 숫자, 한글만 2~12자만 입력 가능합니다.");
-                //console.log(inputText);
                 var sanitizedText = inputText.replace(/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]+/g, "");
-                //console.log(sanitizedText);
                 $(this).val(sanitizedText);
             } 
             else
@@ -136,9 +129,7 @@ $(function() {
             if (!getCheck.test(inputText)) 
             {
                 messageElement.text(msgArr[0]);
-                //console.log(inputText);
                 var sanitizedText = inputText.replace(/[^a-zA-Z0-9]/g, "");
-                //console.log(sanitizedText);
                 $(this).val(sanitizedText);
             } 
             else
@@ -200,12 +191,7 @@ $(function() {
            {
                $("#hiddenAdd").val($("#roadAddress").val() + " " + $("#detailAddress").val());    
            }
-           
-            console.log({
-                userPwd: $("#hiddenPwd").val(),
-                userNickName: $("#hiddenNickName").val(),
-                userAddress: $("#hiddenAdd").val(),
-            });
+                
 
             $.ajax
                ({
@@ -259,7 +245,6 @@ $(function() {
             {
                $("#userAddMsg").html("&nbsp;");
                $("#hiddenAdd").val($("#roadAddress").val() + " " + $("#detailAddress").val());    
-               //console.log(document.getElementById("roadAddress").value);
             });
     
     

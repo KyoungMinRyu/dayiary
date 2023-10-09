@@ -22,23 +22,18 @@
 	 
 	 
     var menuCount = ${menuList.size()};
-    
+
+    $("#hiddenAdd").val("${restoInfo.restoAddress}");
+
 
     //상세 주소 입력시 도로명주소+상세주소 합쳐지는 거
      $("#detailAddress").on("input", function() 
     {
         var roadAddress = $("#roadAddress").val();
         var detailAddress = $("#detailAddress").val();
-
-    
-            // roadAddress가 null이 아닌 경우 roadAddress와 detailAddress를 결합
-            $("#hiddenAdd").val(roadAddress + " " + detailAddress);
-        
-
+		$("#hiddenAdd").val(roadAddress + " " + detailAddress);
     });   
    
-        $("#hiddenAdd").val($("#detailAddress").val());
-
    //메뉴 추가하기 펑션
 $("#menuPlus").on("click", function() {
     var div = document.createElement('div');
@@ -67,9 +62,8 @@ $(document).on("click", ".menuDeleteButton", function() {
             menuElement.parentNode.removeChild(menuElement); // 해당 메뉴 삭제
             menuCount--;
             $("#menuCount").val(menuCount);
-            console.log(menuCount);
         } else {
-            console.log("해당 메뉴가 존재하지 않습니다.");
+            alert("해당 메뉴가 존재하지 않습니다.");
         }
     });
 
@@ -209,8 +203,6 @@ $("#menuCount").val(menuCount);
                 document.getElementById('postcode').value = data.zonecode;
                 document.getElementById("roadAddress").value = addr2;
                  
-                console.log($("#roadAddress").val());
-                
                  // 커서를 상세주소 필드로 이동한다.
                 $("#detailAddress").focus();
               }

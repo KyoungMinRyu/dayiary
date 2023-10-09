@@ -190,7 +190,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 					{
 						if(!StringUtil.equals(cookieUserId, "adm"))
 						{
-							if(url.indexOf("/admin/") == -1 && url.indexOf("/seller/") == -1 && !StringUtil.equals("/notice/noticeWriteForm", url) && !StringUtil.equals("/index/adminIndex", url) && !StringUtil.equals("/index/sellerIndex", url))
+							if(url.indexOf("/admin/") == -1 && url.indexOf("/seller/") == -1 && !StringUtil.equals("/notice/noticeWriteForm", url) && 
+									!StringUtil.equals("/index/adminIndex", url) && !StringUtil.equals("/index/sellerIndex", url) && 
+									!StringUtil.equals("/gift/giftAdd", url) && !StringUtil.equals("/resto/restoAdd", url))
 							{
 								bFlag = true;
 							}	
@@ -202,7 +204,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 						}
 						else
 						{
-							if(url.indexOf("/seller/") == -1 && url.indexOf("/msg/") == -1 && url.indexOf("/post/") == -1 && url.indexOf("/friend/") == -1 && url.indexOf("/anniversary/") == -1  && url.indexOf("/user/") == -1 && !StringUtil.equals("/index/sellerIndex", url))
+							if(url.indexOf("/seller/") == -1 && url.indexOf("/msg/") == -1 && url.indexOf("/post/") == -1 && url.indexOf("/friend/") == -1 && 
+									url.indexOf("/anniversary/") == -1  && url.indexOf("/user/") == -1 && !StringUtil.equals("/index/sellerIndex", url)&& 
+									!StringUtil.equals("/gift/giftAdd", url) && !StringUtil.equals("/resto/restoAdd", url))
 							{
 								bFlag = true;
 							}
@@ -215,7 +219,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 					}
 					else if(seller != null && StringUtil.equals(seller.getStatus(), "Y"))
 					{
-						if(url.indexOf("/admin/") == -1 && url.indexOf("/msg/") == -1 && url.indexOf("/post/") == -1 && url.indexOf("/friend/") == -1 && url.indexOf("/anniversary/") == -1  && url.indexOf("/user/") == -1 && !StringUtil.equals("/notice/noticeWriteForm", url) && !StringUtil.equals("/index/adminIndex", url) && !StringUtil.equals("/index/index", url))
+						if(url.indexOf("/admin/") == -1 && url.indexOf("/msg/") == -1 && url.indexOf("/post/") == -1 && url.indexOf("/friend/") == -1 && 
+								url.indexOf("/anniversary/") == -1  && url.indexOf("/user/") == -1 && !StringUtil.equals("/notice/noticeWriteForm", url) && 
+								!StringUtil.equals("/index/adminIndex", url) && !StringUtil.equals("/index/index", url) && !StringUtil.equals("/gift/giftOrder", url))
 						{
 							bFlag = true;
 						}
@@ -227,7 +233,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 					}
 					else
 					{
-						// 인증된 사용자가 아니면 쿠키 삭제
+						// 인증된 사용자가 아니면 쿠키, 세션 삭제
+						session.removeAttribute(CookieUtil.getHexValue(request, AUTH_COOKIE_NAME));
+						session.removeAttribute(CookieUtil.getHexValue(request, "SELLER_ID"));
 						CookieUtil.deleteCookie(request, response, "/", AUTH_COOKIE_NAME);
 						CookieUtil.deleteCookie(request, response, "/", "SELLER_ID");
 						bFlag = false;
@@ -273,6 +281,8 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
 				}
 				else
 				{
+					session.removeAttribute(CookieUtil.getHexValue(request, AUTH_COOKIE_NAME));
+					session.removeAttribute(CookieUtil.getHexValue(request, "SELLER_ID"));
 					CookieUtil.deleteCookie(request, response, "/", AUTH_COOKIE_NAME);
 					CookieUtil.deleteCookie(request, response, "/", "SELLER_ID");
 					response.sendRedirect("/");

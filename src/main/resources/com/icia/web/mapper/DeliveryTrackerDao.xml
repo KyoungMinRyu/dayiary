@@ -6,6 +6,9 @@
    <id column="ORDER_SEQ" property="orderSeq" />
    <result column="ORDER_NUM" property="orderNum" />
    <result column="DELIVER_COMPANY" property="deliverCompany" />
+   <result column="SELLER_SHOP_NAME" property="sellerShopName" />
+   <result column="P_NAME" property="pName" />
+   <result column="USER_NAME" property="userName" />
 </resultMap>
 
 <select id="selectNeedDeliveryTracker" resultMap="orderDeliveryListResultMap">
@@ -32,14 +35,23 @@ WHERE
 
 <select id="selectDeliveryTracker" parameterType="String" resultMap="orderDeliveryListResultMap">
 SELECT
-    O.ORDER_SEQ,
-    ORDER_NUM,
-    DELIVER_COMPANY
+    O.ORDER_SEQ AS ORDER_SEQ,
+    D.ORDER_NUM AS ORDER_NUM,
+    D.DELIVER_COMPANY AS DELIVER_COMPANY,
+    S.SELLER_SHOP_NAME AS SELLER_SHOP_NAME,
+    P.P_NAME AS P_NAME,
+    U.USER_NAME AS USER_NAME
 FROM
     ORDER_LIST O,
-    DELIVERY D
+    DELIVERY D,
+    PRODUCT_INFO P,
+    G2_SELLER S,
+    G2_USER U
 WHERE
     O.ORDER_SEQ = #{value}
 	AND O.ORDER_SEQ = D.ORDER_SEQ
+    AND P.PRODUCT_SEQ = O.PRODUCT_SEQ
+    AND S.SELLER_ID = P.SELLER_ID
+    AND U.USER_ID = O.USER_ID
 </select>
 </mapper>

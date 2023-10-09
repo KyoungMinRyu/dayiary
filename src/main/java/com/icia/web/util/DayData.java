@@ -281,7 +281,7 @@ public class DayData
     	json = jsonParsing.parsingJson(json, "days");
 //    	System.out.println(json);
     	List<String> list = jsonParsing.parsingArr(json);
-    	System.out.println(list.size());
+//    	System.out.println(list.size());
     	String data = "";
     	String month = "";
     	String day = "";
@@ -356,17 +356,17 @@ public class DayData
 					break;
 			}
     	}	
-    	System.out.println(mon1Day.size());
-    	System.out.println(mon2Day.size());
-    	System.out.println(mon3Day.size());
-    	System.out.println(mon4Day.size());
-    	System.out.println(mon5Day.size());
-    	System.out.println(mon6Day.size());
-    	System.out.println(mon7Day.size());
-    	System.out.println(mon8Day.size());
-    	System.out.println(mon9Day.size());
-    	System.out.println(mon10Day.size());
-    	System.out.println(mon11Day.size());
-    	System.out.println(mon12Day.size());
+//    	System.out.println(mon1Day.size());
+//    	System.out.println(mon2Day.size());
+//    	System.out.println(mon3Day.size());
+//    	System.out.println(mon4Day.size());
+//    	System.out.println(mon5Day.size());
+//    	System.out.println(mon6Day.size());
+//    	System.out.println(mon7Day.size());
+//    	System.out.println(mon8Day.size());
+//    	System.out.println(mon9Day.size());
+//    	System.out.println(mon10Day.size());
+//    	System.out.println(mon11Day.size());
+//    	System.out.println(mon12Day.size());
 	}
 }

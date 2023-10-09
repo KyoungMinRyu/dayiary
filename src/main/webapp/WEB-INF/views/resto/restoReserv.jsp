@@ -132,7 +132,7 @@ button
       예약 날짜<input type="text" name="orderDate" id="orderDate" maxlength="50" class="form-control mb-2" value="${orderDate}" readonly/>
       예약 시간<input type="text" name="orderTime" id="orderTime" maxlength="50" class="form-control mb-2" value="${orderTime}" readonly/>
       예약 인원<input type="text" name="quantity" id="quantity" maxlength="3" class="form-control mb-2" placeholder="수량" value="${quantity}명" readonly />
-      총 예약금<input type="text" name="totalAmount" id="totalAmount" maxlength="10" class="form-control mb-2" placeholder="금액" value="${totalAmount2}원" readonly/>
+      총 예약금<input type="text" name="totalAmount" id="totalAmount" maxlength="10" class="form-control mb-2" placeholder="금액" value="<fmt:formatNumber value="${totalAmount}" pattern="#,###"/>원" readonly/>
 <div id="btnContainer">
 <button id="btnList" type="button" style="margin-top:20px;">리스트로 돌아가기</button>
 </div>

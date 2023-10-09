@@ -59,7 +59,6 @@
         $(".field9").append(div);
   
         menuCount++;
-        console.log(menuCount);
         $("#menuCount").val(menuCount);
     });
     
@@ -154,11 +153,6 @@
           alert("음식타입을 체크하세요.");
           return;
        }
-       
-       
-       
-       //여기서부터 menu 시작 
-    
 
            for (var i = 0 ; i < menuCount ; i++) 
            { 

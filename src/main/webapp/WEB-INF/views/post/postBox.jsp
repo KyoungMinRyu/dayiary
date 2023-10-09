@@ -331,9 +331,6 @@ var cookieUserId;
 
 function fn_msgView(yourId)
 {
-   
-   //console.log("yourId" + yourId); //대화 상대방의 아이디 가져왔음 (쿠키유저 X)
-   
      $.ajax({
            type: "POST",  
            url: "/post/postList", 
@@ -514,7 +511,6 @@ function toggleDiscussionColor(element, i) {
 function handle(e){
     if(e.keyCode === 13){
       var content = document.getElementById("text-content").value;
-      console.log(content);
       var html="<p class='text-bubble sent'>" + content + "</p>";
       $(html).appendTo(".current");
 

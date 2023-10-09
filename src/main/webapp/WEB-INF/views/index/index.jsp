@@ -383,7 +383,25 @@ letter-spacing: 10px;
 } */
 
 </style>
-
+<script type="text/javascript">
+<%
+if(com.icia.web.util.CookieUtil.getHexValue(request, "SELLER_ID") != null && com.icia.web.util.CookieUtil.getHexValue(request, "SELLER_ID") != "")
+{
+%>
+	location.href = "/index/sellerIndex";
+<%
+}
+else if(com.icia.web.util.CookieUtil.getHexValue(request, "USER_ID") != null && com.icia.web.util.CookieUtil.getHexValue(request, "USER_ID") != "")
+{
+	if(com.icia.common.util.StringUtil.equals(com.icia.web.util.CookieUtil.getHexValue(request, "USER_ID"), "adm"))
+	{
+	%>
+		location.href = "/index/adminIndex";		
+	<%
+	}
+}
+%>
+</script>
 </head>
 <body>
 <%@ include file="/WEB-INF/views/include/navigation.jsp" %>

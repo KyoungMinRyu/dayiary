@@ -176,7 +176,7 @@ public class Scheduler
 		logger.debug("sendNewlyBatchMsg Scheduling 시작");
 		try 
 		{
-			 //logger.debug("새롭게 발송된 문자 개수 : " + selectSendList(anniversaryDao.selectAllUserBirthday(), anniversaryDao.selectAllUserAnniversary(), anniversaryDao.selectAllCoupleAnniversary()));
+//			 logger.debug("새롭게 발송된 문자 개수 : " + selectSendList(anniversaryDao.selectAllUserBirthday(), anniversaryDao.selectAllUserAnniversary(), anniversaryDao.selectAllCoupleAnniversary()));
 		} 
 		catch (Exception e) 
 		{
@@ -203,11 +203,11 @@ public class Scheduler
 		{
 			count = sendMsg(allUserBirthdayList, 0);
 		}
-		else if(allUserAnniversaryList != null && allUserAnniversaryList.size() > 0)
+		if(allUserAnniversaryList != null && allUserAnniversaryList.size() > 0)
 		{
 			count = count + sendMsg(allUserAnniversaryList, 1);
 		}
-		else if(allCoupleAnniversaryList != null && allCoupleAnniversaryList.size() > 0)
+		if(allCoupleAnniversaryList != null && allCoupleAnniversaryList.size() > 0)
 		{
 			count = count + sendMsg(allCoupleAnniversaryList);
 		}
@@ -257,7 +257,7 @@ public class Scheduler
 				}
 			}
 		}
-		else if(newAllUserAnniversaryList != null && newAllUserAnniversaryList.size() > 0)
+		if(newAllUserAnniversaryList != null && newAllUserAnniversaryList.size() > 0)
 		{
 			if(allUserAnniversaryList == null || allUserAnniversaryList.size() == 0)
 			{
@@ -286,7 +286,7 @@ public class Scheduler
 				}
 			}
 		}
-		else if(newAllCoupleAnniversaryList != null && newAllCoupleAnniversaryList.size() > 0)
+		if(newAllCoupleAnniversaryList != null && newAllCoupleAnniversaryList.size() > 0)
 		{
 			if(allCoupleAnniversaryList == null || allCoupleAnniversaryList.size() == 0)
 			{
@@ -407,7 +407,7 @@ public class Scheduler
 			else if(StringUtil.equals(coupleAnniversary.getStartDate().substring(4, 8), date.substring(4, 8)))
 			{
 				calYear = Integer.toString(Integer.parseInt(date.substring(0, 4)) - Integer.parseInt(coupleAnniversary.getStartDate().substring(0, 4)));
-				if(!StringUtil.equals(calYear, "0"))
+				if(StringUtil.equals(calYear, "0"))
 				{
 					msgBuilder.append("연인이 된 것을 진심으로 축하드립니다!");
 				}

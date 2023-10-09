@@ -30,9 +30,8 @@ public class GiftService {
 		List<GiftFile> giftFileList = giftAdd.getGiftFileList();
 
 		String productSeq = "P" + giftAdd.getProductSeq();
-
+		giftAdd.setProductSeq(productSeq);
 		if (count > 0 && giftFileList != null) {
-			logger.debug("[giftservice] giftInsert");
 
 			for (int i = 0; i < giftFileList.size(); i++) {
 				giftAdd.getGiftFileList().get(i).setProductSeq(productSeq);

@@ -41,7 +41,6 @@
                   document.querySelector("div#images_container").appendChild(img);
                };
                
-               console.log(image);
                reader.readAsDataURL(image);
             }
           
@@ -117,33 +116,24 @@
       },
       success:function(response)
       {
-         if(response.code == 0)
-           { // insert 성공
-             alert("선물 등록에 성공하셨습니다.");
-              location.href = "/index/sellerIndex";
-           }
-           else if(response.code == 400)
-           { // 파라미터 오류
-            
-             alert("선물 등록에 실패하셨습니다.");
-              location.href = "/";   
-           }
-           else if(response.code == 100)
-           { // 회원이 이미 존재함
-
-             alert("선물 등록에 실패하셨습니다.1");
-              location.href = "/";   
-           }
-           else if(response.code == 500)
-           { // 서버 에러
-             alert("선물 등록에 실패하셨습니다.2");
-              location.href = "/";   
-           }
-           else
-           { // 알 수 없는 오류
-             alert("선물 등록에 실패하셨습니다.3");
-              location.href = "/";   
-           }
+    	  if(response.code == 0)
+          { // insert 성공
+            	alert("선물 등록에 성공하셨습니다.");
+            	location.href = "/gift/giftView?productSeq=" + response.data;
+          }
+          else if(response.code == 400)
+          { // 파라미터 오류
+           
+            alert("입력값이 잘못 되었습니다.");
+          }
+          else if(response.code == 500)
+          { // 서버 에러
+            	alert("서버에 에러가 발생하였습니다.");
+          }
+          else
+          { // 알 수 없는 오류
+          	  alert("알 수 없는 오류가 발생하였습니다.");
+          }
       },
       error:function(error)
       {
@@ -237,11 +227,14 @@ footer {
      </div>
      <br>
     <div class="field gift-type">
-              <b style="color: #000000;">선물 카테고리(목걸이,시계 등은 악세서리 / 화장품, 향수는 뷰티)</b>
+              <b style="color: #000000;">선물 카테고리</b>
         <div class="giftCategory">
            <label><input type="radio" name="giftCategory" id="giftCategory1" value="뷰티"> 뷰티</label>
-           <label><input type="radio" name="giftCategory" id="giftCategory2" value="건강"> 건강</label>
-           <label><input type="radio" name="giftCategory" id="giftCategory3" value="악세서리"> 악세서리</label>
+           <label><input type="radio" name="giftCategory" id="giftCategory2" value="악세서리"> 악세서리</label>
+           <label><input type="radio" name="giftCategory" id="giftCategory3" value="패션"> 패션</label>
+           <label><input type="radio" name="giftCategory" id="giftCategory4" value="가전"> 가전</label>
+           <label><input type="radio" name="giftCategory" id="giftCategory5" value="식품"> 식품</label>
+           <label><input type="radio" name="giftCategory" id="giftCategory6" value="꽃"> 꽃</label> 
        </div>
    </div><br><br>
    

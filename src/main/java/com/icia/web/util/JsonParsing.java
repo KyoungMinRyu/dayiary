@@ -184,10 +184,10 @@ public class JsonParsing
 		JSONObject jsonObject;
 		try 
 		{
-			//System.out.println(jsonArray.length());
 			for (int i = 0; i < jsonArray.length(); i++) 
 			{ 
 				jsonObject = jsonArray.getJSONObject(i); // JSON파일의 i번째 배열마다 데이터 파싱
+				logger.debug(parsingJson(jsonObject, key));
 				list.add(parsingJson(jsonObject, key));
 			}
 		}

@@ -40,9 +40,7 @@
                 {
                    messageElement.css("color", "red");
                     messageElement.text(msgArr[0]);
-                    //console.log(inputText);
                     var sanitizedText = inputText.replace(/[^a-zA-Z0-9]/g, "");
-                    //console.log(sanitizedText);
                     $(this).val(sanitizedText);
                 } 
                 else
@@ -53,7 +51,6 @@
             
             $("#userId").keyup(function(event)
               {   
-               //console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#userPwd1").focus();
@@ -67,7 +64,6 @@
                 {
                    if((inputText != null && inputText != "") && getCheck.test(inputText))
                    {
-                      console.log("if문안");
                        $.ajax
                        ({
                            type:"POST",
@@ -83,23 +79,18 @@
                              { // 사용가능 아이디
                                  $("#userIdMsg").text("사용가능한 아이디입니다.");
                                    $("#userIdMsg").css("color", "#FFFF9C");
-                                   //console.log("사용가능한 아이디");
-                                   //console.log($("#userId").val());
                                      $("#hiddenId").val(String($("#userId").val())); 
-                                     //console.log("히든? : " + $("#hiddenId").val());
                              }
                              else if(response.code == 100)
                              { // 중복 아이디
                                    $("#userIdMsg").text("사용할 수 없는 아이디입니다.");
                                    $("#userIdMsg").css("color", "red");
-                                   //console.log("사용불가한 아이디");
                              }
                              else
                              { // 파라미터 오류
 
                                    $("#userIdMsg").text("입력 값이 잘못되었습니다.");
                                    $("#userIdMsg").css("color", "red");
-                                   //console.log("사용불가한 아이디");
                              }
                            },
                            error: function(xhr, status, error) 
@@ -118,9 +109,7 @@
                 if (!getCheck.test(inputText)) 
                 {
                     messageElement.text(msgArr[1]);
-                    //console.log(inputText);
                     var sanitizedText = inputText.replace(/[^a-zA-Z0-9]/g, "");
-                    //console.log(sanitizedText);
                     $(this).val(sanitizedText);
                 } 
                 else
@@ -131,7 +120,6 @@
             
             $("#userPwd1").keyup(function(event)
            {   
-               //console.log(event.keyCode);
                if(event.keyCode === 13)
                {
                   $("#userPwd2").focus();
@@ -157,7 +145,6 @@
             
             $("#userPwd2").keyup(function(event)
               {   
-               //console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#userEmail").focus();
@@ -180,7 +167,6 @@
             
             $("#userEmail").keyup(function(event)
               {   
-               //console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#userName").focus();
@@ -262,9 +248,7 @@
                 if (!getName.test(inputText)) 
                 {
                     messageElement.text(msgArr[5]);
-                    //console.log(inputText);
                     var sanitizedText = inputText.replace(/[^ㄱ-ㅎㅏ-ㅣ가-힣]+/g, "");
-                    //console.log(sanitizedText);
                     $(this).val(sanitizedText);
                 } 
                 else
@@ -276,7 +260,6 @@
             
             $("#userName").keyup(function(event)
               {   
-               //console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#userNickName").focus();
@@ -290,9 +273,7 @@
                 if (!getNickName.test(inputText)) 
                 {
                     messageElement.text("닉네임은 영어 대소문자, 숫자, 한글만 2~12자만 입력 가능합니다.");
-                    //console.log(inputText);
                     var sanitizedText = inputText.replace(/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]+/g, "");
-                    //console.log(sanitizedText);
                     $(this).val(sanitizedText);
                 } 
                 else
@@ -303,7 +284,6 @@
             
             $("#userNickName").keyup(function(event)
               {   
-               //console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#userBir").focus();
@@ -313,12 +293,10 @@
             $("#userNickName").on("blur", function()
             {
                 var inputText = $(this).val();
-                //console.log(inputText);
                 if(inputText != $("#hiddenNickName").val())
                 {
                    if((inputText != null && inputText != "") && getNickName.test(inputText))
                    {
-                      //console.log("if문안");
                        $.ajax
                        ({
                            type:"POST",
@@ -334,24 +312,19 @@
                              { // 사용가능 아이디
                                  $("#userNickNameMsg").text("사용가능한 닉네임입니다.");
                                    $("#userNickNameMsg").css("color", "#FFFF9C");
-                                   //console.log("사용가능한 아이디");
-                                   //console.log($("#userId").val());
                                      $("#hiddenNickName").val(String($("#userNickName").val())); 
-                                     //console.log("히든? : " + $("#hiddenId").val());
                              }
                              else if(response.code == 100)
                              { // 중복 아이디
                                    $("#userNickNameMsg").text("사용할 수 없는 닉네임입니다.");
                                    $("#userNickNameMsg").css("color", "red");
                                    $("#hiddenNickName").val("");
-                                   //console.log("사용불가한 아이디");
                              }
                              else
                              { // 파라미터 오류
                                    $("#userNickNameMsg").text("입력 값이 잘못되었습니다.");
                                    $("#userNickNameMsg").css("color", "red");
                                    $("#hiddenNickName").val("");
-                                   //console.log("사용불가한 아이디");
                              }
                            },
                            error: function(xhr, status, error) 
@@ -370,9 +343,7 @@
                 if (!getBir.test(inputText)) 
                 {
                     messageElement.text(msgArr[6]);
-                    //console.log(inputText);
                     var sanitizedText = inputText.replace(/[^0-9]/g, "");
-                    //console.log(sanitizedText);
                     $(this).val(sanitizedText);
                 } 
                 else
@@ -384,7 +355,6 @@
 
             $("#userBir").keyup(function(event)
               {   
-               //console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#userPh").focus();
@@ -394,8 +364,7 @@
             $("#detailAddress").on("input", function() 
             {
                $("#userAddMsg").html("&nbsp;");
-               $("#hiddenAdd").val($("#roadAddress").val() + " " + $("#detailAddress").val());    
-               //console.log(document.getElementById("roadAddress").value);
+               $("#hiddenAdd").val($("#roadAddress").val() + " " + $("#detailAddress").val());   
             });
             
             
@@ -406,9 +375,7 @@
                 if (!getPh.test(inputText)) 
                 {
                     messageElement.text(msgArr[7]);
-                    //console.log(inputText);
                     var sanitizedText = inputText.replace(/[^0-9]/g, "");
-                    //console.log(sanitizedText);
                     $(this).val(sanitizedText);
                 } 
                 else
@@ -420,7 +387,6 @@
 
             $("#userPh").keyup(function(event)
               {   
-               console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#chMSG").focus();
@@ -437,7 +403,7 @@
                 if(getPh.test($("#userPh").val())) // 전화번호 정규표현식
                 { // 정규 표현식 성공 했을 떄 
                     var display = $("#chMsgMsg"); // 타이머 표시하기 위해 p태그 지정
-                    var leftSec = 30; // 타이머 시간 설정
+                    var leftSec = 180; // 타이머 시간 설정
                     var checkRanNum = false;
                     $("#hiddenChPh").val("0");
                     $.ajax
@@ -480,7 +446,6 @@
 
             function startTimer(count, display, ranNum) // 타이머시간, 남은시간 표시해줄 태그, 인증번호(자바에서 넘길 예정)
             {  
-               console.log(ranNum);
                 var minutes, seconds;
                 display.css("color", "red");
                 $("#Msg").val("");
@@ -510,7 +475,6 @@
                         {
                             $("#chMsg").on("click",function() // 인증번호 확인 버튼 눌렀을 때
                             {
-                                //console.log(typeof String(random_num));
                                 console.log("입력 값" + $("#Msg").val());
                                 if($("#Msg").val() === String(ranNum))
                                 {
@@ -532,7 +496,6 @@
                                     $("#userPhMsg").html("&nbsp;");
                                     $("#sendMsg").attr("disabled", false);
                                 }
-                                //console.log($("#hiddenChPh").val())
                             });
                         }
                     }, 1000
@@ -541,7 +504,6 @@
          
          $("#btnSubmit").keyup(function(event)
               {   
-                  //console.log(event.keyCode);
                   if(event.keyCode === 13)
                 {
                     event.preventDefault();
@@ -602,9 +564,7 @@
             if($("input:radio[name=userGen]").is(":checked"))
             { // 체크되었을 때
                $("#userGenMsg").html("&nbsp");
-               //console.log($("input[type=radio][name=userGen]:checked").val());
                $("#hiddenGen").val($("input[type=radio][name=userGen]:checked").val());
-               //console.log($("#hiddenGen").val());
             }
             else
             {

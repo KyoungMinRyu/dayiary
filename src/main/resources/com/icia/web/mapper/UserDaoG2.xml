@@ -187,7 +187,8 @@ SELECT
     DELIVERY_STATUS,
     TOTAL_CNT,
     TOTAL_PRICE,
-    REVIEWED
+    REVIEWED,
+    FILE_NAME
 FROM
     (
         SELECT
@@ -201,7 +202,8 @@ FROM
             DELIVERY_STATUS,
             TOTAL_CNT,
             TOTAL_PRICE,
-            REVIEWED
+            REVIEWED,
+            FILE_NAME
         FROM
             (
                 SELECT
@@ -214,7 +216,8 @@ FROM
                     O.DELIVERY_STATUS AS DELIVERY_STATUS,
                     PL.TOTAL_CNT AS TOTAL_CNT,
                     PL.TOTAL_PRICE AS TOTAL_PRICE,
-                    O.REVIEWED AS REVIEWED
+                    O.REVIEWED AS REVIEWED,
+                    F.FILE_NAME AS FILE_NAME
                 FROM
                     ORDER_LIST O,
                     PRODUCT_INFO P,

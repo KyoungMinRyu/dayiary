@@ -199,10 +199,7 @@ public class MainBoardService {
 				mainBoardDao.likeDeleteAll(boardSeq); // 좋아요 모두 삭제
 			}
 
-			logger.debug("체크1111111111111111");
 			count = mainBoardDao.boardDelete(boardSeq); // 게시물 먼저 지우고 파일 삭제
-			logger.debug("체크222222222222222222");
-
 			if (count > 0) {
 				List<MainBoardFile> mainBoardFileList = mainBoard.getMainBoardFile();
 
@@ -351,7 +348,6 @@ public class MainBoardService {
 
 		try {
 			count = mainBoardDao.likeCheck(mainBoardReaction);
-			logger.debug("카운트 : " + count);
 		} catch (Exception e) {
 			logger.error("[MainBoardService] likeCheck Exception", e);
 		}

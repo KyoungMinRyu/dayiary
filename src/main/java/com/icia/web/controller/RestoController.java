@@ -87,31 +87,14 @@ public class RestoController {
 		if (!StringUtil.isEmpty(searchTypeDate)) {
 			search.setSearchTypeDate(searchTypeDate);
 		}
-
-//		logger.debug("로케:" + search.getSearchTypeLocation());
-//		logger.debug("샵:" + search.getSearchTypeShop());
-//		logger.debug("푸드:" + search.getSearchTypeFood());
-//		logger.debug("데이트:" + search.getSearchTypeDate());
-
 		totalCount = restoService.restoCount(search);
-//		logger.debug("토탈카운트:" + totalCount);
 
 		if (totalCount > 0) {
 			paging = new Paging("/resto/restoList", totalCount, LIST_COUNT, PAGE_COUNT, curPage, "curPage");
-
 			search.setStartRow(paging.getStartRow());
 			search.setEndRow(paging.getEndRow());
-
 			list = restoService.restoList(search);
-
-//			logger.debug("=============================paging:" + paging.getStartRow());
-//			logger.debug("=============================paging:" + paging.getEndRow());
-//			logger.debug("=============================search:" + search.getStartRow());
-//			logger.debug("=============================search:" + search.getEndRow());
-//
-//			logger.debug("=============================list count:" + list.size());
 		}
-
 		model.addAttribute("list", list);
 		model.addAttribute("searchTypeLocation", searchTypeLocation);
 		model.addAttribute("searchTypeShop", searchTypeShop);
@@ -119,7 +102,6 @@ public class RestoController {
 		model.addAttribute("searchTypeDate", searchTypeDate);
 		model.addAttribute("curPage", curPage);
 		model.addAttribute("paging", paging);
-
 		return "/resto/restoList";
 	}
 
@@ -139,16 +121,13 @@ public class RestoController {
 		long curPage = HttpUtil.get(request, "curPage", (long) 1);
 		// 본인 글 여부(판매자일 경우 수정 가능하도록)
 		String boardMe = "N";
-
 		RestoInfo restoInfo = null;
 		List<RestoInfo> bestRestoList = null;
 		List<RestoReview> reviewList = null;
 
 		if (!StringUtil.equals(rSeq, "")) {
 			restoInfo = restoService.restoView(rSeq);
-
 			bestRestoList = restoService.bestRestList();
-
 			reviewList = restoService.reviewList(rSeq);
 			HashMap<String, String> hashMap = new HashMap<String, String>();
 			hashMap.put("userId", cookieUserId);
@@ -234,9 +213,6 @@ public class RestoController {
 		String orderDate = HttpUtil.get(request, "orderDate", "");
 		String orderTime = HttpUtil.get(request, "orderTime", "");
 
-		logger.debug("사용자가 선택한 오더데이트" + orderDate);
-		logger.debug("사용자가 선택한 오더타임" + orderTime);
-
 		if (!StringUtil.isEmpty(orderDate) && !StringUtil.isEmpty(orderTime)) {
 			// xml 쿼리에 대입하기 위한 OrderList 변수 선언
 			OrderList orderList = new OrderList();
@@ -272,8 +248,8 @@ public class RestoController {
 
 	// 레스토랑 예약 성공 후 띄워줄 예약완료 안내 페이지
 	@RequestMapping(value = "/resto/restoReserv")
-	public String restoReserv(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
-		// itemCode는 필수가 아니길래 삭제했음
+	public String restoReserv(ModelMap model, HttpServletRequest request, HttpServletResponse response) 
+	{
 		String itemName = HttpUtil.get(request, "restoName", ""); // reservationForm에 있는 레스토랑명을 itemName으로 가져옴
 		int quantity = HttpUtil.get(request, "orderPerson", (int) 0); // reservationForm에 있는 예약인원수를 quantity로 가져옴
 		int deposit = HttpUtil.get(request, "deposit", (int) 0); // reservationForm에 있는 예약금을 가져옴
@@ -281,48 +257,15 @@ public class RestoController {
 		String orderDate = HttpUtil.get(request, "orderDate", "");
 		String orderTime = HttpUtil.get(request, "orderTime", "");
 		String orderSeq = HttpUtil.get(request, "orderSeq", "");
-
-		// 시간을 19 : 00 형식으로 변환
-		StringBuilder stringBuilder = new StringBuilder(orderTime);
-		stringBuilder.insert(2, " : ");
-		String orderTime2 = stringBuilder.toString();
-
-		// 총금액을 30,000 형식으로 변환
-		DecimalFormat decimalFormat = new DecimalFormat("#,###");
-		String totalAmount2 = decimalFormat.format(totalAmount);
 		model.addAttribute("itemName", itemName);
 		model.addAttribute("quantity", quantity);
-		model.addAttribute("totalAmount2", totalAmount2);
+		model.addAttribute("totalAmount", totalAmount);
 		model.addAttribute("orderDate", orderDate);
-		model.addAttribute("orderTime2", orderTime2);
+		model.addAttribute("orderTime", orderTime);
 		model.addAttribute("orderSeq", orderSeq);
 		return "/resto/restoReserv";
-	}
-
-	// 댓글 수정
-	@RequestMapping(value = "/resto/restoReservationUpdate", method = RequestMethod.POST)
-	@ResponseBody
-	public Response<Object> restoReservationUpdate(HttpServletRequest request, HttpServletResponse resonse) {
-		Response<Object> ajaxResponse = new Response<Object>();
-		String orderSeq = HttpUtil.get(request, "orderSeq", "");
-
-		logger.debug("예약업데이트 시도 시 주문번호" + orderSeq);
-
-		if (!StringUtil.isEmpty(orderSeq) && !StringUtil.equals(orderSeq, "")) {
-			if (restoService.restoReservationUpdate(orderSeq) > 0) {
-				ajaxResponse.setResponse(0, "success");
-			} else // 주문정보가 존재하지 않음(DB ORDER_LIST에)
-			{
-				ajaxResponse.setResponse(404, "NOT FOUND");
-			}
-		} else // 주문번호(orderSeq) 못가져왔음
-		{
-			ajaxResponse.setResponse(400, "bad request");
-		}
-
-		return ajaxResponse;
-	}
-
+   	}
+   
 	// 판매자 로그인 후 restraunt 네비 눌렀을 때 가는 위치
 	@RequestMapping(value = "/resto/restoAdd")
 	public String restoAdd(HttpServletRequest request, HttpServletResponse response) {
@@ -431,6 +374,58 @@ public class RestoController {
 
 	}
 
+	@RequestMapping(value = "/resto/reversalFavorite", method = RequestMethod.POST)
+	@ResponseBody
+	public Response<Object> reversalFavorite(HttpServletRequest request, HttpServletResponse response) 
+	{
+		Response<Object> ajaxResponse = new Response<Object>();
+		String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+		int checkFavorite = HttpUtil.get(request, "checkFavorite", -1);
+		String rSeq = HttpUtil.get(request, "rSeq", "");
+		if(checkFavorite >= 0 && !StringUtil.isEmpty(rSeq))
+		{
+			HashMap<String, String>hashMap = new HashMap<String, String>();
+			hashMap.put("userId", cookieUserId);
+			hashMap.put("rSeq", rSeq);
+			if(checkFavorite == 0)
+			{
+				if(restoService.insertRestoFavorite(hashMap) > 0)
+				{
+					hashMap.put("cnt", "1");
+					hashMap.remove("userId");
+					ajaxResponse.setResponse(0, "Success", hashMap);
+				}
+				else
+				{
+					ajaxResponse.setResponse(500, "DB Sever Error");
+				}
+			}
+			else if(checkFavorite == 1)
+			{
+				if(restoService.deleteRestoFavorite(hashMap) > 0)
+				{
+					hashMap.put("cnt", "0");
+					hashMap.remove("userId");
+					ajaxResponse.setResponse(0, "Success", hashMap);
+				}
+				else
+				{
+					ajaxResponse.setResponse(500, "DB Sever Error");
+				}
+			}
+			else
+			{
+				ajaxResponse.setResponse(400, "Bad Request");
+			}
+		}
+		else
+		{
+			ajaxResponse.setResponse(400, "Bad Request");
+		}
+		
+		return ajaxResponse;
+	}
+	
 	@RequestMapping(value = "/resto/restoFavoriteList", method = RequestMethod.POST)
 	@ResponseBody
 	public Response<Object> restoFavoriteList(HttpServletRequest request, HttpServletResponse response) {

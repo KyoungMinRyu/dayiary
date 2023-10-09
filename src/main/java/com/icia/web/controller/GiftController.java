@@ -64,8 +64,6 @@ public class GiftController {
 	@RequestMapping(value = "/gift/giftProc", method = RequestMethod.POST)
 	@ResponseBody
 	public Response<Object> giftProc(MultipartHttpServletRequest request, HttpServletResponse response) {
-		logger.debug("giftcontroller/giftProc시작");
-
 		Response<Object> ajaxResponse = new Response<Object>();
 		String cookieSellerId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
 		String pName = HttpUtil.get(request, "giftName", "");
@@ -77,49 +75,37 @@ public class GiftController {
 
 		if (!StringUtil.isEmpty(pName) && !StringUtil.isEmpty(pPrice) && !StringUtil.isEmpty(pContent)) {
 			GiftAdd giftAdd = new GiftAdd();
-
-			logger.debug("처음여긴통과해?");
 			giftAdd.setSellerId(cookieSellerId);
 			giftAdd.setpName(pName);
 			giftAdd.setpPrice(pPrice);
 			giftAdd.setpContent(pContent);
 			giftAdd.setProductCategory(productCategory);
 			GiftFile giftFile;
-
 			if (thumFile != null && fileData != null && fileData.size() > 0) {
-
 				// 리스트 화
 				List<GiftFile> giftFileList = new ArrayList<GiftFile>();
-
 				if (thumFile.getFileSize() > 0) {
 					giftFile = new GiftFile();
-
 					giftFile.setFileName(thumFile.getFileName());
-
 					giftFileList.add(giftFile);
-
 				}
-
 				for (int i = 0; i < fileData.size(); i++) {
 					if (fileData.get(i).getFileSize() > 0) {
 						giftFile = new GiftFile();
-
 						giftFile.setFileName(fileData.get(i).getFileName());
-
 						giftFileList.add(giftFile);
 					}
 				}
-
 				giftAdd.setGiftFileList(giftFileList);
-
 			}
-
 			// 서비스 호출
 			try {
 				if (giftService.giftInsert(giftAdd) > 0) {
-					ajaxResponse.setResponse(0, "success");
+					ajaxResponse.setResponse(0, "success", giftAdd.getProductSeq());
 					logger.debug("[GiftController.giftInsert] 성공 ");
-				} else {
+				} 
+				else 
+				{
 					ajaxResponse.setResponse(500, "Internal server error");
 				}
 			} catch (Exception e) {
@@ -143,6 +129,7 @@ public class GiftController {
 		String productSeq = HttpUtil.get(request, "productSeq", "");
 		String orderBy = HttpUtil.get(request, "orderBy", "regDesc");
 		String productType = HttpUtil.get(request, "productType", "all");
+		String searchTypeCategory = HttpUtil.get(request, "searchTypeCategory", "");
 		// 등록된 선물 리스트
 		List<GiftAdd> list = null;
 		// 검색조건용 조회객체
@@ -189,6 +176,7 @@ public class GiftController {
 		model.addAttribute("paging", paging);
 		model.addAttribute("orderBy", orderBy);
 		model.addAttribute("productType", productType);
+		model.addAttribute("searchTypeCategory", searchTypeCategory);
 		return "/gift/giftList";
 	}
 
@@ -198,11 +186,12 @@ public class GiftController {
 		// 쿠키 값
 		String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_USER_NAME);
 		// 해당 선물 번호
-		String productSeq = HttpUtil.get(request, "productSeq", "");
-		// 리스트로 돌아가도 검색조건 유지시키기
-		String searchTypeCategory = HttpUtil.get(request, "searchTypeCategory", "");
 		String searchType = HttpUtil.get(request, "searchType", "");
 		String searchValue = HttpUtil.get(request, "searchValue", "");
+		String productSeq = HttpUtil.get(request, "productSeq", "");
+		String searchTypeCategory = HttpUtil.get(request, "searchTypeCategory", "");
+		String orderBy = HttpUtil.get(request, "orderBy", "regDesc");
+		String productType = HttpUtil.get(request, "productType", "all");
 
 		// 현재 페이지
 		long curPage = HttpUtil.get(request, "curPage", (long) 1);
@@ -232,13 +221,15 @@ public class GiftController {
 
 		// model.addAttribute("boardMe", boardMe);
 		model.addAttribute("giftAdd", giftAdd);
-		model.addAttribute("searchTypeCategory", searchTypeCategory);
-		model.addAttribute("searchType", searchType);
-		model.addAttribute("searchValue", searchValue);
+		model.addAttribute("productType", productType);
+		model.addAttribute("orderBy", orderBy);
 		model.addAttribute("curPage", curPage);
 		model.addAttribute("cookieUserId", cookieUserId);
 		model.addAttribute("productSeq", productSeq);
 		model.addAttribute("productReviewList", productReviewList);
+		model.addAttribute("searchValue", searchValue);
+		model.addAttribute("searchType", searchType);
+		model.addAttribute("searchTypeCategory", searchTypeCategory);
 
 		// 리스트
 

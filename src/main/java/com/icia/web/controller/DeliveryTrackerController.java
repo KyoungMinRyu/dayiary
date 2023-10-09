@@ -1,5 +1,6 @@
 package com.icia.web.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +63,10 @@ public class DeliveryTrackerController
 					String deliveryTrackerJson = publicDataApi.deliveryTracker(deliveryCompanyList.get(Integer.parseInt(order.getDeliverCompany())), order.getOrderNum());
 					if(deliveryTrackerJson.length() > 0)
 					{
-						ajaxResponse.setResponse(0, "Success", deliveryTrackerJson);
+						HashMap<String, Object> hashMap = new HashMap<String, Object>();
+						hashMap.put("deliveryTracking", order);
+						hashMap.put("detail", deliveryTrackerJson);
+						ajaxResponse.setResponse(0, "Success", hashMap);
 					}
 					else
 					{

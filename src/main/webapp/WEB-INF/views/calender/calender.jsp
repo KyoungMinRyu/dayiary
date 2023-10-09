@@ -857,7 +857,6 @@ function fn_getMoon(year)
       
       let checkDate = new Date(inputYear.val() + "-" + inputMonth.val());
       let lastDay = new Date(new Date(inputYear.val(), inputMonth.val(), 0)).getDate();
-      console.log(lastDay);
       let checkDay = Number(day);
       if(checkDay >= 1 && checkDay <= lastDay)
       {

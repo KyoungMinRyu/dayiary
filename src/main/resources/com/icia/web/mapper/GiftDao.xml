@@ -137,9 +137,10 @@ SELECT PRODUCT_SEQ,
                        NVL(COUNT(REVIEW_SCORE), 0) AS REVIEW_COUNT
                   FROM PRODUCT_INFO A, PRODUCT_FILE B, ORDER_LIST D, ORDER_REVIEW C
                  WHERE A.PRODUCT_SEQ = B.PRODUCT_SEQ
-                   AND B.FILE_SEQ = 1
+                    AND A.STATUS = 'Y' 
+                    AND B.FILE_SEQ = 1
                    AND A.PRODUCT_SEQ = D.PRODUCT_SEQ(+)
-                   AND D.ORDER_SEQ = C.ORDER_SEQ(+)
+                   AND D.ORDER_SEQ = C.ORDER_SEQ(+)                   
 <if test=' productType != null and productType != "" '>                            
                    AND A.PRODUCT_CATEGORY = #{productType}
 </if>

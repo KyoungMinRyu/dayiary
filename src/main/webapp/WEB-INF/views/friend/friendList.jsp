@@ -348,13 +348,6 @@ $(document).ready(function ()
             var $li = $($lis[i]);
             var liTop = $li.position().top;
             var liRelTop = liTop - parentTop;   
-         
-         console.log("liTop : " + liTop);
-         console.log("liRelTop : " + liRelTop);
-         console.log("$li.parent().scrollTop() : " + $li.parent().scrollTop())
-         console.log("liRelTop + $li.parent().scrollTop() : " + liRelTop + $li.parent().scrollTop());
-         console.log("top : " + top);
-         
             if (liRelTop + $li.parent().scrollTop() > top) 
             {
               if (!$li.hasClass('item-focus')) 

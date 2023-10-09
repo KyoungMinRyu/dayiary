@@ -396,7 +396,6 @@ function searchOrderBy(orderGubun)
 
 function fn_view(productSeq)
 {
-   console.log("productSeq:", productSeq); // 디버깅 메시지 출력
    document.bbsForm.productSeq.value = productSeq;
    document.bbsForm.action = "/gift/giftView";
    document.bbsForm.submit();

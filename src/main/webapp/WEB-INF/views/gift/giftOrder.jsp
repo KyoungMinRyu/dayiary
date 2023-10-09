@@ -152,7 +152,6 @@ $(function()
     {
        $("#userAddMsg").html("&nbsp;");
        $("#hiddenAdd").val($("#roadAddress").val() + " " + $("#detailAddress").val());    
-       //console.log(document.getElementById("roadAddress").value);
     });         
     
             

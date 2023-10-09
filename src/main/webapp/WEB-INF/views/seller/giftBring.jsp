@@ -1,76 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <%@ include file="/WEB-INF/views/include/head.jsp" %>
-    <title>선물 등록 폼</title>
+<%@ include file="/WEB-INF/views/include/head.jsp" %>
     
     <script>
 
- $(document).ready(function()
-    {
-
+$(document).ready(function()
+{
+	let productSeq = "${giftAdd.productSeq}";
 
        
   //등록하기 버튼을 눌렀을 때
    $("#btnSubmit").on("click", function()
    {    
-      var fileInput = document.getElementById("giftThum");
-      var orgFileInput = document.getElementById("existingImage");
-       // 파일이 선택되었는지 확인
-      if ((fileInput.files.length === 0 && orgFileInput.src === "") ) {
-           alert("메인사진 파일을 수정하세요.");
-           return;
-       }
-     
-      if($("#giftName").val() == null || $("#giftName").val() == "")
-      {
-         alert("선물 이름을 수정하세요.");
-         $("#giftName").focus();
-         return;
-      }
-      
-      if($("#giftContent").val() == null || $("#giftContent").val() == "")
-      {
-         alert("선물 소개를 수정하세요.");
-         $("#giftContent").focus();
-         return;
-      }
-      
-     
-      
-      if($("#giftPrice").val() == null || $("#giftPrice").val() == "")
-      {
-         alert("선물 가격을 수정하세요.");
-         $("#giftPrice").focus();
-         return;
-      }
-      
-      
-      if (!$("input[name='giftCategory']:checked").length) 
-      {
-         alert("선물 카테고리를 체크하세요.");
-         return;
-      }
-      
-      if (!$("input[name='giftStatus']:checked").length)  
-      {
-         alert("선물 공개 여부를 체크하세요.");
-         return;
-      }
-      
-       var detailFileInput = document.getElementById("detailImage");
-       var orgDetailFileInput = document.getElementById("existingDetailImage");
-       // 파일이 선택되었는지 확인
-      if ((fileInput.files.length === 0 && orgDetailFileInput.src === "") ) {
-           alert("매장 상세 사진 파일을 수정하세요.");
-           return;
-       }
-
-      
-      
-      
       
        //최종 선물등록 시작=============================================ㄴ
        var form = $("#giftUpdateForm")[0]; 
@@ -95,30 +38,21 @@
       {
          if(response.code == 0)
            { // insert 성공
-             alert("선물 수정에 성공하셨습니다.");
-              location.href = "/index/sellerIndex";
+             	alert("선물 수정에 성공하셨습니다.");
+             	location.href = "/gift/giftView?productSeq=" + productSeq;
            }
            else if(response.code == 400)
            { // 파라미터 오류
             
-             alert("선물 등록에 실패하셨습니다.");
-              location.href = "/";   
-           }
-           else if(response.code == 100)
-           { // 회원이 이미 존재함
-
-             alert("선물 등록에 실패하셨습니다.1");
-              location.href = "/";   
+             alert("입력값이 잘못 되었습니다.");
            }
            else if(response.code == 500)
            { // 서버 에러
-             alert("선물 등록에 실패하셨습니다.2");
-              location.href = "/";   
+             	alert("서버에 에러가 발생하였습니다.");
            }
            else
            { // 알 수 없는 오류
-             alert("선물 등록에 실패하셨습니다.3");
-              location.href = "/";   
+             alert("알 수 없는 오류가 발생하였습니다.");
            }
       },
       error:function(error)
@@ -165,29 +99,32 @@
 
  
   function setDetailImage(event) {
-     const input = event.target;
-       if (input.files && input.files[0]) {
+       const input = event.target;
+       const imageContainer = document.getElementById('images_container');
+
+       // 기존의 미리보기 이미지 삭제 (기존 이미지가 있다면)
+       const existingDetailImage = document.getElementById('existingDetailImage');
+       if (existingDetailImage) {
+           imageContainer.removeChild(existingDetailImage);
+       }
+
+       for (let i = 0; i < input.files.length; i++) {
+           const file = input.files[i];
            const reader = new FileReader();
 
            reader.onload = function (e) {
-       // 기존의 미리보기 이미지 삭제 (기존 이미지가 있다면)
-       const imageContainer = document.getElementById('detailImage');
-       const existingDetailImage = document.getElementById('existingDetailImage');
-       if (existingDetailImage) {
-            // 기존 이미지가 있다면 업데이트
-            existingDetailImage.src = e.target.result;
-        } else {
-            // 기존 이미지가 없다면 새로 추가
-            const newImage = document.createElement('img');
-            newImage.src = e.target.result;
-            newImage.alt = '미리보기 이미지';
+               // 미리보기를 위한 이미지 태그 생성
+               const newImage = document.createElement('img');
+               newImage.src = e.target.result;
+               newImage.alt = '미리보기 이미지';
+               newImage.className = 'imageTag';
 
-            imageContainer.appendChild(newImage);
-        }
-    };
+               // 이미지를 컨테이너에 추가
+               imageContainer.appendChild(newImage);
+           };
 
-    reader.readAsDataURL(input.files[0]);
-}
+           reader.readAsDataURL(input.files[i]);
+       }
    }
 
   
@@ -254,7 +191,7 @@ body {
      <div class="1">
     <div class="field about-gift">
         <b style="color: #000000;">선물 한줄소개</b>
-        <input type="text" class="form-control" name="giftContent" id="giftContent"    value="${giftAdd.pContent}"  style="ime-mode:active;"  placeholder="선물 소개를 수정해주세요" /> 
+        <input type="text" class="form-control" name="giftContent" id="giftContent" value="${giftAdd.pContent}"  style="ime-mode:active;"  placeholder="선물 소개를 수정해주세요" /> 
      </div>
   </div>
  </div>  
@@ -267,10 +204,13 @@ body {
     <div class="field gift-type">
               <b style="color: #000000;">선물 카테고리(목걸이,시계 등은 악세서리 / 화장품, 향수는 뷰티)</b>
         <div class="giftCategory">
-           <label><input type="radio" name="giftCategory" id="giftCategory1" value="뷰티" ${giftAdd.productCategory == '뷰티' ? 'checked' : ''}> 뷰티</label>
-           <label><input type="radio" name="giftCategory" id="giftCategory2" value="건강" ${giftAdd.productCategory == '건강' ? 'checked' : ''}> 건강</label>
-           <label><input type="radio" name="giftCategory" id="giftCategory3" value="악세서리" ${giftAdd.productCategory == '악세서리' ? 'checked' : ''}> 악세서리</label>
-       </div>
+        	<label><input type="radio" name="giftCategory" id="giftCategory1" value="뷰티"  ${giftAdd.productCategory == '뷰티' ? 'checked' : ''}> 뷰티</label>
+           	<label><input type="radio" name="giftCategory" id="giftCategory2" value="악세서리"  ${giftAdd.productCategory == '악세서리' ? 'checked' : ''}> 악세서리</label>
+           	<label><input type="radio" name="giftCategory" id="giftCategory3" value="패션"  ${giftAdd.productCategory == '패션' ? 'checked' : ''}> 패션</label>
+           	<label><input type="radio" name="giftCategory" id="giftCategory4" value="가전"  ${giftAdd.productCategory == '가전' ? 'checked' : ''}> 가전</label>
+           	<label><input type="radio" name="giftCategory" id="giftCategory5" value="식품"  ${giftAdd.productCategory == '식품' ? 'checked' : ''}> 식품</label>
+           	<label><input type="radio" name="giftCategory" id="giftCategory6" value="꽃"  ${giftAdd.productCategory == ' 꽃' ? 'checked' : ''}> 꽃</label> 
+		</div>
    </div><br>
    <div class="field gift-status">
         <b style="color: #000000;">선물 공개 여부</b> 

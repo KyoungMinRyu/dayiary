@@ -89,8 +89,6 @@ public class RestoService {
 			if (restoInfo != null) {
 				List<RestoFile> restoFileList = restoDao.restoFileSelect(rSeq);
 				List<Menu> menuList = restoDao.menuSelect(rSeq);
-				logger.debug("레스토뷰 서비스 디버깅 menuList.size() : " + menuList.size());
-				logger.debug("레스토뷰 서비스 디버깅 파일ㄹㄹㄹlist.size() : " + restoFileList.size());
 
 				if (restoFileList != null) {
 					restoInfo.setRestoFileList(restoFileList);
@@ -98,7 +96,6 @@ public class RestoService {
 
 				if (menuList != null) {
 					restoInfo.setMenuList(menuList);
-					logger.debug("레스토뷰 서비스 디버깅 restoInfo.getMenuList() : " + restoInfo.getMenuList());
 				}
 
 			}
@@ -203,7 +200,6 @@ public class RestoService {
 		String rSeq = "R" + restoInfo.getrSeq();
 
 		if (count > 0 && restoFileList != null && menuList != null) {
-			logger.debug("[restoservice] restoListInsert1");
 
 			for (int i = 0; i < restoFileList.size(); i++) {
 				restoInfo.getRestoFileList().get(i).setrSeq(rSeq);
@@ -221,7 +217,6 @@ public class RestoService {
 				String mSeq = "M" + menu.getMenuSeq();
 				menuFile.setMenuSeq(mSeq);
 				System.out.println(menuFile.getFileName());
-				logger.debug("[restoservice] restoListInsert2");
 				restoDao.menuFileInsert(menuFile);
 
 			}

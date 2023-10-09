@@ -23,6 +23,7 @@
    <result column="RESTO_ADDRESS" property="restoAddress" />
    <result column="RESTO_PH" property="restoPh" />
    <result column="RESTO_CONTENT" property="restoContent" />
+   <result column="FILE_NAME" property="fileName"/>
    <result column="REG_DATE" property="regDate" />
    <result column="STATUS" property="status" />
    <result column="RESTO_TYPE" property="restoType" />
@@ -266,7 +267,7 @@ SELECT R_SEQ,
                AND B.FILE_SEQ = 1
                  AND A.R_SEQ = B.R_SEQ
                 
-              ORDER BY A.REG_DATE ASC))
+              ORDER BY A.REG_DATE DESC))
 
 </select>
 
@@ -327,7 +328,7 @@ SELECT PRODUCT_SEQ,
                           WHERE B.FILE_SEQ = 1
                           AND A.SELLER_ID = #{value}
                           AND A.PRODUCT_SEQ = B.PRODUCT_SEQ
-   ORDER BY A.REG_DATE ASC ))
+   ORDER BY A.REG_DATE DESC ))
 </select>
 
 <!-- 총 선물 수 -->
@@ -705,7 +706,7 @@ FROM(
                    INNER JOIN G2_USER D ON A.USER_ID = D.USER_ID
                WHERE B.SELLER_ID = #{sellerId}
                      AND A.STATUS = 'Y'
-                     ORDER BY C.REG_DATE ASC
+                     ORDER BY C.REG_DATE DESC
                      ))
 </select> 
 
@@ -779,7 +780,7 @@ FROM(
                      INNER JOIN PAY_LIST D ON A.ORDER_SEQ = D.ORDER_ID
                      INNER JOIN G2_USER E ON A.USER_ID = E.USER_ID
                      WHERE B.SELLER_ID = #{sellerId}
-                  ORDER BY D.REG_DATE ASC
+                  ORDER BY D.REG_DATE DESC
                      ))
    
 </select> 

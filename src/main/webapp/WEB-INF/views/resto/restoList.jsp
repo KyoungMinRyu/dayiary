@@ -293,18 +293,6 @@ $(document).ready(function() {
        document.bbsForm.submit();
    });
    
-  
-   
-   
-/*$("select[name=location]").change(function(){ //셀렉트박스 값 가져오는 문법!
-     console.log($(this).val()); //value값 가져오기
-     console.log($("select[name=location] option:selected").text()); //text값 가져오기
-   });
-*/
-
-
-
-
 
 });
 

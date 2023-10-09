@@ -1176,6 +1176,23 @@ button.btn.btn-solid:active, button.btn.btn-outline:active {
     color: #000; /* 검정색 */
 }
 
+
+.floating-button {
+    position: fixed;
+    bottom: 20px; 
+    right: 25px; 
+    width: 50px;
+    height: 50px; 
+    border-radius: 50%;
+    background-color: #ff4c3b; 
+    border: 1px solid #ddd;
+    text-align: center;
+    line-height: 45px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #fff;
+}
+
 </style>
 <script type="text/javascript">
 
@@ -1199,7 +1216,6 @@ $(document).ready(function() {
        var formattedPriceElement = document.getElementById("formattedPrice");
        formattedPriceElement.textContent = formattedPrice + "원";
 
-       console.log(formattedPrice);
 
      //수량결정 후 가격
        function updateTotalPrice() {
@@ -1240,7 +1256,7 @@ $(document).ready(function() {
        document.orderPage.price.value = price;
        document.orderPage.quantity.value = quantity;
        document.orderPage.totalPrice.value = price * quantity;
-       document.orderPage.giftFileName.value = "${giftAdd.fileName}";
+       document.orderPage.giftFileName.value = "${giftAdd.giftFileList.get(0).fileName}";
        document.orderPage.giftpName.value = "${giftAdd.pName}";
        document.orderPage.giftpContent.value = "${giftAdd.pContent}";
        document.orderPage.productSeq.value = productSeq;
@@ -1325,6 +1341,12 @@ function fn_reversal(checkFavorite, productSeq)
    }
 }
 
+
+function fn_moveList()
+{
+    document.bbsForm.action = "/gift/giftList";
+    document.bbsForm.submit();
+}
 </script>
 </head>
 <body>
@@ -1415,10 +1437,21 @@ function fn_reversal(checkFavorite, productSeq)
 	                   		<a class="nav-link active text-danger" id="review-tab" style="cursor: pointer; font-size:18px;" role="tab" aria-selected="true">상품후기</a>
 	                   		<div class="material-border"></div>
 	               		</li>
-                        <li class="nav-item-qna">                                 <!--afterSelected, productSeq 2가지 QNA화면으로 넘기는 용도의 onclick -->
-                			<a class="nav-link active text-danger"  id="top-home-tab" data-toggle="tab" onclick="fn_movePage('2', '${productSeq}')" style="cursor: pointer; font-size:18px;" role="tab" aria-selected="true">문의하기</a>   
-                            <div class="material-border"></div>
-                        </li>
+                        
+                        <%
+                       	if(com.icia.web.util.CookieUtil.getHexValue(request, "SELLER_ID") == null || com.icia.web.util.CookieUtil.getHexValue(request, "SELLER_ID") == "")
+                       	{
+                          	if(com.icia.web.util.CookieUtil.getHexValue(request, "USER_ID") != null && com.icia.web.util.CookieUtil.getHexValue(request, "USER_ID") != "")
+                          	{
+                        %>     		
+		                        <li class="nav-item-qna">                                 <!--afterSelected, productSeq 2가지 QNA화면으로 넘기는 용도의 onclick -->
+		                			<a class="nav-link active text-danger"  id="top-home-tab" data-toggle="tab" onclick="fn_movePage('2', '${productSeq}')" style="cursor: pointer; font-size:18px;" role="tab" aria-selected="true">문의하기</a>   
+		                            <div class="material-border"></div>
+		                        </li>
+                       	<%
+                          	}
+                       	}
+                       	%>
 					</ul>
 					
 					
@@ -1510,7 +1543,19 @@ function fn_reversal(checkFavorite, productSeq)
         
         
     </section>
-    
+
+<div class="floating-button" onclick="fn_moveList()">
+	<img src="/resources/images/fList.png" style="width: 30px; height: 30px;" title="리스트로 이동">	
+</div>    
+
+<form name="bbsForm" id="bbsForm" method="post">
+   <input type="hidden" name="searchTypeCategory" value="${searchTypeCategory}" />
+   <input type="hidden" name="searchType" value="${searchType}" />
+   <input type="hidden" name="searchValue" value="${searchValue}" />
+   <input type="hidden" name="orderBy" value="${orderBy}" />
+   <input type="hidden" name="productType" value="${productType}" />
+   <input type="hidden" name="curPage" value="${curPage}" />
+</form>
     
 	<form name="orderPage" id="orderPage" method="post">
 	    <input type="hidden" name="price" value="" />

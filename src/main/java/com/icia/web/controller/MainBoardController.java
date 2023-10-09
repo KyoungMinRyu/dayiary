@@ -53,9 +53,6 @@ public class MainBoardController {
 
    // 다이어리 리스트
    @RequestMapping(value = "/board/diaryList")
-   // 위에 GET, POST 방식 모두 허용 하기 위해 메소드 타입을 기입하지 않은 것_이유는: 메뉴를 통해서 들어오는건(넘어가는 정보 없음)
-   // get방식,
-   // 조회할때는 작성자이름과 조회종류 누르고 클릭시에는(넘어가는 정보가 있음) post방식으로 해야기 때문에 모두 허용한 것.
    public String diaryList(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
       String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
       // 조회 항목
@@ -79,28 +76,13 @@ public class MainBoardController {
          search.setSearchType(searchType);
          search.setSearchValue(searchValue);
       }
-
       search.setUserId(cookieUserId);
-      logger.debug("===================ㅋㅋsearch에 넣은 쿠키유저 : " + search.getUserId());
-      logger.debug("===================ㅋㅋsearchType : " + searchType);
-      logger.debug("===================ㅋㅋsearchValue : " + searchValue);
-
       totalCount = mainBoardService.boardListCount(search);
-      logger.debug("===================== totalCount : " + totalCount);
-
       if (totalCount > 0) {
          paging = new Paging("/board/diaryList", totalCount, LIST_COUNT, PAGE_COUNT, curPage, "curPage");
-
          search.setStartRow(paging.getStartRow());
          search.setEndRow(paging.getEndRow());
-
          list = mainBoardService.boardList(search);
-
-         logger.debug("=============================paging:" + paging.getStartRow());
-         logger.debug("=============================paging:" + paging.getEndRow());
-         logger.debug("=============================search:" + search.getStartRow());
-         logger.debug("=============================search:" + search.getEndRow());
-
       }
 
       if (StringUtil.equals(myBoard, "1")) // 내다이어리보기 눌렀을때는 조회창에 서치타입,서치밸류 안보이게 하기 위함
@@ -143,23 +125,12 @@ public class MainBoardController {
    @RequestMapping(value = "/board/diaryWriteProc", method = RequestMethod.POST)
    @ResponseBody
    public Response<Object> diaryWriteProc(MultipartHttpServletRequest request, HttpServletResponse response)
-   // 보내는 방식이 enctype="multipart/form-data"로 보내므로 위에 받는 매개변수도 Multipart로 맞춰줘야한다.
    {
       Response<Object> ajaxResponse = new Response<Object>();
       String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
       String boardTitle = HttpUtil.get(request, "boardTitle", "");
-      // String boardContent = HttpUtil.get(request, "boardContent", "");
       String editor = HttpUtil.get(request, "editor", "");
       List<FileData> fileData = HttpUtil.getFiles(request, "mainBoardFile", UPLOAD_SAVE_DIR);
-
-      // FileData fileData = HttpUtil.getFile(request, "mainBoardFile",
-      // UPLOAD_SAVE_DIR);
-      // "hiBbsFile"은 writeForm에 있는 이름(첨부파일) = OrgName명으로 사용할것. 유틸이 새로 지어준 이름(유니크)은
-      // FileName명으로 쓰임.
-      // UPLOAD_SAVE_DIR는 파일 업로드 경로이며, 경로를 변경하려면 env.xml의 맨아래부분에서 수정하면 된다.
-      // 현재 위에 메서드에서 하는 역할은 해당 파일 정보를 읽어서 파일 경로를 읽고 그곳에다 업로딩해놓고 DB에만 저장 안한 것.
-
-      logger.debug("=======================editor:" + editor);
 
       if (!StringUtil.isEmpty(boardTitle) && !StringUtil.isEmpty(editor)) {
          MainBoard mainBoard = new MainBoard();
@@ -183,15 +154,12 @@ public class MainBoardController {
                mainBoardFileList.add(mainBoardFile);
             }
 
-            logger.debug("=======================editor2222:" + editor);
             mainBoard.setMainBoardFile(mainBoardFileList);
-            // 위에서 생성한 new HiBoardFile 객체를, hiBoard는 시작주소만 바라보도록 연결함.
          }
 
          // 서비스 호출
          try {
-            if (mainBoardService.boardInsert(mainBoard) > 0) // boardInsert는 메서드 예외처리 되어있음.(예외발생) > 호출하는쪽에서 처리해라 :
-                                                   // try~catch문 써야함
+            if (mainBoardService.boardInsert(mainBoard) > 0)
             {
                ajaxResponse.setResponse(0, "success");
             } else {
@@ -303,10 +271,6 @@ public class MainBoardController {
       String boardContent = HttpUtil.get(request, "editor", "");
       List<FileData> fileData = HttpUtil.getFiles(request, "mainBoardFile", UPLOAD_SAVE_DIR);
 
-      logger.debug("==============================boardSeq : " + boardSeq);
-      logger.debug("==============================boardTitle : " + boardTitle);
-      logger.debug("==============================boardContent : " + boardContent);
-
       if (boardSeq > 0 && !StringUtil.isEmpty(boardTitle) && !StringUtil.isEmpty(boardContent)) {
          MainBoard mainBoard = mainBoardService.boardSelect(boardSeq);
 
@@ -411,7 +375,6 @@ public class MainBoardController {
       String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
       String commentContent = HttpUtil.get(request, "commentContent", "");
 
-      logger.debug("=======================댓글내용commentContent:" + commentContent);
 
       if (!StringUtil.isEmpty(commentContent) && !StringUtil.isEmpty(cookieUserId))
       // 로그인했고, 댓글내용 작성했을때
@@ -429,8 +392,7 @@ public class MainBoardController {
 
             // 서비스 호출
             try {
-               if (mainBoardService.commentInsert(mainBoardComment) > 0) // boardInsert는 메서드 예외처리 되어있음.(예외발생) >
-                                                            // 호출하는쪽에서 처리해라 : try~catch문 써야함
+               if (mainBoardService.commentInsert(mainBoardComment) > 0)
                {
                   ajaxResponse.setResponse(0, "success");
                } else {
@@ -513,7 +475,6 @@ public class MainBoardController {
       long commentSeq = HttpUtil.get(request, "commentSeq", (long) 0);
       String updateCommentContent = HttpUtil.get(request, "updateCommentContent", "");
 
-      logger.debug("updateCommentContentzzzzzz: " + updateCommentContent);
 
       if (boardSeq > 0) {
          MainBoard mainBoard = mainBoardService.boardSelect(boardSeq);
@@ -562,19 +523,10 @@ public class MainBoardController {
       long commentSeq = HttpUtil.get(request, "commentSeq", (long) 0);
       String replyCommentContent = HttpUtil.get(request, "replyCommentContent", "");
 
-      logger.debug("replyCommentContent 디버깅 : " + replyCommentContent);
 
       if (boardSeq > 0 && !StringUtil.isEmpty(replyCommentContent)) // 게시물 존재하고, 답글 내용 비어있지 않으면
       {
          MainBoardComment parentBoardComment = mainBoardService.commentSelect(commentSeq);
-         // 답변글에 대한 인서트 작업 (그룹번호 기준으로 desc할거임. 답글이 글번호가 더 높다고 답글이 더 먼저 나오면 안되니까)
-         // 그룹번호는 원글과 답글을 묶어서 같은번호를 사용함. O, I는 부모글의 O, I에 +1을 가져감.
-         // 원글 시퀀스가 10이라면 G:10, O:0, I:0, P:0
-         // 답글1 -> 시퀀스:11, G:10, O:1, I:1, P:10
-         // 답글2 -> 시퀀스:12, G:10, O:1, I:1, P:10 (처음에는 이런데 ORDER<순번>이 겹쳐버림. 그래서 업데이트 쳐줘야함)
-         // (업데이트) 그룹번호가 같으면서 나의 ORDER보다 크거나 같은 애를 찾아서 +1 해줘야함. 단, 인덴트는 들여쓰기용이라 다 1인게맞음
-         // G는 DESC, O는 ASC 해줄것
-
          MainBoardComment mainBoardComment = new MainBoardComment(); // 답댓글 객체 생성
 
          if (parentBoardComment.getCommentIndent() == 0) // 부모댓글이 답글이 아닌 원댓글(조상댓글)이면
@@ -620,8 +572,6 @@ public class MainBoardController {
       int likeCheck = HttpUtil.get(request, "likeCheck", 3); // 3이면 ajax에서 값 못가져온거임. 1이면 like, 0이면 unlike
       int likeCount = 0;
 
-      logger.debug("이즈라이크 : " + likeCheck);
-
       if (boardSeq > 0) // 게시물 존재하면
       {
          MainBoardReaction mainBoardReaction = new MainBoardReaction();
@@ -634,7 +584,6 @@ public class MainBoardController {
             if (mainBoardService.likeInsert(mainBoardReaction) > 0) // 좋아요 인서트 성공
             {
                likeCount = mainBoardService.likeCount(boardSeq);
-               logger.debug("라이크카운트 좋아요: " + likeCount);
                ajaxResponse.setResponse(0, "like : insert success");
                ajaxResponse.setData(likeCount);
             } else // 좋아요 인서트 실패
@@ -646,7 +595,6 @@ public class MainBoardController {
             if (mainBoardService.likeDelete(mainBoardReaction) > 0) // 레코드 삭제 성공
             {
                likeCount = mainBoardService.likeCount(boardSeq);
-               logger.debug("라이크카운트 싫어요: " + likeCount);
                ajaxResponse.setResponse(0, "unlike : delete success");
                ajaxResponse.setData(likeCount);
             } else // 레코드 삭제 실패

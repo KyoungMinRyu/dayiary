@@ -403,9 +403,6 @@ $(document).ready(function()
    //운송장번호 입력 시 ..
       $("#submitButton").click(function() 
       {
-         console.log("aa");
-         console.log(orderSeq);
-         
          if(orderSeq != "" && orderSeq != null)
          {
             selectedValue = document.querySelector('.delivery select').value;   
@@ -486,7 +483,7 @@ $(document).ready(function()
    	   	        			{
 	   	   	        			if(temp === data.rSeq)
 	   	   	        			{
-	   	   	        				makeTag += "<h4>" + data.regDate + " " + data.reservPerson + "명 " + data.totalPrice + "원</h4>";
+	   	   	        				makeTag += "<h4>" + data.regDate + " " + data.reservPerson.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "명 " + data.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원</h4>";
 	   	   	        			}
 	   	   	        			else
 	   	   	        			{
@@ -501,7 +498,7 @@ $(document).ready(function()
 	   	   	        			makeTag = 
 		   	        					"<div style='width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;'><h3>" +
 		   	        					 data.restoName + "</h3><div style='justify-content: center; text-align: center;'><h4>" +
-		   	        					 data.regDate + " " + data.reservPerson + "명 " + data.totalPrice + "원</h4>";	   	           			
+		   	        					 data.regDate + " " + data.reservPerson.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "명 " + data.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원</h4>";	   	           			
 	   	        				flag = 1;
 							}
    	   	        			temp = data.rSeq;   	   	        			
@@ -519,7 +516,7 @@ $(document).ready(function()
    	   	        			{
 	   	   	        			if(temp === data.productSeq)
 	   	   	        			{
-	   	   	        				makeTag += "<h4>" + data.regDate + " " + data.totalCnt + "개 " + data.totalPrice + "원</h4>";
+	   	   	        				makeTag += "<h4>" + data.regDate + " " + data.totalCnt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "개 " + data.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원</h4>";
 	   	   	        			}
 	   	   	        			else
 	   	   	        			{
@@ -534,7 +531,7 @@ $(document).ready(function()
 	   	   	        			makeTag = 
 		   	        					"<div style='width:100%; height: auto; border: 1px solid black; border-radius: 10px; padding: 10px; margin-bottom: 20px;'><h3>" +
 		   	        					 data.pName + "</h3><div style='justify-content: center; text-align: center;'><h4>" +
-		   	        					 data.regDate + " " + data.totalCnt + "개 " + data.totalPrice + "원</h4>";	   	           			
+		   	        					 data.regDate + " " + data.totalCnt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "개 " + data.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원</h4>";	   	           			
 	   	        				flag = 1;
 							}
    	   	        			temp = data.productSeq;   	   	        			
@@ -733,7 +730,6 @@ function fn_writeDeliveryNum(seq)
 {
    deliveryContainer.style.display = "flex";
    orderSeq = seq;
-   console.log(orderSeq);
    $("#deliveryContainer").fadeIn();
 }
 
@@ -768,7 +764,6 @@ function fn_restoList(url)
         url: url,
         success: function(response)
         {
-           console.log(response.data);  
            let json = response.data;
            let makeTag = "";
            let show = "";
@@ -823,11 +818,10 @@ function fn_giftList(url)
         url: url,
         success: function(response)
         {
-           console.log(response.data); 
            let json = response.data;
            let makeTag = "";
            let show = "";
-            for(let i = 0; i < json.length; i++)
+           for(let i = 0; i < json.length; i++)
            {
               makeTag = 
                     "<div class='listItem'><a href='/gift/giftview?productSeq=" + json[i].productSeq + "'>" +
@@ -857,9 +851,7 @@ function fn_giftList(url)
         },
         error: function(xhr, status, error) 
         {
-           console.log(xhr.responseText);
             console.log(error);
-            
         }
     });  
 }
@@ -891,7 +883,6 @@ function fn_restoList2(url, formData) {
         url: url,
         data: formData,
         success: function(response) {
-            console.log(response.data);
             searchType = response.data.searchType;
             searchValue = response.data.searchValue;
             let json = response.data.list; // AJAX 응답 데이터를 json 변수에 할당
@@ -937,7 +928,6 @@ function fn_giftList2(url, formData) {
         url: url,
         data: formData,
         success: function(response) {
-            console.log(response.data);
             searchType = response.data.searchType;
             searchValue = response.data.searchValue;
             let json = response.data.list; // AJAX 응답 데이터를 json 변수에 할당
@@ -1036,7 +1026,6 @@ function fn_writeDelivery(seq)
 {
     reviewContainer.style.display = "flex";
    orderSeq = seq;
-   console.log(orderSeq);
    $("#reviewContainer").fadeIn();
 }
 
@@ -1052,7 +1041,17 @@ function fn_deliveryNumProc(formData)
         {
            if(response.code == 0)
            {
+        	  $("#deliveryContainer").fadeOut();
+               // deliveryNumber 초기화
+              $("#deliveryNumber").val("");
+               
+               // 선택된 옵션 초기화 (0번째 옵션을 선택하도록 설정)
               
+              $(".delivery select").val("0");
+           
+               // 나머지 변수 초기화 (필요에 따라서 초기화)
+              orderNum = "";
+              orderSeq = "";
               orderRestoGiftList("2");
            }
            else if(response.code == 500)
@@ -1243,8 +1242,8 @@ function fn_getMyThings(type)
 		</span>
 
 		<h4 style="margin-bottom: 15px;">송장번호</h4>
-		<input type="text" id="deliveryNumber" maxlength="12"
-			name="deliveryNumber" placeholder="최대 12자리까지 입력 가능합니다" />
+		<input type="text" id="deliveryNumber" maxlength="20"
+			name="deliveryNumber" placeholder="운송장번호를 입력해주세요." />
 
 		<div id="buttonContainer">
 			<input type="button" value="등록" id="submitButton"> <input

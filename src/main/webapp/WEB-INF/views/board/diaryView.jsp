@@ -173,9 +173,6 @@ $(document).ready(function() {
 function fn_commentDelete(commentSeq) //댓글 삭제 버튼 클릭시
 {
 
-         console.log("값 확인 : " + commentSeq);
-         
-        
        if(confirm("댓글을 삭제하시겠습니까?") == true)
        {
           $.ajax({
@@ -253,8 +250,6 @@ function fn_commentUpdate(commentSeq) //댓글 수정 버튼 클릭시
     var commentContentElement = document.getElementById("commentContent_" + commentSeq);
     var commentContent = commentContentElement.getAttribute("value");
        
-       // 이제 특정 commentSeq에 대한 댓글 내용을 가지고 있습니다.
-       console.log("댓글내용: " + commentContent); //수정 전 원래 댓글 내용
        
        //원래 댓글창을 textarea수정창으로 변경 - id: updateContent_commentSeq
        $("#commentContent_" + commentSeq).replaceWith("<textarea class='form-control' id='updateContent_" + commentSeq + "' style='width:1000px;' rows='3'>" 
@@ -361,8 +356,6 @@ function fn_commentReply(commentSeq) {
             click: function() {
                var replyCommentContent = $("#replyContent_" + commentSeq).val();
                fn_commentReplyComplete(commentSeq, replyCommentContent); 
-               //답글 작성 후 답글확인 버튼을 눌렀을시, 위에 textarea에 적은 값 가지고 fn_commentReplyComplete로 이동함
-        console.log("replyCommentContent 1:" + replyCommentContent);
            }
         });
         
@@ -392,7 +385,6 @@ function fn_commentReply(commentSeq) {
 //답글 작성 완료 버튼 눌렀을시
 function fn_commentReplyComplete(commentSeq, replyCommentContent)
 {
-   console.log("replyCommentContent 2:" + replyCommentContent);
    
    if (replyCommentContent === null || replyCommentContent === "") 
    {
@@ -459,27 +451,6 @@ function fn_commentReplyComplete(commentSeq, replyCommentContent)
    
 }
 
-
-
-/*function fn_like(boardSeq) //좋아요 했을때 호출
-{
-   var btnLike = document.getElementById("btnLike");
-   var img = btnLike.querySelector("img");
-
-   if (isLike === 0) { // 좋아요를 눌렀으면 1로 변경
-     img.src = "/resources/images/like.png";
-     sendLikeStatusToServer(boardSeq, 1); // 좋아요 상태를 서버에 1로 전송
-   } 
-   else {
-     img.src = "/resources/images/unlike.png";
-     sendLikeStatusToServer(boardSeq, 0); // 좋아요 취소 상태를 서버에 0으로 전송
-   }
-
-   isLike = (isLike === 0) ? 1 : 0; // 상태를 반대로 토글
-   console.log("isLike:" + isLike);
-} */
-
-
 function fn_like(boardSeq) {
     $.ajax({
         type: "POST",
@@ -489,11 +460,6 @@ function fn_like(boardSeq) {
             likeCheck: 1
         },
         success: function(response) {
-            console.log("좋아요 - response.code : " + response.code);
-            console.log("msg : " + response.msg);
-            console.log("data : " + response.data);
-
-            // 응답에서 받은 갱신된 likeCount 값을 클라이언트에서 사용
             if (response.code === 0) {
                 $("#btnUnLike").show();
                 $("#btnLike").hide();
@@ -515,11 +481,6 @@ function fn_unlike(boardSeq) {
             likeCheck: 0
         },
         success: function(response) {
-            console.log("좋아요 취소 - response.code : " + response.code);
-            console.log("msg : " + response.msg);
-            console.log("data : " + response.data);
-
-            // 응답에서 받은 갱신된 likeCount 값을 클라이언트에서 사용
             if (response.code === 0) {
                 $("#btnLike").show();
                 $("#btnUnLike").hide();

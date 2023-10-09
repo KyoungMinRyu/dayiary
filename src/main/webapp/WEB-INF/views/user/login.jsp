@@ -259,7 +259,6 @@ function fn_loginCheck()
             success:function(response){
                if(!icia.common.isEmpty(response))
                {
-                  //var data = JSON.parse(response);
                   var code = icia.common.objectValue(response, "code", -500);
                   
                   if(code == 0)
@@ -274,17 +273,17 @@ function fn_loginCheck()
                   {
                      if(code == -1)
                      {
-                        alert("비밀번호가 올바르지 않습니다.");
+                        alert("일치하는 정보가 없습니다.");
                         $("#userPwd").focus();
                      }
                      else if(code == 404)
                      {
-                        alert("사용자 정보가 올바르지 않습니다.");
+                        alert("일치하는 정보가 없습니다.");
                         $("#userId").focus();
                      }
                      else if(code == 400)
                      {
-                        alert("파라미터 값이 올바르지 않습니다.");
+                        alert("입력 값이 올바르지 않습니다.");
                         $("#userId").focus();
                      }
                      else
@@ -341,30 +340,27 @@ function fn_sellerloginCheck()
             success:function(response){
                if(!icia.common.isEmpty(response))
                {
-                  //var data = JSON.parse(response);
                   var code = icia.common.objectValue(response, "code", -500);
                   
                   if(code == 0)
                   {
                      location.href = "/index/sellerIndex"; 
-                     //location.href = "/";차이점 -- web.xml에 있는 welcomefile list를 참조 . index.jsp가 먼저 호출되어 controller 탐 
-                     ///index는 dispatch한테 먼저 연락.
                   }
                   else
                   {
                      if(code == -1)
                      {
-                        alert("비밀번호가 올바르지 않습니다.");
+                        alert("일치하는 정보가 없습니다.");
                         $("#userPwd").focus();
                      }
                      else if(code == 404)
                      {
-                        alert("사용자 정보가 올바르지 않습니다.");
+                        alert("일치하는 정보가 없습니다.");
                         $("#userId").focus();
                      }
                      else if(code == 400)
                      {
-                        alert("파라미터 값이 올바르지 않습니다.");
+                        alert("입력 값이 올바르지 않습니다.");
                         $("#userId").focus();
                      }
                      else
@@ -382,7 +378,6 @@ function fn_sellerloginCheck()
             },
             complete:function(data)
             {
-               //응답이 종료되면 실행 잘 사용하지 않음.
                icia.common.log(data);
             },
             error:function(xhr, status, error)

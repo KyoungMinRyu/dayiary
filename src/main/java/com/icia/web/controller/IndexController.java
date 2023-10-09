@@ -23,7 +23,6 @@ public class IndexController
 	@RequestMapping(value = "/index")
    	public String index(HttpServletRequest request, HttpServletResponse response)
 	{
-//		new NaverApi().clovaChatbot("자기소개", "ㅁㅁㅁㅁㅁㅁㅁㅁ");
 		return "/index/index";
 	}
 	

@@ -203,7 +203,6 @@ public class UserG2Controller {
 	}
 
 	// 닉네임 중복체크 Ajax통신
-	// 닉네임 중복체크 Ajax통신
 	@RequestMapping(value = "/user/userNickNameAjax", method = RequestMethod.POST)
 	@ResponseBody
 	public Response<Object> userNickNameAjax(HttpServletRequest request, HttpServletResponse response) {
@@ -912,13 +911,8 @@ public class UserG2Controller {
 			}
 
 			board.setUserId(cookieUserId);
-			logger.debug("===================ㅋㅋsearch에 넣은 쿠키유저 : " + board.getUserId());
-			logger.debug("===================ㅋㅋsearchType : " + searchType);
-			logger.debug("===================ㅋㅋsearchValue : " + searchValue);
 
 			totalCount = mainBoardService.boardListCount(board);
-			logger.debug("===================== totalCount : " + totalCount);
-
 			if (totalCount > 0) {
 				paging = new Paging("../user/myPagePaging/page-content-diary", totalCount, LIST_COUNT, PAGE_COUNT,
 						curPage, "curPage");
@@ -928,10 +922,6 @@ public class UserG2Controller {
 
 				list = mainBoardService.boardList(board);
 
-				logger.debug("=============================paging:" + paging.getStartRow());
-				logger.debug("=============================paging:" + paging.getEndRow());
-				logger.debug("=============================search:" + board.getStartRow());
-				logger.debug("=============================search:" + board.getEndRow());
 
 			}
 
@@ -964,10 +954,7 @@ public class UserG2Controller {
 				modelMap.addAttribute("myNickName", yourFriend.getMyNickName());
 				modelMap.addAttribute("coupleAnniversary", coupleAnniversary);
 
-				System.out.println(yourFriend.getYourId());
-				System.out.println(yourFriend.getMyId());
 				modelMap.addAttribute("yourFriend", yourFriend);
-				System.out.println(yourFriend.getFileName());
 			}
 
 			return "/user/myPagePaging/page-content-couple";
@@ -1045,12 +1032,8 @@ public class UserG2Controller {
 			}
 
 			board.setUserId(cookieUserId);
-			logger.debug("===================ㅋㅋsearch에 넣은 쿠키유저 : " + board.getUserId());
-			logger.debug("===================ㅋㅋsearchType : " + searchType);
-			logger.debug("===================ㅋㅋsearchValue : " + searchValue);
 
 			totalCount = mainBoardService.boardListCount(board);
-			logger.debug("===================== totalCount : " + totalCount);
 
 			if (totalCount > 0) {
 				paging = new Paging("/user/myPagePaging/page-content-diary", totalCount, LIST_COUNT, PAGE_COUNT,
@@ -1060,11 +1043,6 @@ public class UserG2Controller {
 				board.setEndRow(paging.getEndRow());
 
 				list = mainBoardService.boardList(board);
-
-				logger.debug("=============================paging:" + paging.getStartRow());
-				logger.debug("=============================paging:" + paging.getEndRow());
-				logger.debug("=============================search:" + board.getStartRow());
-				logger.debug("=============================search:" + board.getEndRow());
 
 			}
 

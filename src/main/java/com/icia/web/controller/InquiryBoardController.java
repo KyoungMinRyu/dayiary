@@ -67,9 +67,6 @@ public class InquiryBoardController
       String cookieUserId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
       String cookieSellerId = CookieUtil.getHexValue(request, "SELLER_ID");
       
-      //logger.debug("======== 쿠키값 SELLER_ID :" + CookieUtil.getHexValue(request, "SELLER_ID"));
-      //logger.debug("======== 쿠키값 USER_ID :" + CookieUtil.getHexValue(request, AUTH_COOKIE_NAME));
-      
       if(!StringUtil.isEmpty(cookieUserId))
       {
          List<InquiryBoard> list = null;
@@ -465,9 +462,6 @@ public class InquiryBoardController
       String qnaContent = HttpUtil.get(request, "qnaContent", "");
       List<FileData> fileData = HttpUtil.getFiles(request, "inquiryFile", UPLOAD_SAVE_DIR);
       
-      //logger.debug("=============@111" + qnaSeq);
-      //logger.debug("=============@222" + orderGubun);
-      //logger.debug("=============@333" + userId);
       
       if(!StringUtil.isEmpty(cookieUserId))
       {
@@ -792,10 +786,6 @@ public class InquiryBoardController
       String qnaContent = HttpUtil.get(request, "qnaContent", "");
       List<FileData> fileData = HttpUtil.getFiles(request, "inquiryFile", UPLOAD_SAVE_DIR);
       
-      //logger.debug("===========1111111" + qnaSeq);
-      //logger.debug("===========2222222" + userId);
-      //logger.debug("===========3333333" + sellerId);
-      //logger.debug("===========4444444" + orderGubun);
       
       if(qnaSeq > 0 && !StringUtil.isEmpty(qnaTitle) && !StringUtil.isEmpty(qnaContent))
       {
@@ -809,9 +799,6 @@ public class InquiryBoardController
             inquiryBoard.setSellerId(sellerId);
             inquiryBoard.setQnaTitle(qnaTitle);
             inquiryBoard.setQnaContent(qnaContent);            
-            logger.debug("==================" + parentInquiryBoard.getQnaGroup());
-            logger.debug("==================" + parentInquiryBoard.getQnaOrder());
-            logger.debug("==================" + parentInquiryBoard.getQnaIndent());
             inquiryBoard.setReplyStatus("N");
             inquiryBoard.setQnaGroup(parentInquiryBoard.getQnaGroup());      //그룹->메인게시물의 시퀀스를 따라감
             inquiryBoard.setQnaOrder(parentInquiryBoard.getQnaOrder() + 1);   //그룹번호 내에서의 순서

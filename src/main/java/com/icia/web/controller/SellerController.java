@@ -596,10 +596,7 @@ public class SellerController {
 				MenuFile menuFile = null;
 				for (int i = 1; i <= menuCount; i++) 
 				{
-					// Menu menu = null; // 각 반복에서 새로운 Menu 객체 생성
-					// MenuFile menuFile1 = null; // 각 반복에서 새로운 MenuFile
 					Menu menu = new Menu();
-					// MenuFile menuFile1 = new MenuFile();
 					String menuName = HttpUtil.get(request, "menuName" + i, "");
 					String menuPrice = HttpUtil.get(request, "menuPrice" + i, "");
 					String menuDescription = HttpUtil.get(request, "menuDescription" + i, "");
@@ -610,7 +607,7 @@ public class SellerController {
 					menu.setMenuPrice(menuPrice);
 					menu.setMenuContent(menuDescription);
 					menu.setrSeq(rSeq);
-					if (getMenuFile != null) 
+					if (getMenuFile != null && getMenuFile.getFileSize() > 0) 
 					{
 						menuFile = new MenuFile();
 						menuFile.setFileName(getMenuFile.getFileName());
@@ -637,35 +634,43 @@ public class SellerController {
 					if(sellerService.restoUpdate(restoInfo, flag) > 0) 
 					{
 						ajaxResponse.setResponse(0, "success");
-						if(flag == 1)
+						if(flag != -1)
 						{
-							if(!StringUtil.equals(orgRestoFileList.get(0).getFileName(), "resto.jpg"))
+							if(flag == 1)
 							{
-								FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgRestoFileList.get(0).getFileName());
-							}
-							orgRestoFileList = null;
-						}
-						else if(flag == 2)
-						{
-							orgRestoFileList.remove(0);
-						}
-						
-						if(orgRestoFileList != null && orgRestoFileList.size() > 0)
-						{
-							for(int i = 0; i < orgRestoFileList.size(); i++)
-							{
-								if(!StringUtil.equals(orgRestoFileList.get(i).getFileName(), "resto.jpg"))
+								if(!StringUtil.equals(orgRestoFileList.get(0).getFileName(), "resto.jpg"))
 								{
-									FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgRestoFileList.get(i).getFileName());
+									FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgRestoFileList.get(0).getFileName());
 								}
+								orgRestoFileList = null;
 							}
+							else if(flag == 2)
+							{
+								orgRestoFileList.remove(0);
+							}
+							
+							if(orgRestoFileList != null && orgRestoFileList.size() > 0)
+							{
+								for(int i = 0; i < orgRestoFileList.size(); i++)
+								{
+									if(!StringUtil.equals(orgRestoFileList.get(i).getFileName(), "resto.jpg"))
+									{
+										FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgRestoFileList.get(i).getFileName());
+									}
+								}
+							}						
 						}
-						
 						for(int i = 0; i < orgMenuFileList.size(); i++)
 						{
 							if(!StringUtil.equals(orgMenuFileList.get(i).getFileName(), "normalMenu.png"))
 							{
-								FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgMenuFileList.get(i).getFileName());
+								for(int j = 0; j < menuList.size(); j++)
+								{
+									if(!StringUtil.equals(menuList.get(i).getFileName(), orgMenuFileList.get(i).getFileName()))
+									{
+										FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgMenuFileList.get(i).getFileName());
+									}
+								}
 							}
 						}
 					} 

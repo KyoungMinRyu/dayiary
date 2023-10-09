@@ -109,9 +109,9 @@ footer {
     text-align: center;
     padding: 40px;
     flex: 2;
-    
+    margin: 0px;
     flex-direction: column;
-    min-width: 120%;
+    width: 104%;
 }
 
  .profile-image-container {
@@ -489,12 +489,14 @@ let a = "${yourFriend.relationalType}";
 </div>
 
   </div>
-</div>
+  
+  </div>
+  
 <footer style="background-color: black; color: lightgray; text-align: center; margin-top:80px; padding: 40px;">
  <a style="font-size:25px; letter-spacing:5px;">《 Dayiary 》 </a><br />
     &copy; Copyright Dayiary Corp. All Rights Reserved. <br>
     Always with you 🎉 여러분의 일상을 함께합니다.
-</footer> 
+</footer> 	
 <!-- partial -->
  
 </body>

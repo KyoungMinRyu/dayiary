@@ -766,12 +766,21 @@ div#mapContainer {
 
 
 
-
-
-
-
-
-
+.floating-button {
+    position: fixed;
+    bottom: 20px; 
+    right: 25px; 
+    width: 50px;
+    height: 50px; 
+    border-radius: 50%;
+    background-color: #ffc107; 
+    border: 1px solid #ddd;
+    text-align: center;
+    line-height: 45px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #fff;
+}
 
 
 
@@ -1188,6 +1197,12 @@ function fn_reversal(checkFavorite, rSeq)
       return;
    }
 }
+
+function fn_moveList()
+{
+    document.bbsForm.action = "/resto/restoList";
+    document.bbsForm.submit();
+}
 </script>
 
 
@@ -1282,26 +1297,42 @@ function fn_reversal(checkFavorite, rSeq)
             </c:if>
             <select id="orderTime" name="orderTime" style="font-weight:bold;" onchange="checkDate()">
                 <option value="Time" disabled selected>예약 시간(잔여좌석)</option>
-            
-            <c:if test="${!empty restoInfo.restoOpen}">
-                <c:set var="openHour" value="${(restoInfo.restoOpen).substring(0, 2)}" />
-                <c:set var="closeHour" value="${(restoInfo.restoClose).substring(0, 2) - 1}" />
-                
-                    <c:forEach var="hour" begin="${Integer.parseInt(openHour)}" end="${Integer.parseInt(closeHour)}">
-                      <c:if test="${hour < 12}">
-                        <option value="${hour}${(restoInfo.restoOpen).substring(2)}"> 오전 ${hour}${(restoInfo.restoOpen).substring(2)} </option>
-                      </c:if>
-                      <c:if test="${hour >= 12}">
-                        <option value="${hour}${(restoInfo.restoOpen).substring(2)}"> 오후 ${hour}${(restoInfo.restoOpen).substring(2)}</option>
-                    </c:if>
-                    </c:forEach>
-            </c:if>                
+            	<c:if test="${!empty restoInfo.restoOpen}">
+	                <c:set var="openHour" value="${(restoInfo.restoOpen).substring(0, 2)}" />
+	                <c:set var="closeHour" value="${(restoInfo.restoClose).substring(0, 2) - 1}" />
+	                    <c:choose>
+	                    	<c:when test="${Integer.parseInt(closeHour) < 10}">
+	                    		<c:forEach var="hour" begin="${Integer.parseInt(openHour)}" end="23">
+			                    	<c:if test="${hour < 12}">
+			                        	<option value="${hour}${(restoInfo.restoOpen).substring(2)}"> 오전 ${hour}${(restoInfo.restoOpen).substring(2)} </option>
+			                      	</c:if>
+			                      	<c:if test="${hour >= 12}">
+			                        	<option value="${hour}${(restoInfo.restoOpen).substring(2)}"> 오후 ${hour}${(restoInfo.restoOpen).substring(2)}</option>
+			                    	</c:if>
+			                    </c:forEach>
+			                    
+			                    <c:forEach var="hour" begin="0" end="${Integer.parseInt(closeHour)}">
+			                    	<option value="0${hour}${(restoInfo.restoOpen).substring(2)}"> 오전 0${hour}${(restoInfo.restoOpen).substring(2)} </option>
+			                    </c:forEach>
+			                </c:when>
+	                    	<c:otherwise>
+	                    		<c:forEach var="hour" begin="${Integer.parseInt(openHour)}" end="${Integer.parseInt(closeHour)}">
+			                    	<c:if test="${hour < 12}">
+			                        	<option value="${hour}${(restoInfo.restoOpen).substring(2)}"> 오전 ${hour}${(restoInfo.restoOpen).substring(2)} </option>
+			                      	</c:if>
+			                      	<c:if test="${hour >= 12}">
+			                        	<option value="${hour}${(restoInfo.restoOpen).substring(2)}"> 오후 ${hour}${(restoInfo.restoOpen).substring(2)}</option>
+			                    	</c:if>
+			                    </c:forEach>
+	                    	</c:otherwise>
+	                    </c:choose>
+	            </c:if>                
             </select>
 
          <input type="text" id="limit-person" style="font-weight:bold;" value="잔여좌석 : ${restoInfo.limitPerson}석" readonly>
          <input type="number" id="orderPerson" name="orderPerson" style="font-weight:bold;" placeholder="예약 인원 입력" oninput="checkTime()" >
             
-            <input type="text" id="resultTextBox" placeholder="예약금 : 1인 ${restoInfo.restoDeposit}원" style="background-color:lightGray;" readonly>
+            <input type="text" id="resultTextBox" placeholder="예약금 : 1인 <fmt:formatNumber value="${restoInfo.restoDeposit}" pattern="#,###"/>원" style="background-color:lightGray;" readonly>
             
          <!-- 카카오페이에 보낼 값들 -->
          <input type="hidden" name="restoName" value="${restoInfo.restoName}" /> 
@@ -1424,40 +1455,10 @@ function fn_reversal(checkFavorite, rSeq)
 
    <c:if test="${empty reviewList}">
     <div class="guests-says-slider-iner">
-                  <img src="/resources/images/tamama.png" style="width:104px; height:104px;">
-                  <p>아직 리뷰가 없습니다 (하드코딩)</p>
-                  <h2>★★★★★</h2>
-                  <h4>타마마</h4>
+                  <p>해당 레스토랑에 리뷰가 없습니다.</p>
      </div>
    </c:if>
-                
-                <!--
-                <div class="guests-says-slider-iner">
-                    <img src="/resources/images/profile.png" style="width:104px; height:104px;">
-                    <p>케로케로~</p>
-                    <h2>★★★★★</h2>
-                    <h4>케로로</h4>
-                </div>
-                <div class="guests-says-slider-iner">
-                    <img src="/resources/images/profile.png" style="width:104px; height:104px;">
-                    <p>맛있어요. 재방문 의사 있습니다!</p>
-                    <h2>★★★★★</h2>
-                    <h4>기로로</h4>
-                </div>
-                <div class="guests-says-slider-iner">
-                    <img src="/resources/images/profile.png" style="width:104px; height:104px;">
-                    <p>맛있어요. 재방문 의사 있습니다!</p>
-                    <h2>★★★★★</h2>
-                    <h4>쿠루루</h4>
-                </div>
-                <div class="guests-says-slider-iner">
-                    <img src="/resources/images/profile.png" style="width:104px; height:104px;">
-                    <p>맛있어요. 재방문 의사 있습니다!</p>
-                    <h2>★★★★★</h2>
-                    <h4>타마마</h4>
-                </div>
-                -->
-                
+               
                 
             </div>
         </div>
@@ -1551,6 +1552,9 @@ function fn_reversal(checkFavorite, rSeq)
     </footer>
 </section> 
 
+<div class="floating-button" onclick="fn_moveList()">
+	<img src="/resources/images/fList.png" style="width: 30px; height: 30px;" title="리스트로 이동">	
+</div>
 
 <form name="bbsForm" id="bbsForm" method="post">
    <input type="hidden" name="rSeq" value="${restoInfo.rSeq}" />

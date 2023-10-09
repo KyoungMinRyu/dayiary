@@ -52,7 +52,6 @@
             
             $("#userId").keyup(function(event)
               {   
-               //console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#userPwd1").focus();
@@ -66,7 +65,6 @@
                 {
                    if((inputText != null && inputText != "") && getCheck.test(inputText))
                    {
-                      console.log("if문안");
                        $.ajax
                        ({
                            type:"POST",
@@ -82,23 +80,18 @@
                              { // 사용가능 아이디
                                  $("#userIdMsg").text("사용가능한 아이디입니다.");
                                    $("#userIdMsg").css("color", "blue");
-                                   //console.log("사용가능한 아이디");
-                                   //console.log($("#userId").val());
                                      $("#hiddenId").val(String($("#userId").val())); 
-                                     //console.log("히든? : " + $("#hiddenId").val());
                              }
                              else if(response.code == 100)
                              { // 중복 아이디
                                    $("#userIdMsg").text("사용할 수 없는 아이디입니다.");
                                    $("#userIdMsg").css("color", "red");
-                                   //console.log("사용불가한 아이디");
                              }
                              else
                              { // 파라미터 오류
 
                                    $("#userIdMsg").text("입력 값이 잘못되었습니다.");
                                    $("#userIdMsg").css("color", "red");
-                                  console.log($("#userId").val());
                              }
                            },
                            error: function(xhr, status, error) 
@@ -118,9 +111,7 @@
                 {
                     messageElement.text(msgArr[1]);
                     messageElement.css("color", "#ffffff");
-                    //console.log(inputText);
                     var sanitizedText = inputText.replace(/[^a-zA-Z0-9]/g, "");
-                    //console.log(sanitizedText);
                     $(this).val(sanitizedText);
                 } 
                 else
@@ -131,7 +122,6 @@
             
             $("#userPwd1").keyup(function(event)
            {   
-               //console.log(event.keyCode);
                if(event.keyCode === 13)
                {
                   $("#userPwd2").focus();
@@ -157,7 +147,6 @@
             
             $("#userPwd2").keyup(function(event)
               {   
-               //console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#userEmail").focus();
@@ -180,7 +169,6 @@
             
             $("#userEmail").keyup(function(event)
               {   
-               //console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#userName").focus();
@@ -285,14 +273,12 @@
              }
          
              $(this).val(sanitizedText);
-             //console.log("inputText : " + inputText);
          });
 
            
            
             $("#userBid").keyup(function(event)
               {   
-               //console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#detailAddress").focus();
@@ -304,13 +290,10 @@
             {
                 var inputText = $(this).val();
  
-               //console.log("inputText : " + inputText);
                 if($(this).val() != $("#hiddenBid").val())
                 {
-                //console.log("111111111111111111");
                    if((inputText  != null && inputText  != "") && getBid.test(inputText))
                    {
-                      //console.log("if문안");
                        $.ajax
                        ({
                            type:"POST",
@@ -326,21 +309,18 @@
                              { // 사용가능 아이디
                                  $("#userBidMsg").text("사용가능 사업자번호입니다.");
                                    $("#userBidMsg").css("color", "blue");
-                                   //console.log("사용가능한 아이디");
                                      $("#hiddenBid").val($("#userBid").val()); 
                              }
                              else if(response.code == 100)
                              { // 중복 아이디
                                    $("#userBidMsg").text("사용할 수 없는 사업자번호입니다.");
                                    $("#userBidMsg").css("color", "#ffffff");
-                                   //console.log("사용불가한 아이디");
                              }
                              else
                              { // 파라미터 오류
 
                                    $("#userBidMsg").text("입력 값이 잘못되었습니다.");
                                    $("#userBidMsg").css("color", "#ffffff");
-                                   //console.log("사용불가한 아이디");
                              }
                            },
                            error: function(xhr, status, error) 
@@ -357,14 +337,12 @@
             {
                $("#userShopNameMsg").html("&nbsp;");
                $("#hiddenShopName").val($("#userShopName").val());    
-               //console.log(document.getElementById("roadAddress").value);
             });
             
             $("#detailAddress").on("input", function() 
             {
                $("#userAddMsg").html("&nbsp;");
                $("#hiddenAdd").val($("#roadAddress").val() + " " + $("#detailAddress").val());    
-               //console.log(document.getElementById("roadAddress").value);
             });
             
             
@@ -375,9 +353,7 @@
                 if (!getPh.test(inputText)) 
                 {
                     messageElement.text(msgArr[7]);
-                    //console.log(inputText);
                     var sanitizedText = inputText.replace(/[^0-9]/g, "");
-                    //console.log(sanitizedText);
                     $(this).val(sanitizedText);
                 } 
                 else
@@ -389,7 +365,6 @@
 
             $("#userPh").keyup(function(event)
               {   
-               //console.log(event.keyCode);
                 if(event.keyCode === 13)
                 {
                    $("#chMSG").focus();
@@ -420,7 +395,6 @@
                         },
                         success: function(response)
                         {
-                           //alert(response.code);
                            if(response.code == 0)
                           { 
                                 startTimer(leftSec, display, response.data);
@@ -450,7 +424,6 @@
 
             function startTimer(count, display, ranNum) // 타이머시간, 남은시간 표시해줄 태그, 인증번호(자바에서 넘길 예정)
             {  
-               //console.log(ranNum);
                 var minutes, seconds;
                 display.css("color", "red");
                 $("#Msg").val("");
@@ -480,8 +453,6 @@
                         {
                             $("#chMsg").on("click",function() // 인증번호 확인 버튼 눌렀을 때
                             {
-                                //console.log(typeof String(random_num));
-                                //console.log("입력 값" + $("#Msg").val());
                                 if($("#Msg").val() === String(ranNum))
                                 {
                                     checkRanNum = true;
@@ -503,7 +474,6 @@
                                     $("#Msg").focus();
                                     $("#userPhMsg").html("&nbsp;");
                                 }
-                                //console.log($("#hiddenChPh").val())
                             });
                         }
                     }, 1000
@@ -512,7 +482,6 @@
          
          $("#btnSubmit").keyup(function(event)
               {   
-                  //console.log(event.keyCode);
                   if(event.keyCode === 13)
                 {
                     event.preventDefault();

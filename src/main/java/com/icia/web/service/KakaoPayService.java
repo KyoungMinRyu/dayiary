@@ -141,10 +141,6 @@ public class KakaoPayService {
              if(kakaoPayReady2 != null)
              {
                 kakaoPayOrder2.settId(kakaoPayReady2.getTid());
-                logger.debug("================================");
-                logger.debug("kakaoPayReady2.getTid() : " + kakaoPayReady2.getTid());
-                logger.debug("[KakaoPayService2] kakaoPayReady2 : " + kakaoPayReady2);
-                logger.debug("================================");   
              }
              
           }                                          
@@ -193,14 +189,6 @@ public class KakaoPayService {
           try
           {
              kakaoPayApprove2 = restTemplate.postForObject(new URI(KAKAO_PAY_HOST2 + KAKAO_PAY_APPROVE_URL2), body, KakaoPayApprove2.class);
-          
-             if(kakaoPayApprove2 != null)
-             {   
-                
-                logger.debug("================================");
-                logger.debug("[KakaoPayService2] kakaoPayApprove2 : " + kakaoPayApprove2);
-                logger.debug("================================");   
-             }
           }
           catch(RestClientException e)
           {
@@ -262,10 +250,6 @@ public class KakaoPayService {
 				// url은 위에 두개 +해주면 https://kapi.kakao.com/v1/payment/ready 되는 것
 				if (kakaoPayReady != null) {
 					kakaoPayOrder.settId(kakaoPayReady.getTid());
-					logger.debug("================================");
-					logger.debug("kakaoPayReady.getTid() : " + kakaoPayReady.getTid());
-					logger.debug("[KakaoPayService] kakaoPayReady : " + kakaoPayReady);
-					logger.debug("================================");
 				}
 
 			} catch (RestClientException e) {
@@ -313,9 +297,6 @@ public class KakaoPayService {
 																						// getTotal로 꺼냈음)
 
 				if (kakaoPayApprove != null) {
-					logger.debug("================================");
-					logger.debug("[KakaoPayService] kakaoPayApprove : " + kakaoPayApprove);
-					logger.debug("================================");
 
 					count = restoDao.payListInsert(kakaoPayApprove);
 

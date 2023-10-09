@@ -653,8 +653,8 @@ function fn_getProductList(url, formData)
         		
         		makeTag += 
         				"<p class='texts impact' style='margin-top: 5px;'>" + json[i].pName + "</p>" +
-        				"<p class='texts impact'>개수 : " + json[i].totalCnt + "개</p>" +
-        				"<p class='texts impact' style='margin-bottom: 5px;'>결제액 : " + json[i].totalPrice + "원</p>" +
+        				"<p class='texts impact'>개수 : " + json[i].totalCnt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "개</p>" +
+        				"<p class='texts impact' style='margin-bottom: 5px;'>결제액 : " + json[i].totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원</p>" +
         				"<div class='textBox'><a class='texts atext' onclick=\"fn_getGiftOrderDetail('" + json[i].orderSeq + "')\">&nbsp;주문상세</a>" + 
         				"<a class='texts atext' href='/inquiry/inquiryWriteForm?afterSelected=3&orderSeq=" + json[i].orderSeq + "' style='margin-left: 75%;'>문의하기</a></div>";
     			
@@ -718,14 +718,15 @@ function fn_deliveryTracking(orderSeq)
 	        {
 	        	if(response.code == 0)
 	        	{
-					let jsonData = JSON.parse(response.data);
-					
-					let popupWindow = window.open("", "DeliveryProgressPopup", "width=600,height=700");
+					let jsonData = JSON.parse(response.data.detail);
+					let deliveryTracking = response.data.deliveryTracking;
+					console.log(deliveryTracking);
+					let popupWindow = window.open("", "DeliveryProgressPopup", "width=800,height=700");
 	                popupWindow.document.open();
 	                popupWindow.document.write("<html><head><title>배송 정보</title>");
 
 	                popupWindow.document.write('<style>');
-	                popupWindow.document.write('.container { max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }');
+	                popupWindow.document.write('.container { max-width: 800px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }');
 	                popupWindow.document.write('.header { font-size: 24px; font-weight: bold; margin-bottom: 20px;  text-align: center;}');
 	                popupWindow.document.write('.delivery-info { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }');
 	                popupWindow.document.write('.info-title { font-weight: bold;}');
@@ -738,13 +739,13 @@ function fn_deliveryTracking(orderSeq)
 
 	                popupWindow.document.write('<div class="container">');
 	                popupWindow.document.write('<div class="header ">배 송 조 회</div>');
-	                popupWindow.document.write('<img style="width: 100%; height: 80px;" src="/resources/images/deliveryTracker.png">');
+	                popupWindow.document.write('<img style="width: 100%; height: 120px;" src="/resources/images/deliveryTracker.png">');
 
 	                popupWindow.document.write('<div class="basic-info">');
 	                popupWindow.document.write('<div class="info-title" style="text-align: center;">기본정보</div>');
 					
 	                popupWindow.document.write('<div class="info-data-container">');
-	                popupWindow.document.write('<div class="info-none">받 는 사 람</div> <span id="receiver" class="info-data">' + jsonData.to.name + '</span>');
+	                popupWindow.document.write('<div class="info-none">받 는 사 람</div> <span id="receiver" class="info-data">' + deliveryTracking.userName + '</span>');
 	                popupWindow.document.write('</div>');
 
 	                popupWindow.document.write('<div class="info-data-container">');
@@ -752,11 +753,15 @@ function fn_deliveryTracking(orderSeq)
 	                popupWindow.document.write('</div>');
 
 	                popupWindow.document.write('<div class="info-data-container">');
-	                popupWindow.document.write('<div class="info-none">송 장 번 호</div> <span id="tracking-number" class="info-data">' + jsonData.carrier.id + '</span>');
+	                popupWindow.document.write('<div class="info-none">송 장 번 호</div> <span id="tracking-number" class="info-data">' + deliveryTracking.orderNum + '</span>');
 	                popupWindow.document.write('</div>');
 
 	                popupWindow.document.write('<div class="info-data-container">');
-	                popupWindow.document.write('<div class="info-none">보 낸 사 람</div> <span id="sender" class="info-data">' + jsonData.from.name + '</span>');
+	                popupWindow.document.write('<div class="info-none">보 낸 사 람</div> <span id="sender" class="info-data">' + deliveryTracking.sellerShopName + '</span>');
+	                popupWindow.document.write('</div>');
+	                
+	                popupWindow.document.write('<div class="info-data-container">');
+	                popupWindow.document.write('<div class="info-none">상 품 명</div> <span id="sender" class="info-data">' + deliveryTracking.pName + '</span>');
 	                popupWindow.document.write('</div>');
 	                
 				   	popupWindow.document.write('</div><br>');
@@ -890,9 +895,9 @@ function fn_getRestoList(url, formData)
         		
         		makeTag += 
         				"<p class='texts impact' style='margin-top: 5px;'>" + json[i].restoName + "</p>" +
-        				"<p class='texts impact'>예약인원 : " + json[i].reservPerson + "명</p>" +
+        				"<p class='texts impact'>예약인원 : " + json[i].reservPerson.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "명</p>" +
         				"<p class='texts impact'>예약일 : " + json[i].reservDate + " " + json[i].reservTime + "</p>" +
-        				"<p class='texts impact' style='margin-bottom: 5px;'>결제액 : " + json[i].totalPrice + "원</p>" +
+        				"<p class='texts impact' style='margin-bottom: 5px;'>결제액 : " + json[i].totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원</p>" +
         				"<div class='textBox'><a class='texts atext' onclick=\"fn_getRestoOrderDetail('" + json[i].orderSeq + "')\">&nbsp;주문상세</a>" + 
         				"<a class='texts atext' href='/inquiry/inquiryWriteForm?afterSelected=1&orderSeq=" + json[i].orderSeq + "' style='margin-left: 75%;'>문의하기</a></div>";
     			
@@ -965,14 +970,13 @@ function fn_getGiftOrderDetail(orderSeq)
 	        {
 	        	if(response.code == 0)
 	        	{
-	        		let jsonData = response.data;
-					console.log(jsonData);	
-					let popupWindow = window.open("", "DeliveryProgressPopup", "width=600,height=700");
+	        		let jsonData = response.data;	
+					let popupWindow = window.open("", "DeliveryProgressPopup", "width=800,height=700");
 	                popupWindow.document.open();
 	                popupWindow.document.write("<html><head><title>주문 정보</title>");
 
 	                popupWindow.document.write('<style>');
-	                popupWindow.document.write('.container { max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }');
+	                popupWindow.document.write('.container { max-width: 800px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }');
 	                popupWindow.document.write('.header { font-size: 24px; font-weight: bold; margin-bottom: 20px;  text-align: center;}');
 	                popupWindow.document.write('.delivery-info { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }');
 	                popupWindow.document.write('.info-title { font-weight: bold;}');
@@ -1016,10 +1020,10 @@ function fn_getGiftOrderDetail(orderSeq)
 
 
 	                popupWindow.document.write('<div class="info-data-container">');
-	                popupWindow.document.write('<div class="info-none">구매 개수 : </div> <span id="sender" class="info-data">' + jsonData.totalCnt + '개</span>');
+	                popupWindow.document.write('<div class="info-none">구매 개수 : </div> <span id="sender" class="info-data">' + jsonData.totalCnt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '개</span>');
 	                popupWindow.document.write('</div>');
 	                popupWindow.document.write('<div class="info-data-container">');
-	                popupWindow.document.write('<div class="info-none">결제액 : </div> <span id="sender" class="info-data">' + jsonData.totalPrice + '원</span>');
+	                popupWindow.document.write('<div class="info-none">결제액 : </div> <span id="sender" class="info-data">' + jsonData.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원</span>');
 	                popupWindow.document.write('</div>');
 	                popupWindow.document.write('<div class="info-data-container">');
 	                popupWindow.document.write('<div class="info-none">성명 : </div> <span id="sender" class="info-data">' + jsonData.userName + '</span>');
@@ -1033,7 +1037,7 @@ function fn_getGiftOrderDetail(orderSeq)
 	                
 				   	popupWindow.document.write('</div><br>');
 
-	                popupWindow.document.write('<img style="width: 100%; height: 100%" src="/resources/upload/"' + jsonData.fileName + '>');
+	                popupWindow.document.write('<img style="width: 100%; height: 100%" src="/resources/upload/' + jsonData.fileName + '">');
 	                popupWindow.document.write("</body></html>");
 	                popupWindow.document.close()
 	        	}
@@ -1070,12 +1074,12 @@ function fn_getRestoOrderDetail(orderSeq)
 	        	{
 					let jsonData = response.data;
 					console.log(jsonData);	
-					let popupWindow = window.open("", "DeliveryProgressPopup", "width=600,height=700");
+					let popupWindow = window.open("", "DeliveryProgressPopup", "width=800,height=700");
 	                popupWindow.document.open();
 	                popupWindow.document.write("<html><head><title>주문 정보</title>");
 
 	                popupWindow.document.write('<style>');
-	                popupWindow.document.write('.container { max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }');
+	                popupWindow.document.write('.container { max-width: 800px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }');
 	                popupWindow.document.write('.header { font-size: 24px; font-weight: bold; margin-bottom: 20px;  text-align: center;}');
 	                popupWindow.document.write('.delivery-info { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }');
 	                popupWindow.document.write('.info-title { font-weight: bold;}');
@@ -1124,13 +1128,13 @@ function fn_getRestoOrderDetail(orderSeq)
 
 
 	                popupWindow.document.write('<div class="info-data-container">');
-	                popupWindow.document.write('<div class="info-none">예약 인원 : </div> <span id="sender" class="info-data">' + jsonData.totalCnt + '명</span>');
+	                popupWindow.document.write('<div class="info-none">예약 인원 : </div> <span id="sender" class="info-data">' + jsonData.totalCnt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '명</span>');
 	                popupWindow.document.write('</div>');
 	                popupWindow.document.write('<div class="info-data-container">');
 	                popupWindow.document.write('<div class="info-none">예약자 성명 : </div> <span id="sender" class="info-data">' + jsonData.userName + '</span>');
 	                popupWindow.document.write('</div>');
 	                popupWindow.document.write('<div class="info-data-container">');
-	                popupWindow.document.write('<div class="info-none">예약금 : </div> <span id="sender" class="info-data">' + jsonData.totalPrice + '원</span>');
+	                popupWindow.document.write('<div class="info-none">예약금 : </div> <span id="sender" class="info-data">' + jsonData.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원</span>');
 	                popupWindow.document.write('</div>');
 	                popupWindow.document.write('<div class="info-data-container">');
 	                popupWindow.document.write('<div class="info-none">예약일 : </div> <span id="sender" class="info-data">' + jsonData.reservDate + '</span>');
@@ -1138,7 +1142,7 @@ function fn_getRestoOrderDetail(orderSeq)
 	                
 				   	popupWindow.document.write('</div><br>');
 
-	                popupWindow.document.write('<img style="width: 100%; height: 100%" src="/resources/upload/"' + jsonData.fileName + '>');
+	                popupWindow.document.write('<img style="width: 100%; height: 100%" src="/resources/upload/' + jsonData.fileName + '">');
 	                popupWindow.document.write("</body></html>");
 	                popupWindow.document.close();
 	        	}
@@ -1250,9 +1254,9 @@ function fn_getRestoOrderDetail(orderSeq)
 								</c:choose>
 							</p>
 							<p class="texts impact" style="margin-top: 5px;">${resto.restoName}</p>
-							<p class="texts impact">예약인원 : ${resto.reservPerson}명</p>
+							<p class="texts impact">예약인원 : <fmt:formatNumber value="${resto.reservPerson}" pattern="#,###"/>명</p>
 							<p class="texts impact">예약일 : ${resto.reservDate} ${resto.reservTime}</p>
-							<p class="texts impact" style="margin-bottom: 5px;">결제액 : ${resto.totalPrice}원</p>
+							<p class="texts impact" style="margin-bottom: 5px;">결제액 : <fmt:formatNumber value="${resto.totalPrice}" pattern="#,###"/>원</p>
 							<div class="textBox">
 								<a class="texts atext" onclick="fn_getRestoOrderDetail('${resto.orderSeq}')">&nbsp;주문상세</a>
 								<a class="texts atext" href="/inquiry/inquiryWriteForm?afterSelected=1&orderSeq=${resto.orderSeq}" style="margin-left: 75%;">문의하기</a>

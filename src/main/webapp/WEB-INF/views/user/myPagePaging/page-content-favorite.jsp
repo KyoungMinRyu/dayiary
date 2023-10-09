@@ -207,7 +207,7 @@ function fn_getFavoriteList(url, type)
                        data = json[i];
                        makeTag =
                              "<div class='favoriteItemontainer' onclick=\"fn_movePage('" + data.rSeq + "', 0)\"><div class='favoriteItemImgBox'>" +
-                             "<img class='favoriteItemImg' src=''/resources/images/" + data.fileName + "'></div><div class='favoriteItemText'>" +
+                             "<img class='favoriteItemImg' src='/resources/upload/" + data.fileName + "'></div><div class='favoriteItemText'>" +
                              "<p class='texts impact' style='margin-top: 55px; margin-bottom: 5px;''>가게명 : " + data.restoName + "</p><p class='texts impact' " +
                              "style='margin-bottom: 5px;'>주소 : " + data.restoAddress + "</p><p class='texts impact' style='margin-bottom: 5px;'>매장 전화번호 : " +
                              data.restoPh + "</p>";
@@ -241,7 +241,7 @@ function fn_getFavoriteList(url, type)
                        
                        makeTag =
                          "<div class='favoriteItemontainer' onclick=\"fn_movePage('" + data.productSeq + "', 1)\"><div class='favoriteItemImgBox'>" +
-                         "<img class='favoriteItemImg' src=''/resources/images/" + data.fileName + "'></div><div class='favoriteItemText'>" +
+                         "<img class='favoriteItemImg' src='/resources/upload/" + data.fileName + "'></div><div class='favoriteItemText'>" +
                          "<p class='texts impact' style='margin-top: 85px; margin-bottom: 5px;'>상품명 : " + data.pName + "</p><p class='texts impact' " +
                          "style='margin-bottom: 5px;'>가격 : " + data.pPrice + "원</p><p class='texts impact' style='margin-bottom: 5px;'>설명 : " + data.pContent + "</p></div></div>";
                        
@@ -295,7 +295,7 @@ function fn_getFavoriteList(url, type)
          <c:forEach var="resto" items="${list}" varStatus="status">
             <div class="favoriteItemontainer" onclick="fn_movePage('${resto.rSeq}', 0)">
                <div class="favoriteItemImgBox">
-                  <img class="favoriteItemImg" src="/resources/images/${resto.fileName}">
+                  <img class="favoriteItemImg" src="/resources/upload/${resto.fileName}">
                </div>
                <div class="favoriteItemText">
                   <p class="texts impact" style="margin-top: 55px; margin-bottom: 5px;">가게명 : ${resto.restoName}</p>

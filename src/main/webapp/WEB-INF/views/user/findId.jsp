@@ -103,8 +103,6 @@ function closeWindow()
 {
     window.close();
 }
-console.log("Hidden Name Value:", $("#hiddenName").val());
-console.log("Hidden Email Value:", $("#hiddenEmail").val());
 </script>
 
  

@@ -172,10 +172,6 @@ $(function()
 
 function fn_lostIdProc() 
 {
-    // 값이 제대로 설정되는지 콘솔에 로깅
-    console.log("Sending sellerBusinessId:", $("#hiddensellerBusinessId").val());
-    console.log("Sending sellerEmail:", $("#hiddensellerEmail").val());
-
     $.ajax({
         type: "POST",
         url: "/seller/lostIdProc",
@@ -185,7 +181,6 @@ function fn_lostIdProc()
         },
         dataType: "JSON",
         success: function(response) {
-            console.log("Response received:", response); // 서버로부터의 응답도 확인
             
             if (response && response.code == 0) {
                 location.href = "/seller/findId?sellerId=" + response.data.sellerId; // userId를 sellerId로 변경

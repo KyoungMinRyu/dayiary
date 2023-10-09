@@ -89,7 +89,6 @@ public class KakaoPayController {
 		// kakaoPayOrder객체에 담아서 Service단에서 카카오페이측에서 보낸 후 kakaoPayReady객체에 담는것
 
 		if (kakaoPayReady2 != null) {
-			logger.debug("[KakaoPayController] payReady2 : " + kakaoPayReady2);
 
 			kakaoPayOrder2.settId(kakaoPayReady2.getTid());
 
@@ -393,7 +392,6 @@ public class KakaoPayController {
 		KakaoPayReady kakaoPayReady = kakaoPayService.kakaoPayReady(kakaoPayOrder);
 
 		if (kakaoPayReady != null) {
-			logger.debug("[KakaoPayController] payReady : " + kakaoPayReady);
 
 			kakaoPayOrder.settId(kakaoPayReady.getTid());
 

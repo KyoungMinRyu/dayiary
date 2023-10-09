@@ -173,7 +173,6 @@ public class SellerService {
 	public RestoInfo restoInfoBring(String rSeq) {
 		RestoInfo restoInfo = null;
 		try {
-			logger.debug("아아");
 			restoInfo = sellerDao.restoInfoBring(rSeq);
 		} catch (Exception e) {
 			logger.error("[SellerService] restoInfoBring Exception", e);
@@ -196,7 +195,6 @@ public class SellerService {
 	public List<Menu> menuBring(String rSeq) {
 		List<Menu> list = null;
 		try {
-			logger.debug("아아");
 			list = sellerDao.menuBring(rSeq);
 		} catch (Exception e) {
 			logger.error("[SellerService] restoFileBring Exception", e);
@@ -323,7 +321,6 @@ public class SellerService {
 	public GiftAdd giftInfoBring(String productSeq) {
 		GiftAdd giftAdd = null;
 		try {
-			logger.debug("아아");
 			giftAdd = sellerDao.giftInfoBring(productSeq);
 		} catch (Exception e) {
 			logger.error("[SellerService] giftInfoBring Exception", e);
@@ -335,7 +332,6 @@ public class SellerService {
 	public List<GiftFile> giftFileBring(String productSeq) {
 		List<GiftFile> list = null;
 		try {
-			logger.debug("아아");
 			list = sellerDao.giftFileBring(productSeq);
 		} catch (Exception e) {
 			logger.error("[SellerService] giftFileBring Exception", e);
