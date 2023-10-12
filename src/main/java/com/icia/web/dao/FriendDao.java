@@ -46,7 +46,7 @@ public interface FriendDao
 
 	public int deleteShareAnniversary(long relationalSeq);
 
-	public Friend selectYourId(String userId);
+	public List<Friend> selectYourId(String userId);
 
 	public Friend selectFreind(long relationalSeq);
 

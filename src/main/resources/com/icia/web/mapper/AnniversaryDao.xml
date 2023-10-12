@@ -487,7 +487,7 @@ LEFT JOIN
 ORDER BY USER_BIR ASC
 </select>
 
-<select id="selectCoupleDate" parameterType="com.icia.web.model.Anniversary" resultMap="anniversaryResultMap">
+<select id="selectCoupleDate" parameterType="String" resultMap="anniversaryResultMap">
 SELECT 
     ANNIVERSARY_SEQ,
     ANNIVERSARY_DATE,
@@ -518,7 +518,8 @@ FROM
             WHEN E.ANNIVERSARY_SEQ IS NOT NULL THEN 'Shared'
             ELSE 'Not Shared'
         END AS SHARED_STATUS,
-        ROW_NUMBER() OVER (PARTITION BY A.ANNIVERSARY_TITLE ORDER BY TO_DATE(A.ANNIVERSARY_DATE, 'YYYYMMDD') ASC) AS RN
+        ROW_NUMBER() OVER (PARTITION BY A.ANNIVERSARY_TITLE ORDER BY TO_DATE(A.ANNIVERSARY_DATE, 'YYYYMMDD') ASC) AS RN,
+        C.USER_ID AS USER_ID
     FROM 
         USER_ANNIVERSARY A
     LEFT JOIN 
@@ -533,18 +534,52 @@ FROM
         ANNIVERSARY_SHARE E ON A.ANNIVERSARY_SEQ = E.ANNIVERSARY_SEQ
     WHERE 
         R.STATUS = 'Y'
-        AND (R.RELATIONAL_USER1 = #{userId} OR R.RELATIONAL_USER2 = #{userId})
-        AND R.relational_type = '1'
+        AND (R.RELATIONAL_USER1 = #{value} OR R.RELATIONAL_USER2 = #{value})
         AND C.STATUS = 'Y'
-        AND (A.USER_ID = #{userId} OR A.USER_ID = C.USER_ID)
+        AND (A.USER_ID = #{value} OR A.USER_ID = C.USER_ID)
+        AND ANNIVERSARY_DATE >= TO_CHAR(SYSDATE, 'YYYYMMDD') 
     ) 
 WHERE 
     RN = 1
+    AND USER_ID = #{value}
 ORDER BY 
     TO_DATE(ANNIVERSARY_DATE, 'YYYY/MM/DD HH24:MI:SS') ASC
-
-
-
 </select>
 
+
+<select id="selectSharedAnniversaryProfileList" parameterType="hashmap" resultType="String">
+SELECT
+    NVL(FILE_NAME, '/resources/images/profile.png') AS FILE_NAME
+FROM
+    USER_PROFILE_FILE
+WHERE
+    USER_ID IN 
+                (
+                    SELECT
+                        CASE 
+                            WHEN RELATIONAL_USER1 = #{userId} THEN RELATIONAL_USER2
+                            WHEN RELATIONAL_USER2 = #{userId} THEN RELATIONAL_USER1 
+                        END USER_ID
+                    FROM
+                        RELATIONAL_USER
+                    WHERE
+                        RELATIONAL_SEQ IN 
+                                        ( 
+                                            SELECT
+                                                RELATIONAL_SEQ
+                                            FROM
+                                                ANNIVERSARY_SHARE
+                                            WHERE
+                                               ANNIVERSARY_SEQ IN 
+                                                                (
+                                                                    SELECT
+                                                                        ANNIVERSARY_SEQ
+                                                                    FROM
+                                                                        USER_ANNIVERSARY
+                                                                    WHERE
+                                                                        ANNIVERSARY_SEQ = #{anniversarySeq}
+                                                                )
+                                        )
+                )
+</select>
 </mapper>

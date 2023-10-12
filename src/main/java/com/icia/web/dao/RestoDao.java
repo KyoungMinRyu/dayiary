@@ -73,4 +73,6 @@ public interface RestoDao {
 	public int insertRestoFavorite(HashMap<String, String> hashMap);
 	
 	public List<RestoInfo> selectRestoFavoriteList(String userId);
+	
+	public int deleteOneHourLaterReservPayList();
 }

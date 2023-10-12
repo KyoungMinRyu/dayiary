@@ -35,8 +35,8 @@ body {
 
 footer {
    position:fixed;
-    bottom: 0;
-    width: 100%;
+   bottom: 0;
+   width: 100%;
 }
 .container {
 
@@ -338,11 +338,14 @@ function cateSelectType(type)
             };
           
           reader.readAsDataURL(image);
+          
+
         }
+        $("footer").css("position", "static");
       }
     </script>
     
-<div class="container" style="margin-top:150px">
+<div class="container" style="margin-top:150px; height: auto;">
    <h1>문의사항 작성</h1>
    <form name="inquiryWriteForm" id="inquiryWriteForm" method="post" enctype="multipart/form-data">
    <div id="selectBoxShape" style="margin-bottom:-15px;">
@@ -443,7 +446,7 @@ function cateSelectType(type)
       <input type="hidden" name="curPage" value="${curPage}" />
    </form>
 </div>
-<footer style="background-color: black; color: lightgray; text-align: center; margin-top:60px; padding: 30px;">
+<footer style="background-color: black; color: lightgray; text-align: center; margin-top:auto; padding: 30px;">
  <a style="font-size:20px; letter-spacing:5px;">《 Dayiary 》 </a> <br>
     &copy; Copyright Dayiary Corp. All Rights Reserved. <br>
     Always with you 🎉 여러분의 일상을 함께합니다.

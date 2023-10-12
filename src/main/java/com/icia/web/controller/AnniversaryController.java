@@ -310,6 +310,12 @@ public class AnniversaryController
 					Friend friend = friendService.selectFreind(relationalSeq);
 					if(friend != null)
 					{
+						System.out.println();
+						System.out.println("cookieUserId : " + cookieUserId);
+						System.out.println("friend.getUserId : " + friend.getUserId());
+						System.out.println("friend.getYourId : " + friend.getYourId());
+						System.out.println();
+						
 						if(StringUtil.equals(cookieUserId, friend.getUserId()) || StringUtil.equals(cookieUserId, friend.getYourId()))
 						{
 							hashMap.clear();

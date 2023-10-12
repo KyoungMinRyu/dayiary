@@ -17,68 +17,118 @@
             .replace(/(^02.{0}|^01.{1}|[0-9]{3,4})([0-9]{3,4})([0-9]{4})/g, "$1-$2-$3");
     }
    
-   
-    
+  
+
  $(document).ready(function() {
-   
-    var menuCount = 1;
-    
 
     //상세 주소 입력시 도로명주소+상세주소 합쳐지는 거
     $("#detailAddress").on("input", function() 
    {
-       //var roadAddress = $("#roadAddress").val();
-       //var detailAddress = $("#detailAddress").val();
 
-     // roadAddress가 null이 아닌 경우 roadAddress와 detailAddress를 결합
      $("#hiddenAdd").val( $("#roadAddress").val() + " " + $("#detailAddress").val());
        
    });   
    
-   
+    var menuCount = 1;
+
+ // 메뉴 추가하기 펑션
+ $("#menuPlus").on("click", function() {
+     var div = document.createElement('div');
+     div.innerHTML = $(".restoMenuAdd").html();
+
+     // 각 요소에 고유한 ID, NAME를 추가
+     $(div).find(".menuName").attr("id", "menuName" + menuCount);
+     $(div).find(".menuPrice").attr("id", "menuPrice" + menuCount);
+     $(div).find(".menuDescription").attr("id", "menuDescription" + menuCount);
+     $(div).find(".menuFile").attr("id", "menuFile" + menuCount);
+
+     $(div).find(".menuName").attr("name", "menuName" + menuCount);
+     $(div).find(".menuPrice").attr("name", "menuPrice" + menuCount);
+     $(div).find(".menuDescription").attr("name", "menuDescription" + menuCount);
+     $(div).find(".menuFile").attr("name", "menuFile" + menuCount);
+
+     $(".field9").append(div);
+
+     // 이미지 컨테이너를 생성합니다.
+     var menuImagesContainer = document.createElement('div');
+     menuImagesContainer.id = "menu_images_container" + menuCount;
+     $(".field9").append(menuImagesContainer);
+
+     // 이미지 업로드 필드의 `change` 이벤트를 바인딩합니다.
+     $(div).find(".menuFile").on("change", function(event) {
+         setMenuImage(event, menuCount);
+     });
      
      
-   //메뉴 추가하기 펑션
-    $("#menuPlus").on("click", function() {
-           
-        var div = document.createElement('div');
-        div.innerHTML = $(".restoMenuAdd").html();
-       
-        // 각 요소에 고유한 ID,NAME를 추가
-        $(div).find(".menuName").attr("id", "menuName" + menuCount);
-        $(div).find(".menuPrice").attr("id", "menuPrice" + menuCount);
-        $(div).find(".menuDescription").attr("id", "menuDescription" + menuCount);
-        $(div).find(".menuFile").attr("id", "menuFile" + menuCount);
+     menuCount++;
+     $("#menuCount").val(menuCount);
+ });
+
+ // 메뉴 삭제하기 펑션
+ $("#menuDelete").on("click", function() {
+     if (menuCount > 1) { // 메뉴 아이템이 1개 이상일 때만 삭제
+         menuCount--; // 가장 최근 추가된 메뉴 아이템의 ID를 감소
+
+         $("#menuName" + menuCount).remove();
+         $("#menuPrice" + menuCount).remove();
+         $("#menuDescription" + menuCount).remove();
+         $("#menuFile" + menuCount).remove();
+         $("#menuCount").val(menuCount);
+
+         // 해당 메뉴에 대한 이미지 컨테이너도 삭제
+         var menuImagesContainer = document.getElementById("menu_images_container" + menuCount);
+         if (menuImagesContainer) {
+             menuImagesContainer.remove();
+         }
+     }
+ });
+
+ $("#menuCount").val(menuCount);
+ $(".menuFile").on("change", function(event) {
+       setMenuImage(event, menuCount);
+   });
+
+ function setMenuImage(event, menuCount) {
+     const input = event.target;
+     let currentMenuCount = menuCount; // 현재 menuCount 값을 저장
  
-        $(div).find(".menuName").attr("name", "menuName" + menuCount);
-        $(div).find(".menuPrice").attr("name", "menuPrice" + menuCount);
-        $(div).find(".menuDescription").attr("name", "menuDescription" + menuCount);
-        $(div).find(".menuFile").attr("name", "menuFile" + menuCount);
-        
-        
-        $(".field9").append(div);
+     const reader = new FileReader();
+
+     reader.onload = function(e) {
+         // 새로운 이미지 생성
+         const newImage = document.createElement('img');
+         newImage.src = e.target.result;
+         newImage.alt = '미리보기 이미지';
+         newImage.className = 'imageTag';
+         newImage.style.maxWidth = '20%';
+         newImage.style.maxHeight = '20%';
+
   
-        menuCount++;
-        $("#menuCount").val(menuCount);
-    });
-    
-    //메뉴삭제하기 펑션
-        $("#menuDelete").on("click", function() {
-            if (menuCount > 1) 
-            { // 메뉴 아이템이 1개 이상일 때만 삭제
-                menuCount--; // 가장 최근 추가된 메뉴 아이템의 ID를 감소
+         let imageContainerId;
+         if(currentMenuCount == 1)
+            {
+             imageContainerId = "menu_images_container" ;
+            }
+         else
+            {
+                      imageContainerId = "menu_images_container" + (currentMenuCount - 1);
+            }
+                  const imageContainer = document.querySelector("#" + imageContainerId);
+                  
+                  if (imageContainer) {
+                      // 컨테이너를 비웁니다.
+                      imageContainer.innerHTML = '';
+                      // 이미지를 컨테이너에 추가합니다.
+                      imageContainer.appendChild(newImage);
+                  } else {
+                      console.log("Image container not found for ID: " + imageContainerId);
+                  }
+              };
 
-                $("#menuName" + menuCount).remove(); // 해당 ID를 가진 메뉴 아이템없애기
-                $("#menuPrice" + menuCount).remove();
-                $("#menuDescription" + menuCount).remove();
-                $("#menuFile" + menuCount).remove();
-                $("#menuCount").val(menuCount);
-                
-            }             
-        });
-    
+     reader.readAsDataURL(input.files[0]);
+ }
 
-        $("#menuCount").val(menuCount);
+    
     //등록하기 버튼을 눌렀을 때
    $("#btnSubmit").on("click", function()
    {            
@@ -153,6 +203,11 @@
           alert("음식타입을 체크하세요.");
           return;
        }
+       
+       
+       
+       //여기서부터 menu 시작 
+    
 
            for (var i = 0 ; i < menuCount ; i++) 
            { 
@@ -335,8 +390,50 @@
          
        }).open();
        
-    }   
+    }      
       
+      
+      function setThumbnail(event) {
+       var reader = new FileReader();
+      
+      reader.onload = function(event) {
+
+         var img = document.createElement("img");
+        img.setAttribute("src", event.target.result);
+        img.setAttribute("class", "col-lg-6");
+        img.style.maxWidth = '20%';
+        img.style.maxHeight = '20%';
+        document.querySelector("div#image_container").innerHTML = '';
+        document.querySelector("div#image_container").appendChild(img);
+     };
+     
+     reader.readAsDataURL(event.target.files[0]);
+}
+
+
+     function setDetailImage(event) {
+         $("div#images_container").empty();
+          
+          for(var image of event.target.files){
+             var reader = new FileReader();
+             
+             reader.onload = function(event){
+                var img = document.createElement("img");
+                img.setAttribute("src", event.target.result);
+                img.setAttribute("class", "col-lg-6");
+                img.style.maxWidth = "20%";
+                img.style.maxHeight = "20%";
+                document.querySelector("div#images_container").appendChild(img);
+             };
+             
+        
+             reader.readAsDataURL(image);
+          }
+        
+        }
+
+
+
 
     </script>
 </head>
@@ -388,7 +485,9 @@ body {
 
                 
            <b style="color: #000000;">예약리스트:메인사진</b>
-           <input type="file" id="restoThum" name="restoThum" class="form-control mb-2" required /><br><br>
+           <input type="file" id="restoThum" name="restoThum" class="form-control mb-2" onchange="setThumbnail(event)" required />
+             <div id="image_container"></div>
+           <br><br>
 
            
             <div class="field2">
@@ -441,7 +540,8 @@ body {
    <div class="field5">
         <b style="color: #000000;">매장 상세 사진</b>
         <div class="field">
-   <input type="file" id="restoFile" name="restoFile" class="form-control mb-2" multiple="multiple" />
+   <input type="file" id="restoFile" name="restoFile" class="form-control mb-2"  onchange="setDetailImage(event)" multiple="multiple" />
+        <div id="images_container"></div>
         </div>
    <br><br>
 
@@ -489,6 +589,8 @@ body {
              <input type="text" class="menuDescription" id="menuDescription" name="menuDescription" placeholder="메뉴 설명 입력" />    
             <input type="file" class="menuFile" id="menuFile" name="menuFile" class="form-control mb-2" style="margin-top:5px;" />
       </div>
+        <div id="menu_images_container">
+            </div>
             <input type="button" value="메뉴추가하기" id="menuPlus" name="menuPlus" style="background-color: #000000; margin-top:10px; color: #FFFFFF;" />
             <input type="button" value="메뉴삭제하기" id="menuDelete" name="menuDelete"  style="background-color: #000000; margin-top:10px; color: #FFFFFF;" />
 

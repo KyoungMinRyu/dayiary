@@ -79,7 +79,7 @@ $(document).ready(function() {
      // 새로운 페이지로 이동
      opener.location.href = url;
      
-     //3초뒤 팝업창 닫기
+     //2초뒤 팝업창 닫기
      setTimeout(function() {
            window.close();
        }, 2000);

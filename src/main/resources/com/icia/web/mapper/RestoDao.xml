@@ -21,6 +21,8 @@
    <result column="RESTO_DEPOSIT" property="restoDeposit" />
    <result column="FILE_NAME" property="fileName" />
    <result column="CNT" property="cnt" />
+   <result column="REVIEW_SCORE" property="reviewScore" />
+   <result column="REVIEW_COUNT" property="reviewCount" />
    <result column="LIMIT_PERSON" property="limitPerson" />
 </resultMap>
 
@@ -73,6 +75,7 @@
    <result column="REVIEW_CONTENT" property="reviewContent" />
    <result column="REVIEW_SCORE" property="reviewScore" />
    <result column="R_SEQ" property="rSeq" />
+   <result column="REG_DATE" property="regDate" />
    <result column="USER_ID" property="userId" />
    <result column="FILE_NAME" property="fileName" />
    <result column="USER_NICKNAME" property="userNickName" />
@@ -97,7 +100,9 @@ SELECT R_SEQ,
        RESTO_CLOSE,
        RESTO_DEPOSIT,
        LIMIT_PERSON,
-       FILE_NAME
+       FILE_NAME,
+       REVIEW_SCORE,
+       REVIEW_COUNT
   FROM (SELECT ROWNUM RNM,
                R_SEQ,
                RESTO_NAME,
@@ -114,14 +119,15 @@ SELECT R_SEQ,
                RESTO_CLOSE,
                RESTO_DEPOSIT,
                LIMIT_PERSON,
-               FILE_NAME
-          FROM (SELECT ROWNUM RNM,
-                        A.R_SEQ AS R_SEQ,
+               FILE_NAME,
+                REVIEW_SCORE,
+               REVIEW_COUNT
+          FROM (SELECT  A.R_SEQ AS R_SEQ,
                         A.RESTO_NAME AS RESTO_NAME,
                         A.SELLER_ID AS SELLER_ID,
                         A.RESTO_ADDRESS AS RESTO_ADDRESS,
                         A.RESTO_PH AS RESTO_PH,
-                        A.RESTO_CONTENT AS RESTO_CONTENT,
+                        DBMS_LOB.SUBSTR(A.RESTO_CONTENT, 4000, 1) AS RESTO_CONTENT, 
                         A.REG_DATE AS REG_DATE,
                         A.STATUS AS STATUS,
                         A.RESTO_TYPE AS RESTO_TYPE,
@@ -131,11 +137,16 @@ SELECT R_SEQ,
                         A.RESTO_CLOSE AS RESTO_CLOSE,
                         A.RESTO_DEPOSIT AS RESTO_DEPOSIT,
                         A.LIMIT_PERSON AS LIMIT_PERSON,
-                        B.FILE_NAME AS FILE_NAME
-                    FROM RESTO_INFO A, RESTO_FILE B
+                        B.FILE_NAME AS FILE_NAME,
+                        NVL(AVG(C.REVIEW_SCORE), 0) AS REVIEW_SCORE,
+                        NVL(COUNT(C.REVIEW_SCORE), 0) AS REVIEW_COUNT
+                    FROM RESTO_INFO A, RESTO_FILE B, ORDER_REVIEW C, ORDER_LIST D
                    WHERE A.R_SEQ = B.R_SEQ
                      AND B.FILE_SEQ = 1
                      AND A.STATUS = 'Y'
+                     AND A.R_SEQ = D.R_SEQ(+)
+                     AND D.ORDER_SEQ = C.ORDER_SEQ(+)  
+                     
 <if test=' searchTypeLocation != null and searchTypeLocation != "" '>
                     AND SUBSTR(RESTO_ADDRESS, 1, 2) = #{searchTypeLocation}
 </if>
@@ -148,6 +159,25 @@ SELECT R_SEQ,
 <if test=' searchTypeDate != null and searchTypeDate != "" '>
                   AND (RESTO_OFF NOT LIKE '%' || #{searchTypeDate} || '%' OR RESTO_OFF IS NULL)
 </if>
+
+            GROUP BY  A.R_SEQ,
+                          A.RESTO_NAME,
+                          A.SELLER_ID,
+                          A.RESTO_ADDRESS,
+                          A.RESTO_PH,
+                          DBMS_LOB.SUBSTR(A.RESTO_CONTENT, 4000, 1),
+                          A.REG_DATE,
+                          A.STATUS,
+                          A.RESTO_TYPE,
+                          A.FOOD_TYPE,
+                          A.RESTO_OFF,
+                          A.RESTO_OPEN,
+                          A.RESTO_CLOSE,
+                          A.RESTO_DEPOSIT,
+                          A.LIMIT_PERSON,
+                          B.FILE_NAME
+
+
               ORDER BY A.REG_DATE DESC))
  WHERE RNM <![CDATA[>=]]> #{startRow}
    AND RNM <![CDATA[<=]]> #{endRow}  
@@ -220,7 +250,6 @@ SELECT A.MENU_SEQ,
 ORDER BY MENU_SEQ ASC
 </select>
 
-<!-- 해당 레스토랑의 리뷰 조회 -->
 <select id="reviewList" parameterType="String" resultMap="restoReviewResultMap">
 SELECT NVL(A.ORDER_SEQ, '') AS ORDER_SEQ,
        NVL(A.REVIEW_CONTENT, '') AS REVIEW_CONTENT,
@@ -229,7 +258,8 @@ SELECT NVL(A.ORDER_SEQ, '') AS ORDER_SEQ,
        NVL(B.USER_ID, '') AS USER_ID,
        NVL(C.FILE_NAME, '/resources/images/profile.png') AS FILE_NAME,
        NVL(D.USER_NICKNAME, '') USER_NICKNAME,
-       NVL(B.RESERV_DATE, '') RESERV_DATE
+       NVL(B.RESERV_DATE, '') RESERV_DATE,
+       NVL(A.REG_DATE, '') AS REG_DATE
   FROM ORDER_REVIEW A, ORDER_LIST B, USER_PROFILE_FILE C, G2_USER D
  WHERE A.ORDER_SEQ = B.ORDER_SEQ
    AND B.USER_ID = C.USER_ID(+)
@@ -453,6 +483,22 @@ WHERE
                 )
 </delete>
 
+
+<delete id="deleteOneHourLaterReservPayList">
+DELETE FROM 
+    PAY_LIST
+WHERE
+    ORDER_ID IN 
+                (
+                    SELECT
+                        ORDER_SEQ
+                    FROM   
+                        ORDER_LIST
+                    WHERE
+                        STATUS = 'W'
+                        AND (REG_DATE + 1/24) <![CDATA[<=]]> SYSDATE
+                )
+</delete>
 
 <select id="selectCheckFavorite" parameterType="hashmap" resultType="int">
 SELECT

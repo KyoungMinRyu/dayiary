@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.icia.web.model.Admin;
+import com.icia.web.model.RestoReview;
 import com.icia.web.model.Seller;
 import com.icia.web.model.UserG2;
 import com.icia.web.model.UserProfileFile;
@@ -77,4 +78,10 @@ public interface AdminDao {
 	public int updateGiftText(HashMap<String, Object> hashMap);
 
 	public int updateGiftImages(HashMap<String, Object> hashMap);
+	
+	public int deleteReview(String orderSeq);
+	
+	public List<RestoReview> selectRestoReviewList(String rSeq);
+	
+	public List<RestoReview> selectGiftReviewList(String productSeq);
 }

@@ -14,6 +14,7 @@
    <result column="STATUS" property="status"/>
    <result column="myId" property="myId"/>
    <result column="yourId" property="yourId"/>
+   <result column="YOUR_ID" property="yourId"/>
    <result column="myProfileImage" property="myProfileImage"/>
    <result column="yourProfileImage" property="yourProfileImage"/>
    <result column="myBir" property="myBir"/>
@@ -673,8 +674,6 @@ WHERE
 </delete>
 
 <select id="selectYourId" parameterType="com.icia.web.model.Friend" resultMap="friendResultMap">
-
-
 SELECT 
     CASE 
         WHEN A.RELATIONAL_USER1 = #{userId} THEN A.RELATIONAL_USER1
@@ -737,9 +736,8 @@ LEFT JOIN
 LEFT JOIN 
     G2_USER U2 ON A.RELATIONAL_USER2 = U2.USER_ID
 WHERE 
-    A.RELATIONAL_TYPE = 1
-    AND (A.RELATIONAL_USER1 = #{userId} OR A.RELATIONAL_USER2 = #{userId})
-
+    (A.RELATIONAL_USER1 = #{userId} OR A.RELATIONAL_USER2 = #{userId})
+ORDER BY RELATIONAL_TYPE DESC
 </select>
 
 

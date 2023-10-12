@@ -609,7 +609,74 @@ WHERE
     AND FILE_SEQ = #{fileSeq}  
 </update>
 
+<resultMap type="com.icia.web.model.RestoReview" id="reviewListResultMap">
+   <result column="ORDER_SEQ" property="orderSeq" />
+   <result column="REVIEW_CONTENT" property="reviewContent" />
+   <result column="REVIEW_SCORE" property="reviewScore" />
+   <result column="R_SEQ" property="rSeq" />
+   <result column="PRODUCT_SEQ" property="productSeq" />
+   <result column="USER_ID" property="userId" />
+   <result column="FILE_NAME" property="fileName" />
+   <result column="USER_NICKNAME" property="userNickName" />
+   <result column="RESERV_DATE" property="reservDate" />
+</resultMap>
 
+<delete id="deleteReview" parameterType="String">
+DELETE FROM 
+    ORDER_REVIEW
+WHERE
+    ORDER_SEQ = #{value}
+</delete>
+
+<select id="selectRestoReviewList" parameterType="String" resultMap="reviewListResultMap">
+SELECT 
+	NVL(A.ORDER_SEQ, '') AS ORDER_SEQ,
+	NVL(A.REVIEW_CONTENT, '') AS REVIEW_CONTENT,
+    NVL(A.REVIEW_SCORE, 0) AS REVIEW_SCORE,
+    NVL(B.R_SEQ, '') AS R_SEQ,
+    NVL(B.USER_ID, '') AS USER_ID,
+    NVL(C.FILE_NAME, '/resources/images/profile.png') AS FILE_NAME,
+    NVL(D.USER_NICKNAME, '') USER_NICKNAME,
+    NVL(B.RESERV_DATE, '') RESERV_DATE
+FROM 
+	ORDER_REVIEW A, 
+	ORDER_LIST B, 
+	USER_PROFILE_FILE C, 
+	G2_USER D
+WHERE 
+	A.ORDER_SEQ = B.ORDER_SEQ
+   	AND B.USER_ID = C.USER_ID(+)
+   	AND C.USER_ID(+) = D.USER_ID
+   	AND B.USER_ID = D.USER_ID
+   	AND B.R_SEQ = #{value}
+ORDER BY 
+	A.REG_DATE DESC
+</select> 
+
+<select id="selectGiftReviewList" parameterType="String" resultMap="reviewListResultMap">
+SELECT 
+	NVL(A.ORDER_SEQ, '') AS ORDER_SEQ,
+    NVL(A.REVIEW_CONTENT, '') AS REVIEW_CONTENT,
+    NVL(A.REVIEW_SCORE, 0) AS REVIEW_SCORE,
+    NVL(B.PRODUCT_SEQ, '') AS PRODUCT_SEQ,
+    NVL(B.USER_ID, '') AS USER_ID,
+    NVL(C.FILE_NAME, '/resources/images/profile.png') AS FILE_NAME,
+    NVL(D.USER_NICKNAME, '') USER_NICKNAME,
+    TO_CHAR(A.REG_DATE, 'YYYY.MM.DD HH24:MI:SS') AS REG_DATE
+FROM 
+	ORDER_REVIEW A, 
+	ORDER_LIST B,
+	USER_PROFILE_FILE C,
+	G2_USER D
+WHERE 
+	A.ORDER_SEQ = B.ORDER_SEQ
+	AND B.USER_ID = C.USER_ID(+)
+	AND C.USER_ID(+) = D.USER_ID
+	AND B.USER_ID = D.USER_ID
+	AND B.PRODUCT_SEQ = #{value}
+ORDER BY 
+	A.REG_DATE DESC
+</select>
 </mapper>
 
 

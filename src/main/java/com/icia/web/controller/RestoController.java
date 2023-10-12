@@ -250,21 +250,31 @@ public class RestoController {
 	@RequestMapping(value = "/resto/restoReserv")
 	public String restoReserv(ModelMap model, HttpServletRequest request, HttpServletResponse response) 
 	{
+		// itemCode는 필수가 아니길래 삭제했음
 		String itemName = HttpUtil.get(request, "restoName", ""); // reservationForm에 있는 레스토랑명을 itemName으로 가져옴
 		int quantity = HttpUtil.get(request, "orderPerson", (int) 0); // reservationForm에 있는 예약인원수를 quantity로 가져옴
 		int deposit = HttpUtil.get(request, "deposit", (int) 0); // reservationForm에 있는 예약금을 가져옴
-		int totalAmount = quantity * deposit; // 예약인원수 * 예약금을 totalAmount로 사용
 		String orderDate = HttpUtil.get(request, "orderDate", "");
 		String orderTime = HttpUtil.get(request, "orderTime", "");
 		String orderSeq = HttpUtil.get(request, "orderSeq", "");
+		if (deposit == 0) 
+		{
+			int totalAmount = HttpUtil.get(request, "totalAmount", (int) 0);
+			model.addAttribute("totalAmount", totalAmount);
+		} 
+		else if (deposit != 0) 
+		{
+			int totalAmount = quantity * deposit; // 예약인원수 * 예약금을 totalAmount로 사용
+			model.addAttribute("totalAmount", totalAmount);
+		}
+		// 총금액을 30,000 형식으로 변환
 		model.addAttribute("itemName", itemName);
 		model.addAttribute("quantity", quantity);
-		model.addAttribute("totalAmount", totalAmount);
 		model.addAttribute("orderDate", orderDate);
 		model.addAttribute("orderTime", orderTime);
 		model.addAttribute("orderSeq", orderSeq);
 		return "/resto/restoReserv";
-   	}
+	}
    
 	// 판매자 로그인 후 restraunt 네비 눌렀을 때 가는 위치
 	@RequestMapping(value = "/resto/restoAdd")
@@ -423,6 +433,29 @@ public class RestoController {
 			ajaxResponse.setResponse(400, "Bad Request");
 		}
 		
+		return ajaxResponse;
+	}
+	
+	@RequestMapping(value = "/resto/restoReservationUpdate", method = RequestMethod.POST)
+	@ResponseBody
+	public Response<Object> restoReservationUpdate(HttpServletRequest request, HttpServletResponse resonse) {
+		Response<Object> ajaxResponse = new Response<Object>();
+		String orderSeq = HttpUtil.get(request, "orderSeq", "");
+
+		logger.debug("예약업데이트 시도 시 주문번호" + orderSeq);
+
+		if (!StringUtil.isEmpty(orderSeq) && !StringUtil.equals(orderSeq, "")) {
+			if (restoService.restoReservationUpdate(orderSeq) > 0) {
+				ajaxResponse.setResponse(0, "success");
+			} else // 주문정보가 존재하지 않음(DB ORDER_LIST에)
+			{
+				ajaxResponse.setResponse(404, "NOT FOUND");
+			}
+		} else // 주문번호(orderSeq) 못가져왔음
+		{
+			ajaxResponse.setResponse(400, "bad request");
+		}
+
 		return ajaxResponse;
 	}
 	

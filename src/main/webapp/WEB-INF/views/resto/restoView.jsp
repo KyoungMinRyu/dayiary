@@ -1447,7 +1447,7 @@ function fn_moveList()
          </div>         
                     
                     <h4>${reviewList.userNickName}</h4>
-                    <p style="color:gray;">${reviewList.reservDate.substring(0,10)} 방문</p>
+                    <p style="color:gray;">${reviewList.regDate.substring(0,10)} 등록</p>
                 </div>
    </c:forEach>
    

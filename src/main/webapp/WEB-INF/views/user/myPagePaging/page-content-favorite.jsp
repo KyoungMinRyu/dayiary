@@ -243,7 +243,7 @@ function fn_getFavoriteList(url, type)
                          "<div class='favoriteItemontainer' onclick=\"fn_movePage('" + data.productSeq + "', 1)\"><div class='favoriteItemImgBox'>" +
                          "<img class='favoriteItemImg' src='/resources/upload/" + data.fileName + "'></div><div class='favoriteItemText'>" +
                          "<p class='texts impact' style='margin-top: 85px; margin-bottom: 5px;'>상품명 : " + data.pName + "</p><p class='texts impact' " +
-                         "style='margin-bottom: 5px;'>가격 : " + data.pPrice + "원</p><p class='texts impact' style='margin-bottom: 5px;'>설명 : " + data.pContent + "</p></div></div>";
+                         "style='margin-bottom: 5px;'>가격 : " + data.pPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원</p><p class='texts impact' style='margin-bottom: 5px;'>설명 : " + data.pContent + "</p></div></div>";
                        
                        show += makeTag;
                        makeTag = "";

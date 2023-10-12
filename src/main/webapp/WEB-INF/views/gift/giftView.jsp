@@ -1280,7 +1280,7 @@ $(document).ready(function() {
 function fn_movePage(afterSelected, productSeq)
 {
    
-     window.location.href = "/inquiryWriteForm?afterSelected=" + afterSelected + "&productSeq=" + productSeq;
+     window.location.href = "/inquiry/inquiryWriteForm?afterSelected=" + afterSelected + "&productSeq=" + productSeq;
   
 }
 

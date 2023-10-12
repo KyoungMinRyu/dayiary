@@ -31,6 +31,8 @@ public class OrderList implements Serializable {
 
 	private String searchType; // 검색타입 (1:이름, 2:제목, 3:내용)
 	private String searchValue; // 검색값
+	
+	private String orderTotalCnt;
 
 	private int totalCnt;
 	private String pName;
@@ -80,8 +82,17 @@ public class OrderList implements Serializable {
 		sellerId = "";
 		restoAddress = "";
 		restoPh = "";
+		orderTotalCnt = "";
 	}
-	
+		
+	public String getOrderTotalCnt() {
+		return orderTotalCnt;
+	}
+
+	public void setOrderTotalCnt(String orderTotalCnt) {
+		this.orderTotalCnt = orderTotalCnt;
+	}
+
 	public String getRestoAddress() {
 		return restoAddress;
 	}

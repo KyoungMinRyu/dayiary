@@ -16,8 +16,8 @@ $(document).ready(function() {
          url:"/kakao/payReady",
          data:{
             itemName:$("#itemName").val(),
-            quantity:$("#quantity").val(),
-            totalAmount:$("#totalAmount").val(),
+            quantity:Number($("#quantity").val().replaceAll(",", "").replace("명", "")),
+            totalAmount:Number($("#totalAmount").val().replaceAll(",", "").replace("원", "")),
             orderId:$("#orderId").val()
          },
          success:function(response)
@@ -139,8 +139,8 @@ button
    <h2>예약금을 결제해 주세요.</h2>
    <form name="payForm" id="payForm" method="post">
       레스토랑명<input type="text" name="itemName" id="itemName" maxlength="50" class="form-control mb-2" placeholder="레스토랑명" value="${itemName}" readonly/>
-      예약 인원<input type="text" name="quantity" id="quantity" maxlength="3" class="form-control mb-2" placeholder="수량" value="${quantity}" readonly />
-      총 예약금<input type="text" name="totalAmount" id="totalAmount" maxlength="10" class="form-control mb-2" placeholder="금액" value="${totalAmount}" readonly/>
+      예약 인원<input type="text" name="quantity" id="quantity" maxlength="3" class="form-control mb-2" placeholder="수량" value="<fmt:formatNumber value="${quantity}" pattern="#,###"/>명" readonly />
+      총 예약금<input type="text" name="totalAmount" id="totalAmount" maxlength="10" class="form-control mb-2" placeholder="금액" value="<fmt:formatNumber value="${totalAmount}" pattern="#,###"/>원" readonly/>
       <div class="form-group row">
          <div class="col-sm-12">
             <button type="button" id="btnPay" class="btn btn-primary" title="카카오페이">카카오페이 결제</button>

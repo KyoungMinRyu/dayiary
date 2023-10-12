@@ -213,14 +213,14 @@ public class FriendService {
 		return myFriendList;
 	}
 
-	public Friend selectYourId(String userId) {
-		Friend friend = null;
+	public List<Friend> selectYourId(String userId) {
+		List<Friend> list = null;
 		try {
-			friend = friendDao.selectYourId(userId);
+			list = friendDao.selectYourId(userId);
 		} catch (Exception e) {
-			logger.error("[FriendService](selectYourUser)", e);
+			logger.error("[FriendService](selectYourId)", e);
 		}
-		return friend;
+		return list;
 	}
 
 	public Friend selectFreind(long relationalSeq) {

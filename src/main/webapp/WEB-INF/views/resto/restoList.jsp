@@ -124,7 +124,6 @@ body {
       font-family: 'NanumSquareNeo-Variable', sans-serif;
        margin: 0;
        font-size:35px;
-       margin-bottom: 35px !important;
        letter-spacing:5px;
        text-shadow: 1px 1px 1px rgba(1, 1, 2, 0.4);
        text-align: center;
@@ -395,7 +394,52 @@ function fn_list(curPage)
          <img src="/resources/upload/${restoInfo.fileName}" alt="Product 1">
       </div>
            <div class="product-description">
-              <h2>《 ${restoInfo.restoName} 》</h2>
+              <h2 style="margin-bottom:10px !important;">《 ${restoInfo.restoName} 》</h2>
+              
+              
+          <div id="star" style="display: flex; justify-content: center; margin-bottom:10px;">
+          
+          <c:set var="starCount" value="${restoInfo.reviewScore}" />
+   
+           <c:choose>
+              <c:when test="${starCount eq 0}"> <!-- 별점이 0일 경우 (아직 리뷰가 없을때) -->
+                   <img src="/resources/images/emptyStar.png" style="width:30px; height:30px; border:none !important;" alt="Empty Star">
+                   <img src="/resources/images/emptyStar.png" style="width:30px; height:30px; border:none !important;" alt="Empty Star">
+                   <img src="/resources/images/emptyStar.png" style="width:30px; height:30px; border:none !important;" alt="Empty Star">
+                   <img src="/resources/images/emptyStar.png" style="width:30px; height:30px; border:none !important;" alt="Empty Star">
+                   <img src="/resources/images/emptyStar.png" style="width:30px; height:30px; border:none !important;" alt="Empty Star">
+                   (${restoInfo.reviewCount}건)
+               </c:when>
+           
+               <c:when test="${(starCount % 2) eq 0}"> <!-- 별점이 짝수일 경우 (꽉찬별만 있을때) -->
+                  <c:forEach var="i" begin="1" end="${starCount / 2}">
+                   <img src="/resources/images/fullStar.png" style="width:30px; height:30px; border:none !important;" alt="Full Star">
+                   </c:forEach>
+                   <c:forEach var="i" begin="1" end="${5 - (starCount / 2)}">
+                   <img src="/resources/images/emptyStar.png" style="width:30px; height:30px; border:none !important;" alt="Empty Star">
+                   </c:forEach>
+                   (${restoInfo.reviewCount}건)
+               </c:when>
+                
+               <c:when test="${(starCount % 2) eq 1}">
+                  <c:forEach var="i" begin="1" end="${starCount / 2}"> <!-- 별점이 홀수일 경우 (반개별 필요) -->
+                   <img src="/resources/images/fullStar.png" style="width:30px; height:30px; border:none !important;" alt="Full Star">
+                   </c:forEach>
+                   <img src="/resources/images/halfStar.png" style="width:30px; height:30px; border:none !important;" alt="Half Star">
+                   <c:forEach var="i" begin="1" end="${5 - (starCount / 2)}">
+                   <img src="/resources/images/emptyStar.png" style="width:30px; height:30px; border:none !important;" alt="Empty Star">
+                   </c:forEach>
+                   (${restoInfo.reviewCount}건)
+               </c:when>
+           </c:choose>
+            
+            
+          </div>
+              
+              
+              
+              
+              
               <p id="restoContent">${restoInfo.restoContent}</p>
                <span class="product-address"><img src="/resources/images/address.png" style="width:20px;height:20px; margin-right:10px;">${restoInfo.restoAddress}</span>
            
@@ -421,6 +465,7 @@ function fn_list(curPage)
                 
                 <p><img src="/resources/images/call.png" style="width:20px;height:20px; margin-right:10px;">${restoInfo.restoPh}</p>
          </div>
+         
          <div id="bb">
                 <a href="javascript:void(0)" onclick="fn_view('${restoInfo.rSeq}')">
              <span id="click" style="display:grid;"><img src="/resources/images/자세히보기.png"  alt="자세히 보기"></span>

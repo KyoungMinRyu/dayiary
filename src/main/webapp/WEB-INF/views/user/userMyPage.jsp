@@ -366,7 +366,7 @@ let a = "${yourFriend.relationalType}";
             <i class="far fa-user" >
             </i>
            </span>
-           <span class="dropdown__title">
+           <span class="dropdown__title" style="font-size: 17px;">
             내 프로필
            </span>
           </li>
@@ -413,7 +413,6 @@ let a = "${yourFriend.relationalType}";
         <c:set var="anniversaryDate" value="${item.anniversaryDate}" />
 
         <!-- anniversaryDate가 현재 날짜 이후라면 항목을 표시합니다. -->
-        <c:if test="${anniversaryDate ge currentDate}">
             <c:set var="colorIndex" value="${status.index % 4}" />
             <c:choose>
                 <c:when test="${colorIndex == 0}">
@@ -460,21 +459,19 @@ let a = "${yourFriend.relationalType}";
         <c:choose>
             <c:when test="${item.sharedStatus eq 'Shared'}">
                 <img src="${url}" alt="member" style="width: 35px; height: 35px;">
-                <img src="${yourProfileImage}" alt="member" style="width: 35px; height: 35px;">
-            </c:when>
-             <c:when test="${item.sharedStatus eq 'Not Shared'}">
-                <img src="${url}" alt="member" style="width: 35px; height: 35px;">
-               
+                <c:forEach var="sharedProfile" items="${item.sharedAnniversaryProfileList}" varStatus="status">                	
+                	<c:if test="${status.index < 4}">
+				      	<img src="${sharedProfile}" alt="member" style="width: 35px; height: 35px;">
+				    </c:if>
+                </c:forEach>                
             </c:when>
             <c:otherwise>
-                <img src="${url}" alt="member" style="width: 35px; height: 35px;">
+                <img src="${url}" alt="member" style="width: 35px; height: 35px;">            
             </c:otherwise>
         </c:choose>
     </div>
 </div>
 
-        </c:if>
-    
     
 </c:forEach>
     </c:if>

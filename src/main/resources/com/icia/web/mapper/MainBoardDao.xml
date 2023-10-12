@@ -15,6 +15,8 @@
    <result column="READ_CNT" property="readCnt" />
    <result column="REG_DATE" property="regDate" />
    <result column="BOARD_TYPE" property="boardType" />
+   <result column="COMMENT_COUNT" property="commentCount" />
+   <result column="LIKE_COUNT" property="likeCount" />
 </resultMap>
 
 <!-- 다이어리 첨부파일 resultMap -->
@@ -121,7 +123,9 @@ SELECT BOARD_SEQ,
        READ_CNT,
        REG_DATE,
        BOARD_TYPE,
-       FILE_SEQ
+       FILE_SEQ,
+       COMMENT_COUNT,
+       LIKE_COUNT
   FROM (SELECT ROWNUM RNM,
                BOARD_SEQ,
                FILE_NAME,
@@ -134,7 +138,9 @@ SELECT BOARD_SEQ,
                READ_CNT,
                REG_DATE,
                BOARD_TYPE,
-               FILE_SEQ
+               FILE_SEQ,
+               COMMENT_COUNT,
+               LIKE_COUNT
           FROM (SELECT A.BOARD_SEQ,
                       C.FILE_NAME,
                        NVL(A.USER_ID, '') AS USER_ID,
@@ -142,11 +148,13 @@ SELECT BOARD_SEQ,
                        NVL(B.USER_NICKNAME, '') AS USER_NICKNAME,
                        NVL(B.USER_EMAIL, '') AS USER_EMAIL,
                        NVL(BOARD_TITLE, '') AS BOARD_TITLE,
-                       NVL(BOARD_CONTENT, '') AS BOARD_CONTENT,
+                       NVL(DBMS_LOB.SUBSTR(BOARD_CONTENT, 4000, 1), '') AS BOARD_CONTENT,
                        NVL(READ_CNT, 0) AS READ_CNT,
                        TO_CHAR(A.REG_DATE, 'YYYY"년" MM"월" DD"일"') AS REG_DATE,
                        NVL(BOARD_TYPE, 'D') AS BOARD_TYPE,
-                       NVL(C.FILE_SEQ, 1) AS FILE_SEQ
+                       NVL(C.FILE_SEQ, 1) AS FILE_SEQ,
+                       NVL(COUNT(E.COMMENT_SEQ), 0) AS COMMENT_COUNT,
+                       (SELECT NVL(COUNT(*),0) FROM MAIN_BOARD_REACTION AA WHERE AA.BOARD_SEQ = A.BOARD_SEQ) AS LIKE_COUNT
                   FROM MAIN_BOARD A, G2_USER B, MAIN_BOARD_FILE C,
                   (
                     SELECT
@@ -163,11 +171,12 @@ SELECT BOARD_SEQ,
                     
                   SELECT #{userId} AS USER_ID
                     FROM DUAL
-                  ) D
+                  ) D, MAIN_BOARD_COMMENT E
                  WHERE B.USER_ID = D.USER_ID
                    AND A.USER_ID = B.USER_ID 
                    AND A.BOARD_SEQ = C.BOARD_SEQ
                    AND C.FILE_SEQ = 1
+                   AND A.BOARD_SEQ = E.BOARD_SEQ(+)
 <if test='searchType != null and searchType != "" and searchValue != null and searchValue != ""'>
    <choose>
       <when test='searchType == "1"'>              
@@ -187,7 +196,20 @@ SELECT BOARD_SEQ,
         </when>
     </choose>
 </if>                        
-              ORDER BY BOARD_SEQ DESC))   
+               GROUP BY A.BOARD_SEQ, 
+              C.FILE_NAME,
+              A.USER_ID,
+              B.USER_NAME,
+              B.USER_NICKNAME,
+              B.USER_EMAIL,
+              BOARD_TITLE,
+              DBMS_LOB.SUBSTR(BOARD_CONTENT, 4000, 1), 
+              READ_CNT,
+              A.REG_DATE,
+               BOARD_TYPE,
+              C.FILE_SEQ
+
+              ORDER BY REG_DATE DESC))   
  WHERE RNM <![CDATA[>=]]> #{startRow}
    AND RNM <![CDATA[<=]]> #{endRow}
 </select>

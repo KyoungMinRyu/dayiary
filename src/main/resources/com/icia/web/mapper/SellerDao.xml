@@ -94,6 +94,7 @@
    <result column="ORDER_ADDRESS" property="orderAddress" />
    <result column="ORDER_MSG" property="orderMsg"/>  
    <result column="USER_NAME" property="userName" /> 
+   <result column="ORDER_TOTAL_CNT" property="orderTotalCnt" /> 
 </resultMap>
 
 
@@ -250,7 +251,7 @@ SELECT R_SEQ,
                         A.RESTO_ADDRESS,
                         A.RESTO_PH,
                         A.RESTO_CONTENT,
-                        A.REG_DATE,
+                        TO_CHAR(A.REG_DATE, 'YYYY"년" MM"월" DD"일"') AS REG_DATE,
                         A.STATUS,
                         A.RESTO_TYPE,
                         A.FOOD_TYPE,
@@ -706,7 +707,7 @@ FROM(
                    INNER JOIN G2_USER D ON A.USER_ID = D.USER_ID
                WHERE B.SELLER_ID = #{sellerId}
                      AND A.STATUS = 'Y'
-                     ORDER BY C.REG_DATE DESC
+                     ORDER BY A.REG_DATE DESC
                      ))
 </select> 
 
@@ -780,7 +781,7 @@ FROM(
                      INNER JOIN PAY_LIST D ON A.ORDER_SEQ = D.ORDER_ID
                      INNER JOIN G2_USER E ON A.USER_ID = E.USER_ID
                      WHERE B.SELLER_ID = #{sellerId}
-                  ORDER BY D.REG_DATE DESC
+                  ORDER BY A.REG_DATE DESC
                      ))
    
 </select> 
@@ -856,6 +857,7 @@ SELECT
     TO_CHAR(O.REG_DATE, 'YYYYMM') AS REG_DATE,
     SUM(RESERV_PERSON) AS RESERV_PERSON,
     SUM(RESTO_DEPOSIT * RESERV_PERSON) AS TOTAL_PRICE,
+    COUNT(O.ORDER_SEQ) AS ORDER_TOTAL_CNT,
     R.RESTO_NAME
 FROM
     ORDER_LIST O, 
@@ -886,6 +888,7 @@ SELECT
     P.P_NAME,
     P.PRODUCT_SEQ,
     TO_CHAR(O.REG_DATE, 'YYYYMM') AS REG_DATE,
+    COUNT(O.ORDER_SEQ) AS ORDER_TOTAL_CNT,
     SUM(TOTAL_CNT) AS TOTAL_CNT,
     SUM(TOTAL_PRICE) AS TOTAL_PRICE
 FROM 

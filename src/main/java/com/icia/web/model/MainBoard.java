@@ -30,6 +30,9 @@ public class MainBoard implements Serializable
    
    private String fileName;
    
+   private int commentCount; //각 게시물당 댓글 개수
+   private int likeCount;
+   
    public MainBoard()
    {
       boardSeq = 0;
@@ -52,149 +55,170 @@ public class MainBoard implements Serializable
       endRow = 0;      
       searchType = "";
       searchValue = "";   
+      
+      commentCount = 0;
+      likeCount = 0;
    }
    
    
+   
+   public int getLikeCount() {
+   return likeCount;
+   }
 
-	public String getUserNickName() {
-	   return userNickName;
-	}
-	
-	
-	
-	public void setUserNickName(String userNickName) {
-	   this.userNickName = userNickName;
-	}
-	
-	
-	
-	public String getFileName() {
-	   return fileName;
-	}
-	
-	
-	
-	public void setFileName(String fileName) {
-	   this.fileName = fileName;
-	}
-	
-	
-	
-	public long getBoardSeq() {
-	   return boardSeq;
-	}
-	
-	public void setBoardSeq(long boardSeq) {
-	   this.boardSeq = boardSeq;
-	}
-	
-	public String getUserId() {
-	   return userId;
-	}
-	
-	public void setUserId(String userId) {
-	   this.userId = userId;
-	}
-	
-	public String getBoardTitle() {
-	   return boardTitle;
-	}
-	
-	public void setBoardTitle(String boardTitle) {
-	   this.boardTitle = boardTitle;
-	}
-	
-	public String getBoardContent() {
-	   return boardContent;
-	}
-	
-	public void setBoardContent(String boardContent) {
-	   this.boardContent = boardContent;
-	}
-	
-	public int getReadCnt() {
-	   return readCnt;
-	}
-	
-	public void setReadCnt(int readCnt) {
-	   this.readCnt = readCnt;
-	}
-	
-	public String getRegDate() {
-	   return regDate;
-	}
-	
-	public void setRegDate(String regDate) {
-	   this.regDate = regDate;
-	}
-	
-	public String getBoardType() {
-	   return boardType;
-	}
-	
-	public void setBoardType(String boardType) {
-	   this.boardType = boardType;
-	}
-	
-	public String getUserName() {
-	   return userName;
-	}
-	
-	public void setUserName(String userName) {
-	   this.userName = userName;
-	}
-	
-	public String getUserEmail() {
-	   return userEmail;
-	}
-	
-	public void setUserEmail(String userEmail) {
-	   this.userEmail = userEmail;
-	}
-	
-	public long getStartRow() {
-	   return startRow;
-	}
-	
-	public void setStartRow(long startRow) {
-	   this.startRow = startRow;
-	}
-	
-	public long getEndRow() {
-	   return endRow;
-	}
-	
-	public void setEndRow(long endRow) {
-	   this.endRow = endRow;
-	}
-	
-	public String getSearchType() {
-	   return searchType;
-	}
-	
-	public void setSearchType(String searchType) {
-	   this.searchType = searchType;
-	}
-	
-	public String getSearchValue() {
-	   return searchValue;
-	}
-	
-	public void setSearchValue(String searchValue) {
-	   this.searchValue = searchValue;
-	}
-	
-	
-	
-	public List<MainBoardFile> getMainBoardFile() {
-	   return mainBoardFile;
-	}
-	
-	
-	
-	public void setMainBoardFile(List<MainBoardFile> mainBoardFile) {
-	   this.mainBoardFile = mainBoardFile;
-	}
+
+   public void setLikeCount(int likeCount) {
+      this.likeCount = likeCount;
+   }
+
+
+   public int getCommentCount() {
+   return commentCount;
+   }
+   
+   public void setCommentCount(int commentCount) {
+      this.commentCount = commentCount;
+   }
+
+   public String getUserNickName() {
+      return userNickName;
+   }
+   
+   
+   
+   public void setUserNickName(String userNickName) {
+      this.userNickName = userNickName;
+   }
+   
+   
+   
+   public String getFileName() {
+      return fileName;
+   }
+   
+   
+   
+   public void setFileName(String fileName) {
+      this.fileName = fileName;
+   }
+   
+   
+   
+   public long getBoardSeq() {
+      return boardSeq;
+   }
+   
+   public void setBoardSeq(long boardSeq) {
+      this.boardSeq = boardSeq;
+   }
+   
+   public String getUserId() {
+      return userId;
+   }
+   
+   public void setUserId(String userId) {
+      this.userId = userId;
+   }
+   
+   public String getBoardTitle() {
+      return boardTitle;
+   }
+   
+   public void setBoardTitle(String boardTitle) {
+      this.boardTitle = boardTitle;
+   }
+   
+   public String getBoardContent() {
+      return boardContent;
+   }
+   
+   public void setBoardContent(String boardContent) {
+      this.boardContent = boardContent;
+   }
+   
+   public int getReadCnt() {
+      return readCnt;
+   }
+   
+   public void setReadCnt(int readCnt) {
+      this.readCnt = readCnt;
+   }
+   
+   public String getRegDate() {
+      return regDate;
+   }
+   
+   public void setRegDate(String regDate) {
+      this.regDate = regDate;
+   }
+   
+   public String getBoardType() {
+      return boardType;
+   }
+   
+   public void setBoardType(String boardType) {
+      this.boardType = boardType;
+   }
+   
+   public String getUserName() {
+      return userName;
+   }
+   
+   public void setUserName(String userName) {
+      this.userName = userName;
+   }
+   
+   public String getUserEmail() {
+      return userEmail;
+   }
+   
+   public void setUserEmail(String userEmail) {
+      this.userEmail = userEmail;
+   }
+   
+   public long getStartRow() {
+      return startRow;
+   }
+   
+   public void setStartRow(long startRow) {
+      this.startRow = startRow;
+   }
+   
+   public long getEndRow() {
+      return endRow;
+   }
+   
+   public void setEndRow(long endRow) {
+      this.endRow = endRow;
+   }
+   
+   public String getSearchType() {
+      return searchType;
+   }
+   
+   public void setSearchType(String searchType) {
+      this.searchType = searchType;
+   }
+   
+   public String getSearchValue() {
+      return searchValue;
+   }
+   
+   public void setSearchValue(String searchValue) {
+      this.searchValue = searchValue;
+   }
+   
+   
+   
+   public List<MainBoardFile> getMainBoardFile() {
+      return mainBoardFile;
+   }
+   
+   
+   
+   public void setMainBoardFile(List<MainBoardFile> mainBoardFile) {
+      this.mainBoardFile = mainBoardFile;
+   }
 
 }
    

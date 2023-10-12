@@ -6,12 +6,9 @@
 <%@ include file="/WEB-INF/views/include/head.jsp" %>
 <link rel="stylesheet" href="/resources/css/progress-bar.css" type="text/css">
 <script type="text/javascript">
-$(document).ready(function() {
-   
-   $("#btnClose").on("click", function() {
-      window.close();
-   });
-});
+setTimeout(function() {
+    window.close();
+}, 2000);
 
 
 function fn_paySuccess()
@@ -58,18 +55,7 @@ h2
    margin-bottom:50px;
 }
 
-button
-{
-   margin-top:10px;
-}
 
-#btnContainer
-{
-   display: flex;
-    align-items: flex-end;
-    margin-right: 30px;
-    flex-direction: column;
-}
 
 </style>
 </head>
@@ -80,8 +66,8 @@ button
       <h2>카카오페이 결제 완료되었습니다.</h2>
        예약번호: ${kakaoPayApprove.partner_order_id}<br/>
        레스토랑명: ${kakaoPayApprove.item_name}<br/>
-       예약인원: ${kakaoPayApprove.quantity}<br/>
-       결제금액: ${kakaoPayApprove.amount.total}<br/>
+       예약인원: <fmt:formatNumber value="${kakaoPayApprove.quantity}" pattern="#,###"/>명<br/>
+       결제금액: <fmt:formatNumber value="${kakaoPayApprove.amount.total}" pattern="#,###"/>원<br/>
        결제방법: ${kakaoPayApprove.payment_method_type}<br/>
 <script>fn_paySuccess();</script>
      </c:when>  
@@ -89,9 +75,6 @@ button
       <h2>카카오페이 결제 중 오류가 발생하였습니다.</h2>
     </c:otherwise>
 </c:choose>
-</div>
-<div id="btnContainer">
-<button id="btnClose" type="button">닫기</button>
 </div>
 </body>
 </html>

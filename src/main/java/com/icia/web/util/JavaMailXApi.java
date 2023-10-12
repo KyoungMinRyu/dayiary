@@ -39,7 +39,7 @@ public class JavaMailXApi
 			{
 				Message message = getMessage();
 				message.addRecipient(Message.RecipientType.TO, new InternetAddress(userEmail));
-				message.setSubject("인증번호를 입력해주세요.");
+				message.setSubject("[Dayiary]회원가입을 위해 인증을 완료해주세요.");
 				message.setContent(content[type], "text/html; charset=utf-8");
 				Transport.send(message);
 			} 
@@ -70,7 +70,7 @@ public class JavaMailXApi
 	 * **/
 	public String sendMailPass(String email, String title, String contentMsg) // mail은 메일 받을 주소 
 	{
-		String content = "<p>"+ contentMsg +"</p>";
+		String content = "<p style='font-size: 20px;'>"+ contentMsg +"</p>";
 		try 
 		{
 			Message message = getMessage();
@@ -107,7 +107,7 @@ public class JavaMailXApi
 
        if(!StringUtil.isEmpty(userEmail)) 
        {
-    	   if(StringUtil.equals(sendMailPass(userEmail, "[Dayiary] 임시 비빌번호 발송", "임시 비밀번호가 발급되었습니다.<br> 임시비밀번호  :  " + tempPassword.toString() + "<br> 로그인 후 꼭 비밀번호를 변경하신 후 이용하시기 바랍니다.") , "Y"))
+    	   if(StringUtil.equals(sendMailPass(userEmail, "[Dayiary] 임시 비밀번호가 발송되었습니다.", "임시 비밀번호가 발급되었습니다.<br> 임시비밀번호  :  " + tempPassword.toString() + "<br> 로그인 후 꼭 비밀번호를 변경하신 후 이용하시기 바랍니다.") , "Y"))
 		   {
 				logger.debug("===============================================================");
 				logger.debug("MailSend Success, Temporary Password : " + tempPassword);
@@ -133,7 +133,7 @@ public class JavaMailXApi
 
        if(!StringUtil.isEmpty(sellerEmail)) 
        {
-          if(StringUtil.equals(sendMailPass(sellerEmail, "[Dayiary] 판매자 임시 비빌번호 발송", "임시 비밀번호가 발급되었습니다.<br> 임시비밀번호  :  " + tempPassword.toString() + "<br> 로그인 후 꼭 비밀번호를 변경하신 후 이용하시기 바랍니다.") , "Y"))
+          if(StringUtil.equals(sendMailPass(sellerEmail, "[Dayiary] 판매자 비밀번호가 발송되었습니다.", "임시 비밀번호가 발급되었습니다.<br> 임시비밀번호  :  " + tempPassword.toString() + "<br> 로그인 후 꼭 비밀번호를 변경하신 후 이용하시기 바랍니다.") , "Y"))
          {
             logger.debug("===============================================================");
             logger.debug("MailSend Success, Temporary Password : " + tempPassword);

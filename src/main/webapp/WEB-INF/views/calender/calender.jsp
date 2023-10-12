@@ -40,7 +40,7 @@ li:not(:first-child){
 }
 
 .calender{
-   width: 50%;
+   width: 60%;
    margin: auto;
    border-radius: 8px;
    box-shadow: 2px 2px 28px rgba(0,0,0,.5);

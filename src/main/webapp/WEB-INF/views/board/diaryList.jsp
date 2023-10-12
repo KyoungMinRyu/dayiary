@@ -198,6 +198,10 @@ input#check_btn:checked + label:before{
                <h2> <span class="highlight-text">${mainBoard.boardTitle}</span></h2>
                <p>${mainBoard.regDate}</p>
                <p>- ${mainBoard.userNickName} -</p>
+               <div style="display:flex; justify-content: flex-end;">
+               <p> <img src="/resources/images/like.png" style="width:27px; height:27px; border-radius:0px;"> ${mainBoard.likeCount} </p>
+               <p> <img src="/resources/images/reply.png" style="width:30px; height:35px; border-radius:0px; margin-left:10px;"> ${mainBoard.commentCount} </p>
+                 </div>
            </a>
            </div>
            

@@ -375,7 +375,8 @@ letter-spacing: 10px;
 
 
 </style>
-
+<script type="text/javascript">
+</script>
 </head>
 <body>
 <%@ include file="/WEB-INF/views/include/navigation.jsp" %>

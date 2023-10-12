@@ -24,6 +24,11 @@ body
 .row
 {
    font-family: 'SUIT-Regular', sans-serif;
+	font-size: 18px;
+}
+
+input[type="text"] {
+  font-size: 20px !important;
 }
 
 </style>
@@ -31,7 +36,7 @@ body
 
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css'>
 <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
-<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.7/css/swiper.min.css'><link rel="stylesheet" href="./style.css">
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.7/css/swiper.min.css'>
 
 <!-- partial -->
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
@@ -474,7 +479,7 @@ function fn_validateEmail(value)
                <br/>
                <label class="d-block m-top-15">
                  <input type="checkbox" id="sameAsUser" onclick="fetchUserData()" class="filled-in" />
-                 <span>주문자정보와 동일</span>
+                 <span style="font-size: 18px;">주문자정보와 동일</span>
                </label>
                 <div class="row">
                   <div class="input-field col s12 l6 m-top-15">

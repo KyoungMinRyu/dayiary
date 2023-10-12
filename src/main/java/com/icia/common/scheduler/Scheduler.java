@@ -112,6 +112,7 @@ public class Scheduler
 		logger.debug("deleteOneHourLaterReserv Scheduling 시작");
 		try 
 		{
+			restoDao.deleteOneHourLaterReservPayList();
 			logger.debug("삭제된 예약 대기 1시간 지난 또는 결재 대기중 삭제 개수 : " + restoDao.deleteOneHourLaterReserv());
 		} 
 		catch (Exception e) 

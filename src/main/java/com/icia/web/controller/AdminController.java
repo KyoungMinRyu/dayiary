@@ -466,7 +466,7 @@ public class AdminController
 	   	{
 	   		admin = list.get(i);
 	   		totalCount += Long.parseLong(admin.getUserTotalCount());
-	   		if(StringUtil.equals(yearMonth, admin.getUserTotalCount()))
+	   		if(StringUtil.equals(yearMonth, admin.getUserRegDate()))
 	   		{
 	   			modelMap.addAttribute("userMonthlyTotalCount", admin.getUserTotalCount());
 	   		}
@@ -558,6 +558,7 @@ public class AdminController
    {
 	   String rSeq = HttpUtil.get(request, "rSeq", "");
 	   modelMap.addAttribute("resto", adminService.selectAdminRestoView(rSeq));
+	   modelMap.addAttribute("reviewList", adminService.selectRestoReviewList(rSeq));
 	   return "/admin/adminRestoView";   
    }
    
@@ -848,6 +849,7 @@ public class AdminController
    {
 	   String productSeq = HttpUtil.get(request, "productSeq", "");
 	   modelMap.addAttribute("giftAdd", adminService.selectAdminGiftView(productSeq));
+	   modelMap.addAttribute("reviewList", adminService.selectGiftReviewList(productSeq));
 	   return "/admin/adminGiftView";   
    }
    
@@ -998,5 +1000,32 @@ public class AdminController
 	   }
 	   return ajaxResponse;
    }
+   
+   @RequestMapping(value="/admin/deleteReview", method=RequestMethod.POST)
+   @ResponseBody
+   public Response<Object> deleteReview(HttpServletRequest request, HttpServletResponse response)
+   {
+	   Response<Object> ajaxResponse = new Response<Object>();
+	   String cookieAdminId = CookieUtil.getHexValue(request, AUTH_COOKIE_NAME);
+	   String orderSeq = HttpUtil.get(request, "orderSeq", "");
+	   if(!StringUtil.isEmpty(orderSeq))
+	   {
+		   if(StringUtil.equals(cookieAdminId, "adm"))
+		   { 
+			   ajaxResponse.setResponse(0, "Success", adminService.deleteReview(orderSeq));
+		   }
+		   else
+		   {
+			   ajaxResponse.setResponse(404, "Not Found");
+		   }
+	   }
+	   else
+	   {
+		   ajaxResponse.setResponse(400, "Bad Request");
+	   }
+	   return ajaxResponse;
+   }
+     
+   
 }
 		

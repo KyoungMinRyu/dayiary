@@ -11,11 +11,13 @@ $(document).ready(function() {
 	let date = "${orderDate}"; 
 	const cnt = ${quantity};
 	const restoName = "${itemName}";
-	let time = "${orderTime2}";
+	let time = "${orderTime}";
 	const orderSeq = "${orderSeq}";
 	
 	date = date.replaceAll("-", "");
-
+	
+	date = date.replaceAll(".", "");
+	
 	time = time.replaceAll(":", "");
 	
 	time = time.replaceAll(" ", "");

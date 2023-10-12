@@ -640,42 +640,48 @@ public class UserG2Controller {
 		model.addAttribute("toCount", toCount);
 		model.addAttribute("fromCount", fromCount);
 
-		if (friend != null) {
-
-			Friend yourFriend = friendService.selectYourId(cookieUserId);
-
-			if (yourFriend != null) {
-
-				model.addAttribute("myId", yourFriend.getMyId());
-				model.addAttribute("yourId", yourFriend.getYourId());
-				model.addAttribute("yourProfileImage", yourFriend.getYourProfileImage());
-				model.addAttribute("myBir", yourFriend.getMyBir());
-				model.addAttribute("yourBir", yourFriend.getYourBir());
-				model.addAttribute("myName", yourFriend.getMyName());
-				model.addAttribute("yourName", yourFriend.getYourName());
-				model.addAttribute("myGen", yourFriend.getMyGen());
-				model.addAttribute("yourGen", yourFriend.getYourGen());
-				model.addAttribute("yourFriend", yourFriend);
-				CoupleAnniversary coupleAnniversary = anniversaryService.selectCoupleAnniversary(cookieUserId);
-				model.addAttribute("coupleAnniversary", coupleAnniversary);
-
-				List<Anniversary> anniversaryFriend = anniversaryService.selectFriendBirProfile(cookieUserId);
-				List<Anniversary> selectcouple = anniversaryService.selectCoupleDate(cookieUserId);
-				if (anniversaryFriend != null) {
-					if (selectcouple != null) {
-						model.addAttribute("selectcouple1", selectcouple.get(0));
-						model.addAttribute("selectcouple0", selectcouple);
-					}
-
-					model.addAttribute("anniversaryFriend", anniversaryFriend.get(0));
-					model.addAttribute("anniversaryFriend0", anniversaryFriend);
+		if (friend != null) 
+		{
+			List<Friend> list = friendService.selectYourId(cookieUserId);
+			if (list != null && list.size() > 0) 
+			{
+				Friend yourFriend = list.get(0);
+				if(StringUtil.equals(yourFriend.getRelationalType(), "1"))
+				{
+					model.addAttribute("myId", yourFriend.getMyId());
+					model.addAttribute("yourId", yourFriend.getYourId());
+					model.addAttribute("yourProfileImage", yourFriend.getYourProfileImage());
+					model.addAttribute("myBir", yourFriend.getMyBir());
+					model.addAttribute("yourBir", yourFriend.getYourBir());
+					model.addAttribute("myName", yourFriend.getMyName());
+					model.addAttribute("yourName", yourFriend.getYourName());
+					model.addAttribute("myGen", yourFriend.getMyGen());
+					model.addAttribute("yourGen", yourFriend.getYourGen());
+					model.addAttribute("yourFriend", yourFriend);
+					CoupleAnniversary coupleAnniversary = anniversaryService.selectCoupleAnniversary(cookieUserId);
+					model.addAttribute("coupleAnniversary", coupleAnniversary);	
 					DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 					String currentDate = dateFormat.format(new Date());
 					model.addAttribute("currentDate", currentDate);
-
 				}
-
 			}
+			
+			List<Anniversary> selectcouple = anniversaryService.selectCoupleDate(cookieUserId);
+			if (selectcouple != null && selectcouple.size() > 0) 
+			{
+				HashMap<String, Object> selectFileHashMap = new HashMap<String, Object>();
+				selectFileHashMap.put("userId", cookieUserId);
+				for(int i = 0; i< selectcouple.size(); i++)
+				{
+					if(StringUtil.equals(selectcouple.get(i).getSharedStatus(), "Shared"))
+					{
+						selectFileHashMap.put("anniversarySeq", selectcouple.get(i).getAnniversarySeq());
+						selectcouple.get(i).setSharedAnniversaryProfileList(anniversaryService.selectSharedAnniversaryProfileList(selectFileHashMap));
+					}
+				}
+				model.addAttribute("selectcouple0", selectcouple);
+			}
+			
 			if (!StringUtil.isEmpty(profileImageFileName)) {
 
 				model.addAttribute("url", profileImageFileName);
@@ -937,7 +943,7 @@ public class UserG2Controller {
 		}
 
 		else if (StringUtil.equals(category, "연인상태")) {
-			Friend yourFriend = friendService.selectYourId(cookieUserId);
+			Friend yourFriend = friendService.selectYourId(cookieUserId).get(0);
 			if (yourFriend != null) {
 				CoupleAnniversary coupleAnniversary = anniversaryService.selectCoupleAnniversary(cookieUserId);
 				modelMap.addAttribute("myId", yourFriend.getMyId());
@@ -1010,12 +1016,9 @@ public class UserG2Controller {
 			hashMap.put("userId", cookieUserId);
 			hashMap.put("yourId", cookieUserId);
 			Friend friend = friendService.selectYourUser(hashMap);
-			if (friend != null) {
-				Friend yourFriend = friendService.selectYourId(cookieUserId);
-				if (yourFriend != null) {
-
-				}
-
+			if (friend != null) 
+			{
+				
 				modelMap.addAttribute("url", profileImageFileName);
 				modelMap.addAttribute("user", user);
 			}

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+	<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <!DOCTYPE html>
 <html>
@@ -20,6 +20,8 @@
                 var img = document.createElement("img");
                img.setAttribute("src", event.target.result);
                img.setAttribute("class", "col-lg-6");
+               img.style.maxWidth = "20%";
+               img.style.maxHeight = "20%";
                document.querySelector("div#image_container").innerHTML = '';
                document.querySelector("div#image_container").appendChild(img);
             };
@@ -38,6 +40,8 @@
                   var img = document.createElement("img");
                   img.setAttribute("src", event.target.result);
                   img.setAttribute("class", "col-lg-6");
+                  img.style.maxWidth = "20%";
+                  img.style.maxHeight = "20%";
                   document.querySelector("div#images_container").appendChild(img);
                };
                

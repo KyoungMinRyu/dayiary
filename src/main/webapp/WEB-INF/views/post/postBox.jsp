@@ -213,6 +213,7 @@ body {
   padding: 15px;
   border-radius: 12px;
   letter-spacing:2px;
+  font-size: 22px;
 }
 
 .text-only {
@@ -220,7 +221,7 @@ body {
 }
 
 .time {
-  font-size: 10px;
+  font-size: 15px;
   color:lightgrey;
   margin-bottom:10px;
   margin-left: 65px;

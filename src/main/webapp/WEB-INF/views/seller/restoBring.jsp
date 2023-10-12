@@ -19,21 +19,26 @@
     
  $(document).ready(function() {
    let rSeq = "${restoInfo.rSeq}";
-	 
-	 
+    
+    
     var menuCount = ${menuList.size()};
-
-    $("#hiddenAdd").val("${restoInfo.restoAddress}");
-
+    
 
     //상세 주소 입력시 도로명주소+상세주소 합쳐지는 거
      $("#detailAddress").on("input", function() 
     {
         var roadAddress = $("#roadAddress").val();
         var detailAddress = $("#detailAddress").val();
-		$("#hiddenAdd").val(roadAddress + " " + detailAddress);
+
+    
+            // roadAddress가 null이 아닌 경우 roadAddress와 detailAddress를 결합
+            $("#hiddenAdd").val(roadAddress + " " + detailAddress);
+        
+
     });   
    
+   $("#hiddenAdd").val($("#roadAddress").val() + $("#detailAddress").val());
+
    //메뉴 추가하기 펑션
 $("#menuPlus").on("click", function() {
     var div = document.createElement('div');
@@ -41,7 +46,6 @@ $("#menuPlus").on("click", function() {
     // 새로운 메뉴를 생성합니다.
    div.innerHTML = '<div class="restoMenuAdd" id="menuPl' + newMenuCount + '">' +
     '<input type="text" class="menuName" id="menuName' + newMenuCount + '" name="menuName' + newMenuCount + '" value="" placeholder="메뉴명 입력" />' +
-   '<input type="text" class="menuName" id="menuName' + newMenuCount + '" name="menuName' + newMenuCount + '" value="" placeholder="메뉴명 입력" />' +
     '<input type="text" class="menuPrice" id="menuPrice' + newMenuCount + '" name="menuPrice' + newMenuCount + '" value="" placeholder="가격 입력" />' +
     '<input type="text" class="menuDescription" id="menuDescription' + newMenuCount + '" name="menuDescription' + newMenuCount + '" value="" placeholder="메뉴 설명 입력" />' +
     '<input type="file" class="menuFile" id="menuFile' + newMenuCount + '" name="menuFile' + newMenuCount + '" class="form-control mb-2" placeholder="파일을 선택하세요." style="margin-top:5px;" />' +
@@ -62,8 +66,9 @@ $(document).on("click", ".menuDeleteButton", function() {
             menuElement.parentNode.removeChild(menuElement); // 해당 메뉴 삭제
             menuCount--;
             $("#menuCount").val(menuCount);
+            console.log(menuCount);
         } else {
-            alert("해당 메뉴가 존재하지 않습니다.");
+            console.log("해당 메뉴가 존재하지 않습니다.");
         }
     });
 
@@ -73,6 +78,142 @@ $("#menuCount").val(menuCount);
     //등록하기 버튼을 눌렀을 때
    $("#btnSubmit").on("click", function()
    {            
+      var fileInput = document.getElementById("restoThum");
+      var orgFileInput = document.getElementById("existingImage");
+          // 파일이 선택되었는지 확인
+      if ((fileInput.files.length === 0 && orgFileInput.src === "") ) {
+           alert("메인사진 파일을 수정하세요.");
+           return;
+          }
+     
+      if($("#restoName").val() == null || $("#restoName").val() == "")
+       {
+          alert("매장 이름을 입력하세요.");
+          $("#restoName").focus();
+          return;
+       }
+       
+       if($("#roadAddress").val() == null || $("#roadAddress").val() == "")
+       {
+          alert("우번편호 찾기 버튼을 통해 주소를 입력해주세요.");
+          $("#roadAddress").focus();
+          return;
+       }
+       
+       if($("#detailAddress").val() == null || $("#roadAddress").val() == "")
+       {
+          alert("우번편호 찾기 버튼을 통해 주소를 입력해주세요.");
+          $("#roadAddress").focus();
+          return;
+       }
+       
+       if($("#restoPh").val() == null || $("#restoPh").val() == "")
+       {
+          alert("매장 번호를 입력하세요.");
+          $("#restoPh").focus();
+          return;
+       }
+
+       
+       if($("#restoContent").val() == null || $("#restoContent").val() == "")
+       {
+          alert("매장 내용을 입력하세요.");
+          $("#restoContent").focus();
+          return;
+       }
+       
+       if($("#restoDeposit").val() == null || $("#restoDeposit").val() == "")
+       {
+          alert("예약금을 입력하세요.");
+          $("#restoDeposit").focus();
+          return;
+       }
+       
+       if($("#restoLimitPpl").val() == null || $("#restoLimitPpl").val() == "" )
+       {
+          alert("시간당 수용 인원을 입력하세요.");
+          $("#restoLimitPpl").focus();
+          return;
+       }
+       
+       var detailFileInput = document.getElementById("restoFile");
+       var orgDetailFileInput = document.getElementById("images_container");
+       // 파일이 선택되었는지 확인
+      if ((fileInput.files.length === 0 && orgDetailFileInput.src === "") ) {
+           alert("매장 상세 사진 파일을 수정하세요.");
+           return;
+       }
+       
+       
+       if (!$("input[name='restoType']:checked").length) 
+       {
+          alert("매장 타입을 체크하세요.");
+          return;
+       }
+       
+       if (!$("input[name='restoMenuType']:checked").length)  
+       {
+          alert("음식타입을 체크하세요.");
+          return;
+       }
+       
+       
+       
+       //여기서부터 menu 시작 
+    
+
+           for (var i = 1 ; i < menuCount ; i++) 
+           { 
+             
+             
+                  var menuNameInput = document.getElementById("menuName" + i);
+                  var menuPriceInput = document.getElementById("menuPrice" + i);
+                  var menuDescriptionInput = document.getElementById("menuDescription" + i);
+                  var menuFileInput = document.getElementById("menuFile" + i);
+                  var orgDetailFileInput = document.getElementById("existingMenuImage" + i);
+               
+
+               if (menuNameInput.value === "" || menuNameInput.value === null) {
+                   alert("메뉴 이름을 입력하세요.");
+                   menuNameInput.focus();
+                   return false;
+               }
+
+               if (menuPriceInput.value === "" || menuPriceInput.value === null) {
+                   alert("메뉴 가격을 입력하세요.");
+                   menuPriceInput.focus();
+                   return false;
+               }
+
+               if (menuDescriptionInput.value === "" || menuDescriptionInput.value === null) {
+                   alert("메뉴 설명을 입력하세요.");
+                   menuDescriptionInput.focus();
+                   return false;
+               }
+
+               if (menuFileInput.files.length === 0 && orgDetailFileInput.src === "") {
+                   alert("메뉴 사진 파일을 선택하세요.");
+                   return false;
+               }
+               
+           }
+     
+
+           if ($("input[name='restoOpen']").val() === "") {
+               alert("오픈 시간을 입력하세요.");
+               return;
+           }
+
+           if ($("input[name='restoClose']").val() === "") {
+               alert("마감 시간을 입력하세요.");
+               return;
+           }
+        
+      
+         
+      
+      
+  
       //휴무일 하루, 이틀일 때 처리
       var selectRestoOff = [];
       $(".restoOff input:checked").each(function() {
@@ -128,10 +269,10 @@ $("#menuCount").val(menuCount);
       },
       success:function(response)
       {
-         	if(response.code == 0)
-           	{ // insert 성공
-             	alert("매장 수정에 성공하셨습니다.");
-              	location.href = "/resto/restoView?rSeq=" + rSeq;
+            if(response.code == 0)
+              { // insert 성공
+                alert("매장 수정에 성공하셨습니다.");
+                 location.href = "/resto/restoView?rSeq=" + rSeq;
            }
            else if(response.code == 400)
            { 
@@ -203,6 +344,8 @@ $("#menuCount").val(menuCount);
                 document.getElementById('postcode').value = data.zonecode;
                 document.getElementById("roadAddress").value = addr2;
                  
+                console.log($("#roadAddress").val());
+                
                  // 커서를 상세주소 필드로 이동한다.
                 $("#detailAddress").focus();
               }
@@ -241,35 +384,73 @@ $("#menuCount").val(menuCount);
   
 
 
+    function setDetailImage(event) {
+          const input = event.target;
+          const imageContainer = document.getElementById('images_container');
+
+          // 기존의 미리보기 이미지 모두 삭제
+          while (imageContainer.firstChild) {
+              imageContainer.removeChild(imageContainer.firstChild);
+          }
+
+          for (let i = 0; i < input.files.length; i++) {
+              const file = input.files[i];
+              const reader = new FileReader();
+
+              reader.onload = function (e) {
+                  // 미리보기를 위한 이미지 태그 생성
+                  const newImage = document.createElement('img');
+                  newImage.src = e.target.result;
+                  newImage.alt = '미리보기 이미지';
+                  newImage.className = 'imageTag';
+
+                  newImage.style.maxWidth = '20%';
+                  newImage.style.maxHeight = '20%';
+                  // 이미지를 컨테이너에 추가
+                  imageContainer.appendChild(newImage);
+              };
+
+              reader.readAsDataURL(input.files[i]);
+          }
+       }
+
  
-  function setDetailImage(event) {
-       const input = event.target;
-       const imageContainer = document.getElementById('images_container');
+    
+    function setMenuImage(event, menuIndex) {
+        console.log(menuIndex);
 
-       // 기존의 미리보기 이미지 삭제 (기존 이미지가 있다면)
-       const existingDetailImage = document.getElementById('existingDetailImage');
-       if (existingDetailImage) {
-           imageContainer.removeChild(existingDetailImage);
-       }
+        const input = event.target;
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
 
-       for (let i = 0; i < input.files.length; i++) {
-           const file = input.files[i];
-           const reader = new FileReader();
+            reader.onload = function (e) {
+                // 새로운 이미지 생성
+                const newImage = document.createElement('img');
+                newImage.src = e.target.result;
+                newImage.alt = '미리보기 이미지';
+                newImage.className = 'imageTag';
+                newImage.style.maxWidth = '20%';
+                newImage.style.maxHeight = '20%';
+                // 기존 이미지 대체
+                const existingImage = document.getElementById("existingMenuImage"+menuIndex);
+                if (existingImage) {
+                    existingImage.parentNode.replaceChild(newImage, existingImage);
+                } else {
+                    // 기존 이미지가 없다면 추가
+                    const imageContainer = document.getElementById("menu_images_container"+menuIndex);
+                    imageContainer.appendChild(newImage);
+                }
+            };
 
-           reader.onload = function (e) {
-               // 미리보기를 위한 이미지 태그 생성
-               const newImage = document.createElement('img');
-               newImage.src = e.target.result;
-               newImage.alt = '미리보기 이미지';
-               newImage.className = 'imageTag';
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 
-               // 이미지를 컨테이너에 추가
-               imageContainer.appendChild(newImage);
-           };
 
-           reader.readAsDataURL(input.files[i]);
-       }
-   }
+        
+    
+
+
     </script>
 </head>
 <%@ include file="/WEB-INF/views/include/navigation.jsp" %>
@@ -427,9 +608,9 @@ body {
             <input type="text" class="menuName" id="menuName${loop.index + 1}" name="menuName${loop.index + 1}" value="${menu.menuName}" placeholder="메뉴명 입력" />
             <input type="text" class="menuPrice" id="menuPrice${loop.index + 1}" name="menuPrice${loop.index + 1}" value="${menu.menuPrice}" placeholder="가격 입력" />
             <input type="text" class="menuDescription" id="menuDescription${loop.index + 1}" name="menuDescription${loop.index + 1}" value="${menu.menuContent}" placeholder="메뉴 설명 입력" />    
-            <input type="file" class="menuFile" id="menuFile${loop.index + 1}" name="menuFile${loop.index + 1}" class="form-control mb-2" placeholder="파일을 선택하세요."  style="margin-top:5px;" />    
-            <div id="images_container">
-                <img src="/resources/upload/${menu.menuFileList.fileName}" alt="기존 메뉴 이미지" id="existingDetailImage" name="existingDetailImage" class="imageTag" style="max-width: 20%; max-height: 20%;">
+            <input type="file" class="menuFile" id="menuFile${loop.index + 1}" name="menuFile${loop.index + 1}" class="form-control mb-2" placeholder="파일을 선택하세요." onchange="setMenuImage(event, ${loop.index + 1})" style="margin-top:5px;" />    
+            <div id="menu_images_container${loop.index + 1}">
+                <img src="/resources/upload/${menu.menuFileList.fileName}" alt="기존 메뉴 이미지" id="existingMenuImage${loop.index + 1}" name="existingMenuImage${loop.index + 1}" class="imageTag" style="max-width: 20%; max-height: 20%;">
             </div>
             <br> <input type="button" value="메뉴삭제하기" class="menuDeleteButton"  id="menuDelete${loop.index + 1}" name="menuDelete${loop.index + 1}"  style="background-color: #000000; margin-top:10px; color: #FFFFFF;" data-menu-index="${loop.index+1}" />
           <input type="hidden" class="menuSeq" value="${menu.menuSeq}" name="menuSeq${loop.index+1}"/>

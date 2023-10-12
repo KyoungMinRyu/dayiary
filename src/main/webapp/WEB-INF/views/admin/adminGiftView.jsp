@@ -1332,18 +1332,18 @@ function fn_ajaxRequest(url, formData, returnType, msg)
         		let orderTotalCount = 0;
         		if(json.length > 0)
         		{
-        			let popupWindow = window.open("", "restoDetailRevenue", "width=600,height=700");
+        			let popupWindow = window.open("", fn_getPopUpName(), "width=1000,height=800px;");
 	                popupWindow.document.open();
-	                popupWindow.document.write("<html><head><title>매출 정보</title>");
+	                popupWindow.document.write("<html><head><title>선물 매출액 추이</title>");
 
 	                popupWindow.document.write('<style>');
-	                popupWindow.document.write('.container { max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }');
-	                popupWindow.document.write('.header { font-size: 24px; font-weight: bold; margin-bottom: 20px; white-space: nowrap;}');
+	                popupWindow.document.write('body { background-color: #fffbf4; }');           
+	                popupWindow.document.write('.container { border: 2px solid #000; border-radius: 10px; max-width: 1000px; margin: 0 auto; font-size: 24px; padding: 20px; font-family: Arial, sans-serif; }');
+	                popupWindow.document.write('.header { font-size: 24px; font-weight: bold; margin-bottom: 20px;  text-align: center;}');
 	                popupWindow.document.write('.delivery-info { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }');
 	                popupWindow.document.write('.info-title { font-weight: bold;}');
-	                popupWindow.document.write('.info-data { margin-left: 10%; display: inline-block;  }'); 
-	                popupWindow.document.write('.info-none { display: inline-block; width: 150px;}'); 
-
+	                popupWindow.document.write('.info-data { margin-left: 3%; display: inline-block;  }'); 
+	                popupWindow.document.write('.info-none { display: inline-block;}'); 
 	                popupWindow.document.write('</style>');
 
 	                popupWindow.document.write('</head><body style="background: #fffbf4;">');
@@ -1353,14 +1353,15 @@ function fn_ajaxRequest(url, formData, returnType, msg)
 	                popupWindow.document.write('<div class="basic-info">');
 
 	                popupWindow.document.write('<div class="info-data-container" style="display: flex;">');
-	                popupWindow.document.write('<div class="header">상품명 : </div> <span class="header">&nbsp;' + json[0].pName + '</span>');
-	                popupWindow.document.write('</div><br>');
+	                
+	                popupWindow.document.write('<span class="header">&nbsp;' + json[0].pName + '</span>');
+	                popupWindow.document.write('</div>');
 	                
 	                for(let i = 0; i < json.length; i++)
 	                {
 
 		                popupWindow.document.write("<div style='border: 2px solid #000; border-radius: 5px; padding: 10px;'>");
-		                popupWindow.document.write(json[i].giftRegDate);
+		                popupWindow.document.write(json[i].giftRegDate.slice(0,4) + "년 " +json[i].giftRegDate.slice(4) + "월");
 		                popupWindow.document.write('<div class="info-data-container">');
 		                popupWindow.document.write('<div class="info-none">당월 총 구매건수 : </div> <span id="sender" class="info-data">' + json[i].orderTotalCnt.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '건</span>');
 		                popupWindow.document.write('</div>');
@@ -1408,6 +1409,30 @@ function fn_ajaxRequest(url, formData, returnType, msg)
     });
 }
 
+function fn_getPopUpName()
+{
+	return "Detail" + Date.now();	
+}
+
+function fn_deleteReview(orderSeq)
+{
+	if(orderSeq != null && orderSeq != "")
+	{
+		if(confirm("사용자가 등록한 리뷰를 삭제하시겠습니까?"))
+		{
+			let formData = 
+	        {
+				orderSeq: orderSeq
+	        };
+			
+			fn_ajaxRequest("/admin/deleteReview", formData, 0, "리뷰가 삭제되었습니다.");
+		}	
+	}
+	else
+	{
+		return;
+	}
+}
 </script>
 </head>
 <body style="">
@@ -1487,9 +1512,13 @@ function fn_ajaxRequest(url, formData, returnType, msg)
 	                		<a class="nav-link active" id="top-home-tab" data-toggle="tab" href="#top-home" role="tab" aria-selected="true" style="font-size:18px;">상세 설명</a>
 	                        <div class="material-border"></div>
 	                    </li>
+	                    <li class="nav-item-qna">
+	                   		<a class="nav-link active text-danger" id="review-tab" style="cursor: pointer; font-size:18px;" role="tab" aria-selected="true">상품후기</a>
+	                   		<div class="material-border"></div>
+	               		</li>
 	                </ul>
 	             	<div class="tab-content nav-material" id="top-tabContent">
-	               		<h4 style="color: black; margin-left: 5px; margin-top: 5px;">상품 상세 사진</h4><br>
+	               		<h3 style="color: black; margin-left: 5px; margin-top: 5px;">상품 상세 사진</h3><br>
 	               		<div style="display: flex; align-items: center; flex-direction: column;">
 		                 	<c:forEach var="giftFile" items="${giftAdd.giftFileList}" varStatus="status">
 							    <c:if test="${!status.first}">
@@ -1506,11 +1535,65 @@ function fn_ajaxRequest(url, formData, returnType, msg)
 							</c:forEach>
 	               		</div>
 	              	</div>
+	              	<h3 style="color: black; margin-left: 5px; margin-top: 20px;">리뷰 관리</h3><br>
+		            <c:choose>
+						<c:when test="${!empty reviewList}">
+							<c:forEach var="review" items="${reviewList}" varStatus="status">                      
+								<ul class="list-unstyled" id="_reviewList">
+								    <li class="media" style="margin-bottom : 30px;" >
+								        <img src="${review.fileName}" style="width: 75px; height:75px; object-fit:cover; border-radius:20px;" class="mr-3" alt="avata">
+								        <div class="media-body" style="display: flex; justify-content: space-between; align-items: center;">
+								            <div>
+								                <h5 class="mt-0 mb-1" style="font-weight: bold; display: inline;">${review.userNickName}(${review.userId})</h5>
+								                <b style="margin-top: -15px; margin-left:10px; color: lightgray; display: inline;">${review.regDate}</b>
+								                <br />
+								                <div class="review" style="display:flex;">              
+								                  	<c:set var="starCount" value="${review.reviewScore}" />
+								      				<c:choose>
+								                      	<c:when test="${(starCount % 2) eq 0}"> <!-- 별점이 짝수일 경우 (꽉찬별만 있을때) -->
+								                         	<c:forEach var="i" begin="1" end="${starCount / 2}">
+								                          		<img src="/resources/images/fullStar.png" style="width:25px; height:25px; border:none !important;" alt="Full Star">
+								                          	</c:forEach>
+								                          	<c:forEach var="i" begin="1" end="${5 - (starCount / 2)}">
+								                          		<img src="/resources/images/emptyStar.png" style="width:25px; height:25px; border:none !important;" alt="Empty Star">
+								                          	</c:forEach>
+								                      	</c:when>
+								                      	<c:otherwise>
+								                         	<c:forEach var="i" begin="1" end="${starCount / 2}"> <!-- 별점이 홀수일 경우 (반개별 필요) -->
+								                          		<img src="/resources/images/fullStar.png" style="width:25px; height:25px; border:none !important;" alt="Full Star">
+								                          	</c:forEach>
+								                          	<img src="/resources/images/halfStar.png" style="width:25px; height:25px; border:none !important;" alt="Half Star">
+								                          	<c:forEach var="i" begin="1" end="${5 - (starCount / 2)}">
+								                          		<img src="/resources/images/emptyStar.png" style="width:25px; height:25px; border:none !important;" alt="Empty Star">
+								                          	</c:forEach>
+								                      	</c:otherwise>
+								                  	</c:choose>
+								               </div>     
+								               <b id="commentContent" style="font-size: 17px; margin-top: 3px; max-width:1000px;" value="${review.reviewContent}">${review.reviewContent}</b>
+								            </div>
+								            <div>
+								            	<img alt="" src="/resources/images/X_icon.png" style="width: 50px; height: 50px;" onclick="fn_deleteReview('${review.orderSeq}')">
+								            </div>
+								        </div>
+								    </li>
+								</ul>
+					        </c:forEach>
+						</c:when>
+						<c:otherwise>
+							<h3>작성된 리뷰가 없습니다.</h3>
+						</c:otherwise>
+					</c:choose> 
 	            </div>
 	        </div>
 	    </div>
 	</section>
 </div>
-   
+	
+	<script>
+	document.getElementById('review-tab').addEventListener('click', function() 
+	{
+	    document.getElementById('_reviewList').scrollIntoView({behavior: 'smooth'});
+	});
+	</script>
 </body>
 </html>

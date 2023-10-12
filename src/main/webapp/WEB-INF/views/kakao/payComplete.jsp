@@ -149,9 +149,9 @@
             width: 80px;
         }
         #product > .complete > .info table tr > td div {
-            float: left;
             margin-left: 10px;
             text-align: left;
+            overflow: hidden;
         }
         #product > .complete > .info table tr > td div > p {
             text-align: left;

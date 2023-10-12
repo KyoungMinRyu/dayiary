@@ -51,6 +51,9 @@ public class RestoInfo implements Serializable {
 
    // 시간당 최대 예약 인원수
    private int limitPerson;
+   
+   private int reviewScore;
+   private int reviewCount;
 
    public RestoInfo() {
       rSeq = "";
@@ -86,9 +89,34 @@ public class RestoInfo implements Serializable {
 
       cnt = 0;
       limitPerson = 0;
+      
+      reviewScore = 0;
+      reviewCount = 0;
+   }
+   
+
+   public int getReviewScore() {
+   return reviewScore;
    }
 
-   public int getLimitPerson() {
+
+   public void setReviewScore(int reviewScore) {
+      this.reviewScore = reviewScore;
+   }
+
+
+public int getReviewCount() {
+   return reviewCount;
+}
+
+
+public void setReviewCount(int reviewCount) {
+   this.reviewCount = reviewCount;
+}
+
+
+
+public int getLimitPerson() {
       return limitPerson;
    }
 

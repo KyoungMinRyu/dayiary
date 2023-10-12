@@ -1,6 +1,7 @@
 package com.icia.web.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Anniversary implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -21,6 +22,8 @@ public class Anniversary implements Serializable {
 	private String sharedStatus;
 	private String orderSeq;
 
+	private List<String> sharedAnniversaryProfileList;
+	
 	public Anniversary() {
 		anniversarySeq = 0;
 		userId = "";
@@ -36,8 +39,17 @@ public class Anniversary implements Serializable {
 		userPh = "";
 		sharedStatus = "";
 		orderSeq = "";
+		sharedAnniversaryProfileList = null;
 	}
 	
+	public List<String> getSharedAnniversaryProfileList() {
+		return sharedAnniversaryProfileList;
+	}
+
+	public void setSharedAnniversaryProfileList(List<String> sharedAnniversaryProfileList) {
+		this.sharedAnniversaryProfileList = sharedAnniversaryProfileList;
+	}
+
 	public String getOrderSeq() {
 		return orderSeq;
 	}

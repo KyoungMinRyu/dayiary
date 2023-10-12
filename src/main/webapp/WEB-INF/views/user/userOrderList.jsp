@@ -10,8 +10,8 @@
 html, body 
 {
     overflow: hidden; /* 스크롤 비활성화 */
-    height: 100%; /* 화면 전체 높이로 설정 */
-    background-color: #565656;
+    height: 100%; /* 화면 전체 높이로 설정 */ 
+    background-color: #fffbf4 !important;
     
 }
 
@@ -32,6 +32,7 @@ html, body
     width: 100%;
     display: flex;
     border-radius: 10px; /* .itemBox의 모서리를 둥글게 설정 */
+    font-size: 18px;
 }
 
 .listType input[type="radio"] {
@@ -618,12 +619,17 @@ function fn_getProductList(url, formData)
         	searchType = response.data.searchType;
         	searchValue = response.data.searchValue;
         	let json = response.data.list;
+        	let today = new Date();
+        	let regDate = null;
+        	let between = 0;
         	let makeTag = "";
         	let show = "";
         	for(let i = 0; i < json.length; i++)
         	{
+        		regDate = new Date(json[i].regDate.slice(0, 10));
+            	between = (today - regDate)/(1000 * 60 * 60 * 24);
         		makeTag = 
-        				"<div class='listItem'><a href='/resto/restoView?rSeq=" + json[i].productSeq + "'>" +
+        				"<div class='listItem'><a href='/gift/giftView?productSeq=" + json[i].productSeq + "'>" +
         				"<div class='itemBox'><img class='itemImg' src='/resources/upload/" + json[i].fileName + "'>" +
         				"</div></a><div class='itemText'><p class='texts'>" + json[i].regDate;
         				
@@ -635,7 +641,7 @@ function fn_getProductList(url, formData)
         		{
         			if(json[i].deliveryStatus == "0")
         			{
-            			makeTag += "&nbsp;결재완료</p>";
+            			makeTag += "&nbsp;결제완료</p>";
         			}
         			else if(json[i].deliveryStatus == "1")
         			{
@@ -672,16 +678,32 @@ function fn_getProductList(url, formData)
         			{
         				if(json[i].reviewed == "1")
 						{
-        					makeTag +=
-							    "<div class='btnBox'><input onclick=\"fn_movePage('" + json[i].productSeq + "', 1)\" type='button' value='다시구매하기' class='itemBtns' style='margin-left: 10px;'>" +
-							    "<input onclick=\"fn_deliveryTracking('" + json[i].orderSeq + "')\" type='button' value='배송조회' class='itemBtns'></div>";
+        					if(between > 28)
+        					{
+            					makeTag +=
+    							    "<div class='btnBox'><input onclick=\"fn_movePage('" + json[i].productSeq + "', 1)\" type='button' value='다시구매하기' class='itemBtn' style='margin-left: 10px;'></div>";       						
+        					}
+        					else
+        					{
+            					makeTag +=
+    							    "<div class='btnBox'><input onclick=\"fn_movePage('" + json[i].productSeq + "', 1)\" type='button' value='다시구매하기' class='itemBtns' style='margin-left: 10px;'>" +
+    							    "<input onclick=\"fn_deliveryTracking('" + json[i].orderSeq + "')\" type='button' value='배송조회' class='itemBtns'></div>";
+        					}
 						}
 						else
 						{
-							makeTag +=
-							    "<div class='btnBox'><input type='button' value='리뷰쓰기' class='itemBtns' onclick=\"fn_writeReview('" + json[i].orderSeq + 
-							    "')\"><input onclick=\"fn_deliveryTracking('" + json[i].orderSeq + "')\" type='button' value='배송조회' class='itemBtns'></div>";
-
+							if(between > 28)
+        					{
+								makeTag +=
+								    "<div class='btnBox'><input onclick=\"fn_movePage('" + json[i].productSeq + "', 1)\" type='button' value='다시구매하기' class='itemBtns' style='margin-left: 10px;'>" +
+								    "<input type='button' value='리뷰쓰기' class='itemBtns' onclick=\"fn_writeReview('" + json[i].orderSeq + "')\"></div>";
+        					}
+							else
+							{
+								makeTag +=
+								    "<div class='btnBox'><input type='button' value='리뷰쓰기' class='itemBtns' onclick=\"fn_writeReview('" + json[i].orderSeq + 
+								    "')\"><input onclick=\"fn_deliveryTracking('" + json[i].orderSeq + "')\" type='button' value='배송조회' class='itemBtns'></div>";
+							}
 						}
         			}
 				}
@@ -721,11 +743,12 @@ function fn_deliveryTracking(orderSeq)
 					let jsonData = JSON.parse(response.data.detail);
 					let deliveryTracking = response.data.deliveryTracking;
 					console.log(deliveryTracking);
-					let popupWindow = window.open("", "DeliveryProgressPopup", "width=800,height=700");
+					let popupWindow = window.open("", fn_getPopUpName(), "width=800,height=700");
 	                popupWindow.document.open();
 	                popupWindow.document.write("<html><head><title>배송 정보</title>");
 
 	                popupWindow.document.write('<style>');
+	                popupWindow.document.write('body { background-color: #fffbf4; }');   
 	                popupWindow.document.write('.container { max-width: 800px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }');
 	                popupWindow.document.write('.header { font-size: 24px; font-weight: bold; margin-bottom: 20px;  text-align: center;}');
 	                popupWindow.document.write('.delivery-info { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }');
@@ -898,9 +921,16 @@ function fn_getRestoList(url, formData)
         				"<p class='texts impact'>예약인원 : " + json[i].reservPerson.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "명</p>" +
         				"<p class='texts impact'>예약일 : " + json[i].reservDate + " " + json[i].reservTime + "</p>" +
         				"<p class='texts impact' style='margin-bottom: 5px;'>결제액 : " + json[i].totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원</p>" +
-        				"<div class='textBox'><a class='texts atext' onclick=\"fn_getRestoOrderDetail('" + json[i].orderSeq + "')\">&nbsp;주문상세</a>" + 
-        				"<a class='texts atext' href='/inquiry/inquiryWriteForm?afterSelected=1&orderSeq=" + json[i].orderSeq + "' style='margin-left: 75%;'>문의하기</a></div>";
+        				"<div class='textBox'>";
     			
+   				if(json[i].status != "W")
+           		{
+           			makeTag += "<a class='texts atext' onclick=\"fn_getGiftOrderDetail('" + json[i].orderSeq + "')\">&nbsp;주문상세</a>" + 
+           						"<a class='texts atext' href='/inquiry/inquiryWriteForm?afterSelected=3&orderSeq=" + json[i].orderSeq + "' style='margin-left: 75%;'>문의하기</a>";
+           		}
+       			
+           		makeTag += "</div>";
+        				
         		if(json[i].status == "W")
     	        {
 					makeTag += "<input type='button' value='결제하기' class='itemBtn'>";    	        
@@ -971,17 +1001,18 @@ function fn_getGiftOrderDetail(orderSeq)
 	        	if(response.code == 0)
 	        	{
 	        		let jsonData = response.data;	
-					let popupWindow = window.open("", "DeliveryProgressPopup", "width=800,height=700");
+					let popupWindow = window.open("", fn_getPopUpName(), "width=1000,height=800px;");
 	                popupWindow.document.open();
 	                popupWindow.document.write("<html><head><title>주문 정보</title>");
 
 	                popupWindow.document.write('<style>');
-	                popupWindow.document.write('.container { max-width: 800px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }');
+	                popupWindow.document.write('body { background-color: #fffbf4; }');           
+	                popupWindow.document.write('.container { border: 2px solid #000; border-radius: 10px; max-width: 1000px; margin: 0 auto; font-size: 24px; padding: 20px; font-family: Arial, sans-serif; }');
 	                popupWindow.document.write('.header { font-size: 24px; font-weight: bold; margin-bottom: 20px;  text-align: center;}');
 	                popupWindow.document.write('.delivery-info { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }');
 	                popupWindow.document.write('.info-title { font-weight: bold;}');
-	                popupWindow.document.write('.info-data { margin-left: 10%; display: inline-block;  }'); 
-	                popupWindow.document.write('.info-none { display: inline-block; width: 150px;}'); 
+	                popupWindow.document.write('.info-data { margin-left: 3%; display: inline-block;  }'); 
+	                popupWindow.document.write('.info-none { display: inline-block;}'); 
 
 	                popupWindow.document.write('</style>');
 
@@ -991,14 +1022,14 @@ function fn_getGiftOrderDetail(orderSeq)
 
 	                popupWindow.document.write('<div class="basic-info">');
 
-	                popupWindow.document.write('<div class="info-data-container">');
+	                popupWindow.document.write('<div class="info-data-container"');
 	                if(jsonData.status == "Y")
 	                {
-		                popupWindow.document.write('<div class="info-none"><h3>구매 완료</h3></div>');
+		                popupWindow.document.write('<div class="info-none"><h2 style="margin: 0px;">구매 완료</h2></div>');
 	                }
 	                else
 	                {
-		                popupWindow.document.write('<div class="info-none"><h3>구매 취소</h3></div></span>');
+		                popupWindow.document.write('<div class="info-none"><h2 style="margin: 0px;">구매 취소</h2></div></span>');
 	                }
 	                
 	                popupWindow.document.write('</div>');
@@ -1008,7 +1039,7 @@ function fn_getGiftOrderDetail(orderSeq)
 	                popupWindow.document.write('</div>');
 
 	                popupWindow.document.write('<div class="info-data-container">');
-	                popupWindow.document.write('<div class="info-none">결제일 : </div> <span id="carrier" class="info-data">' + jsonData.regDate + '</span>');
+	                popupWindow.document.write('<div class="info-none">결제일 : </div> <span id="carrier" class="info-data">' + jsonData.regDate.slice(0, 10).replaceAll("-", ".") + '</span>');
 	                popupWindow.document.write('</div>');
 
 	                popupWindow.document.write('<div class="info-data-container">');
@@ -1037,7 +1068,7 @@ function fn_getGiftOrderDetail(orderSeq)
 	                
 				   	popupWindow.document.write('</div><br>');
 
-	                popupWindow.document.write('<img style="width: 100%; height: 100%" src="/resources/upload/' + jsonData.fileName + '">');
+	                popupWindow.document.write('<img style="width: 100%; height: 100%; border-radius: 10px; " src="/resources/upload/' + jsonData.fileName + '">');
 	                popupWindow.document.write("</body></html>");
 	                popupWindow.document.close()
 	        	}
@@ -1052,6 +1083,11 @@ function fn_getGiftOrderDetail(orderSeq)
 	        }
 	    });
 	}
+}
+
+function fn_getPopUpName()
+{
+	return "Detail" + Date.now();	
 }
 
 function fn_getRestoOrderDetail(orderSeq)
@@ -1073,18 +1109,20 @@ function fn_getRestoOrderDetail(orderSeq)
 	        	if(response.code == 0)
 	        	{
 					let jsonData = response.data;
-					console.log(jsonData);	
-					let popupWindow = window.open("", "DeliveryProgressPopup", "width=800,height=700");
+					let popupWindow = window.open("", fn_getPopUpName(), "width=1000,height=800");
+					
 	                popupWindow.document.open();
 	                popupWindow.document.write("<html><head><title>주문 정보</title>");
 
 	                popupWindow.document.write('<style>');
-	                popupWindow.document.write('.container { max-width: 800px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }');
+	                popupWindow.document.write('body { background-color: #fffbf4; }');
+	                popupWindow.document.write('.container { border: 2px solid #000; border-radius: 10px; max-width: 1000px; margin: 0 auto; font-size: 24px; padding: 20px; font-family: Arial, sans-serif; }');
 	                popupWindow.document.write('.header { font-size: 24px; font-weight: bold; margin-bottom: 20px;  text-align: center;}');
 	                popupWindow.document.write('.delivery-info { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }');
 	                popupWindow.document.write('.info-title { font-weight: bold;}');
-	                popupWindow.document.write('.info-data { margin-left: 10%; display: inline-block;  }'); 
-	                popupWindow.document.write('.info-none { display: inline-block; width: 150px;}'); 
+	                popupWindow.document.write('.info-data { margin-left: 3%; display: inline-block;  }'); 
+	                popupWindow.document.write('.info-none { display: inline-block;}'); 
+
 
 	                popupWindow.document.write('</style>');
 
@@ -1097,12 +1135,12 @@ function fn_getRestoOrderDetail(orderSeq)
 	                popupWindow.document.write('<div class="info-data-container">');
 	                if(jsonData.status == "Y")
 	                {
-		                popupWindow.document.write('<div class="info-none"><h3>예약중</h3></div>');
+		                popupWindow.document.write('<div class="info-none"><h2 style="margin: 0px;">예약중</h2></div>');
 
 	                }
 	                else
 	                {
-		                popupWindow.document.write('<div class="info-none"><h3>예약취소</h3></div></span>');
+		                popupWindow.document.write('<div class="info-none"><h2 style="margin: 0px;">예약취소</h2></div></span>');
 
 	                }
 	                
@@ -1113,7 +1151,7 @@ function fn_getRestoOrderDetail(orderSeq)
 	                popupWindow.document.write('</div>');
 
 	                popupWindow.document.write('<div class="info-data-container">');
-	                popupWindow.document.write('<div class="info-none">결제일 : </div> <span id="carrier" class="info-data">' + jsonData.regDate + '</span>');
+	                popupWindow.document.write('<div class="info-none">결제일 : </div> <span id="carrier" class="info-data">' + jsonData.regDate.slice(0, 10).replaceAll	("-", ".") + '</span>');
 	                popupWindow.document.write('</div>');
 
 	                popupWindow.document.write('<div class="info-data-container">');
@@ -1137,13 +1175,13 @@ function fn_getRestoOrderDetail(orderSeq)
 	                popupWindow.document.write('<div class="info-none">예약금 : </div> <span id="sender" class="info-data">' + jsonData.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원</span>');
 	                popupWindow.document.write('</div>');
 	                popupWindow.document.write('<div class="info-data-container">');
-	                popupWindow.document.write('<div class="info-none">예약일 : </div> <span id="sender" class="info-data">' + jsonData.reservDate + '</span>');
+	                popupWindow.document.write('<div class="info-none">예약일 : </div> <span id="sender" class="info-data">' + jsonData.reservDate + " " + jsonData.reservTime + '</span>');
 	                popupWindow.document.write('</div>');
 	                
-				   	popupWindow.document.write('</div><br>');
+				   	popupWindow.document.write('</div></div><br>');
 
-	                popupWindow.document.write('<img style="width: 100%; height: 100%" src="/resources/upload/' + jsonData.fileName + '">');
-	                popupWindow.document.write("</body></html>");
+				   	popupWindow.document.write('<img style="width: 100%; height: 100%; border-radius: 10px;" src="/resources/upload/' + jsonData.fileName + '">');
+		            popupWindow.document.write("</body></html>");
 	                popupWindow.document.close();
 	        	}
 	        	else
@@ -1158,6 +1196,64 @@ function fn_getRestoOrderDetail(orderSeq)
 	    });
 	}
 }
+
+function fn_movePayPage(restoName, orderPerson, totalAmount, orderDate, orderTime, orderSeq) 
+{
+   
+   	var form = document.getElementById("restoPay");
+    
+	form.querySelector('input[name="restoName"]').value = restoName;
+    form.querySelector('input[name="orderPerson"]').value = orderPerson;
+    form.querySelector('input[name="totalAmount"]').value = totalAmount;
+    form.querySelector('input[name="orderDate"]').value = orderDate;
+    form.querySelector('input[name="orderTime"]').value = orderTime;
+    form.querySelector('input[name="orderSeq"]').value = orderSeq;
+    
+   	var win = window.open('', 'pay', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=540,height=700,left=650,top=150');
+   	document.restoPay.action = '/kakao/pay'; 
+   	document.restoPay.target = 'pay';
+   	document.restoPay.submit();
+   
+}
+
+function payComplete(orderSeq) //결제 성공했으니 결제대기중(W)->결제완료(Y) 상태로 업데이트
+{
+    $.ajax({
+        type:"POST",
+        url:"/resto/restoReservationUpdate",
+        data:
+        {
+          orderSeq: orderSeq
+        },
+        success:function(response)
+        {
+        	if(response.code == 0)
+           	{
+            	document.restoPay.action = "/resto/restoReserv";
+              	document.restoPay.target = "_self";
+              	document.restoPay.submit();
+          	}
+           	else if(response.code == 400)
+           	{
+              	alert("파라미터 값이 올바르지 않습니다.");
+           	}
+           	else if(response.code == 404)
+           	{
+              	alert("주문정보를 찾을 수 없습니다.");
+              	location.reload();
+           	}
+           	else
+           	{
+              	alert("알 수 없는 오류가 발생하였습니다.");
+           	}
+		},
+        error:function(xhr, status, error)
+        {
+           icia.common.error(error);
+        }    
+	});
+}
+
 </script>
 </head>
 <body>
@@ -1191,7 +1287,7 @@ function fn_getRestoOrderDetail(orderSeq)
 
 <div class="listContainer">
 	<div>
-		<h2 style="color: white;">&nbsp;&nbsp;&nbsp;주문 내역</h2>
+		<h2 style="color: black;">&nbsp;&nbsp;&nbsp;주문 내역</h2>
 	</div>
 	
 	<div class="searchBox">
@@ -1209,7 +1305,7 @@ function fn_getRestoOrderDetail(orderSeq)
 	        </div>
 	    </div> 
 	     <div class="selectBox">
-        	<select name="_searchType" id="_searchType" class="" style="width: auto; height: 100%">
+        	<select name="_searchType" id="_searchType" class="" style="width: auto; height: 100%;">
         		<c:choose>
         			<c:when test="${listType eq '0'}">
 			            <option value="0" <c:if test='${searchType eq "0"}'>selected</c:if>>전체</option>
@@ -1258,13 +1354,14 @@ function fn_getRestoOrderDetail(orderSeq)
 							<p class="texts impact">예약일 : ${resto.reservDate} ${resto.reservTime}</p>
 							<p class="texts impact" style="margin-bottom: 5px;">결제액 : <fmt:formatNumber value="${resto.totalPrice}" pattern="#,###"/>원</p>
 							<div class="textBox">
-								<a class="texts atext" onclick="fn_getRestoOrderDetail('${resto.orderSeq}')">&nbsp;주문상세</a>
-								<a class="texts atext" href="/inquiry/inquiryWriteForm?afterSelected=1&orderSeq=${resto.orderSeq}" style="margin-left: 75%;">문의하기</a>
+								<c:if test="${resto.status ne 'W'}">
+									<a class="texts atext" onclick="fn_getRestoOrderDetail('${resto.orderSeq}')">&nbsp;주문상세</a>
+									<a class="texts atext" href="/inquiry/inquiryWriteForm?afterSelected=1&orderSeq=${resto.orderSeq}" style="margin-left: 75%;">문의하기</a>
+								</c:if>
 							</div>
 							<c:choose>
 								<c:when test="${resto.status eq 'W'}">
-									<input onclick="" type="button" value="결제하기" class="itemBtn">									
-								</c:when>
+									<input type="button" value="결제하기" class="itemBtn" onclick="fn_movePayPage('${resto.restoName}', ' ${resto.reservPerson}', '${resto.totalPrice}', '${resto.reservDate}', '${resto.reservTime}', '${resto.orderSeq}')">								</c:when>
 								<c:when test="${resto.status eq 'N'}">								
 								</c:when>
 								<c:otherwise>
@@ -1295,6 +1392,13 @@ function fn_getRestoOrderDetail(orderSeq)
 		</div>
     </div>
 </div>
-
+<form id="restoPay" name="restoPay" target="pay">
+     <input type="hidden" name="restoName" value="">
+     <input type="hidden" name="orderPerson" value="">
+     <input type="hidden" name="totalAmount" value="">
+     <input type="hidden" name="orderDate" value="">
+     <input type="hidden" name="orderTime" value="">
+     <input type="hidden" name="orderSeq" value="">
+</form>
 </body>
 </html>

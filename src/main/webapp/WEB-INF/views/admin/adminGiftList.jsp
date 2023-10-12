@@ -66,16 +66,17 @@
 {
     clear: both;
 }
-.list-group-item-text
-{
-    margin: 0 0 11px;
-}
 
 .bottomFixed
 {
 	position: fixed;
 	bottom: 0;
     width: 100%;
+}
+
+.list-group-item-text
+{
+	font-size: 18px; 	
 }
 </style>
 
@@ -219,7 +220,7 @@ function getGiftTotalRevenueList(formData, listType)
         				makeTag = 
         				    "<div class='item col-xs-4 col-lg-4' onclick=\"fn_giftRevenueDetailView('" + data.productSeq + "')\">" +
         				    "<div class='thumbnail'><img class='group list-group-image' src='/resources/upload/" + data.fileName + "' alt='' style='width: 500px; height: 350px;'/>" +
-        				    "<div class='caption'><h4 class='group inner list-group-item-heading' style='font-size: 14px; font-weight: bold;'>" + data.pName + "</h4><p class='group inner list-group-item-text'>" +
+        				    "<div class='caption'><h4 class='group inner list-group-item-heading' style='font-size: 20px; font-weight: bold; overflow: hidden; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'>" + data.pName + "</h4><p class='group inner list-group-item-text'>" +
         				    "총 구매건수 : " + data.orderTotalCnt.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "건<br>총 구매개수 : " + data.giftTotalCnt.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "개<br>" +
         				    "총 매출액 : " + data.giftTotalPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원<br>가격 : " + data.pPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + "원</p></div></div></div>";
 
@@ -294,7 +295,7 @@ function fn_giftRevenueDetailView(productSeq)
 		            <div class="thumbnail">
 		                <img class="group list-group-image" src="/resources/upload/${admin.fileName}" alt="" style="width: 500px; height: 350px;"/>
 		                <div class="caption">
-		                    <h4 class="group inner list-group-item-heading" style="font-size: 14px; font-weight: bold;">${admin.pName}</h4>
+		                    <h4 class="group inner list-group-item-heading" style="font-size: 20px; font-weight: bold; overflow: hidden; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${admin.pName}</h4>
 		                    <p class="group inner list-group-item-text">
 		                        총 구매건수 : <fmt:formatNumber value="${admin.orderTotalCnt}" pattern="#,###"/>건<br>
 		                        총 구매개수 : <fmt:formatNumber value="${admin.giftTotalCnt}" pattern="#,###"/>개<br>

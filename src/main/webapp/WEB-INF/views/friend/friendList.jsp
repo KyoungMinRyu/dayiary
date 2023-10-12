@@ -464,10 +464,10 @@ function fn_list()
                <input type="button" id="btnCouple" value="연인등록" style="height: 38px; margin-left: 8px;">
             </c:otherwise>
          </c:choose>
-         <input type="button" id="btnList" value="유저 목록" style="height: 38px;">
-         <input type="button" id="btnCheckRes" value="받은 친구 요청" style="height: 38px;">
-         <input type="button" id="btnCheckReq" value="보낸 친구 요청" style="height: 38px;">
-         <input type="button" id="btnMyFriendList" value="내 친구" style="height: 38px;">
+         <input type="button" id="btnList" value="유저 목록" style="height: 38px; <c:if test='${listType eq "0"}'> background-color: #D9F6FF; </c:if>">
+         <input type="button" id="btnCheckRes" value="받은 친구 요청" style="height: 38px; <c:if test='${listType eq "1"}'> background-color: #D9F6FF; </c:if>">
+         <input type="button" id="btnCheckReq" value="보낸 친구 요청" style="height: 38px; <c:if test='${listType eq "2"}'> background-color: #D9F6FF; </c:if>">
+         <input type="button" id="btnMyFriendList" value="내 친구" style="height: 38px; <c:if test='${listType eq "3"}'> background-color: #D9F6FF; </c:if>">
          <select name="_searchType" id="_searchType" class="" style="width: 80px; height: 38px;">
                <option value="0" <c:if test='${searchType eq "0"}'>selected</c:if>>전체</option>
                <option value="1" <c:if test='${searchType eq "1"}'>selected</c:if>>아이디</option>

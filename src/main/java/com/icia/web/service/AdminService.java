@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.icia.web.model.Admin;
 import com.icia.web.model.GiftAdd;
 import com.icia.web.model.RestoInfo;
+import com.icia.web.model.RestoReview;
 import com.icia.web.model.Seller;
 import com.icia.web.model.UserG2;
 import com.icia.web.model.UserProfileFile;
@@ -528,7 +529,69 @@ public class AdminService
 		}
 		return count;
 	}
+	
+	public int deleteReview(String orderSeq)
+	{
+		int count = 0;
+		try 
+		{
+			count = adminDao.deleteReview(orderSeq);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](deleteReview)", e);
+		}
+		return count;
+	}
+	
+	public List<RestoReview> selectRestoReviewList(String rSeq)
+	{
+
+		List<RestoReview> list = null;
+		try 
+		{
+			list = adminDao.selectRestoReviewList(rSeq);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](selectReviewList)", e);
+		}
+		return list;
+	}
+	
+	public List<RestoReview> selectGiftReviewList(String productSeq)
+	{
+
+		List<RestoReview> list = null;
+		try 
+		{
+			list = adminDao.selectGiftReviewList(productSeq);
+		}
+		catch (Exception e) 
+		{
+	         logger.error("[AdminService](selectGiftReviewList)", e);
+		}
+		return list;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

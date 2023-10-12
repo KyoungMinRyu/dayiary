@@ -160,4 +160,19 @@ public class AnniversaryService {
 		}
 		return selectCoupleDate;
 	}
+	
+
+	public List<String> selectSharedAnniversaryProfileList(HashMap<String, Object> hashMap)
+	{
+		List<String> list = null;
+		try 
+		{
+			list = anniversaryDao.selectSharedAnniversaryProfileList(hashMap);
+		} 
+		catch (Exception e) 
+		{
+			logger.error("[AnniversaryService](selectSharedAnniversaryProfileList)", e);
+		}
+		return list;
+	}
 }
