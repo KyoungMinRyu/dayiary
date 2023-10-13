@@ -51,7 +51,11 @@ body {
      padding-top: 30px;                               /* 게시판 내부내용 상단에서 띄우기 */
      padding-bottom: 10px;
 }
-
+footer {
+   position:fixed;
+   bottom: 0;
+   width: 100%;
+}
 </style>
 <%@ include file="/WEB-INF/views/include/head.jsp" %>
 <script type="text/javascript">
@@ -235,6 +239,7 @@ $(document).ready(function() {
           reader.readAsDataURL(image);
         }
            
+        $("footer").css("position", "static");
       }
 </script>
 

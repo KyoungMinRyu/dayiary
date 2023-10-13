@@ -301,6 +301,11 @@ body {
     background-color: lightgoldenrodyellow;
 }
 
+   div#cbb { 
+    width: 100%;
+    margin-bottom:30px;
+}
+
 </style>
 
  
@@ -576,8 +581,7 @@ function fn_list(curPage) {
 
 <c:if test="${empty list}">   
 <div class="productNo">
-           <div class="product-description">
-         </div>
+           
          <div id="cbb">
              <span id="click" style="display:grid;">찾으시는 제품이 없습니다. <br> 조건을 변경하여 다시 검색해 주세요.</span>
           </div>

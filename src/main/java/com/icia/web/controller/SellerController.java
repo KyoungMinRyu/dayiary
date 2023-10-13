@@ -419,9 +419,14 @@ public class SellerController {
 					seller.setSellerShopName(sellerShopName);
 					seller.setSellerAddress(sellerAddress);
 
-					if (sellerService.sellerUpdate(seller) > 0) {
-						ajaxResponse.setResponse(0, "Success");
-					} else {
+					if (sellerService.sellerUpdate(seller) > 0) 
+					{
+						session.removeAttribute(cookieSellerId);
+						session.setAttribute(cookieSellerId, seller.getSellerShopName());
+						ajaxResponse.setResponse(0, "Success", seller.getSellerShopName());
+					} 
+					else 
+					{
 						ajaxResponse.setResponse(500, "Internal Server error");
 					}
 				} else {
@@ -480,7 +485,7 @@ public class SellerController {
 		List<RestoFile> list = null;
 		List<Menu> menuList = null;
 		MenuFile menuFile = null;
-		if (!StringUtil.isEmpty(restoSeq)) {
+		if (!StringUtil.isEmpty(restoSeq)) {	
 			restoInfo = sellerService.restoInfoBring(restoSeq);
 			list = sellerService.restoFileBring(restoSeq);
 			menuList = sellerService.menuBring(restoSeq);
@@ -662,14 +667,21 @@ public class SellerController {
 						}
 						for(int i = 0; i < orgMenuFileList.size(); i++)
 						{
-							if(!StringUtil.equals(orgMenuFileList.get(i).getFileName(), "normalMenu.png"))
+							for(int j = 0; j < menuList.size(); j++)
 							{
-								for(int j = 0; j < menuList.size(); j++)
+								if(StringUtil.equals(menuList.get(j).getFileName(), orgMenuFileList.get(i).getFileName()))
 								{
-									if(!StringUtil.equals(menuList.get(i).getFileName(), orgMenuFileList.get(i).getFileName()))
-									{
-										FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgMenuFileList.get(i).getFileName());
-									}
+									orgMenuFileList.remove(i);
+								}
+							}
+						}
+						if(orgMenuFileList.size() > 0)
+						{
+							for(int i = 0; i < orgMenuFileList.size(); i++)
+							{
+								if(!StringUtil.equals(orgMenuFileList.get(i).getFileName(), "normalMenu.png"))
+								{
+									FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgMenuFileList.get(i).getFileName());
 								}
 							}
 						}
@@ -794,26 +806,29 @@ public class SellerController {
 				if (sellerService.giftUpdate(giftAdd, flag) > 0) 
 				{
 					ajaxResponse.setResponse(0, "success");
-					if(flag == 1)
+					if(flag > -1)
 					{
-						if(!StringUtil.equals(orgGiftFileList.get(0).getFileName(), "gift.png"))
+						if(flag == 1)
 						{
-							FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgGiftFileList.get(0).getFileName());
-						}
-						orgGiftFileList = null;
-					}
-					else if(flag == 2)
-					{
-						orgGiftFileList.remove(0);
-					}
-					
-					if(orgGiftFileList != null && orgGiftFileList.size() > 0)
-					{
-						for(int i = 0; i < orgGiftFileList.size(); i++)
-						{
-							if(!StringUtil.equals(orgGiftFileList.get(i).getFileName(), "gift.png"))
+							if(!StringUtil.equals(orgGiftFileList.get(0).getFileName(), "gift.png"))
 							{
-								FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgGiftFileList.get(i).getFileName());
+								FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgGiftFileList.get(0).getFileName());
+							}
+							orgGiftFileList = null;
+						}
+						else if(flag == 2)
+						{
+							orgGiftFileList.remove(0);
+						}
+						
+						if(orgGiftFileList != null && orgGiftFileList.size() > 0)
+						{
+							for(int i = 0; i < orgGiftFileList.size(); i++)
+							{
+								if(!StringUtil.equals(orgGiftFileList.get(i).getFileName(), "gift.png"))
+								{
+									FileUtil.deleteFile(UPLOAD_SAVE_DIR + FileUtil.getFileSeparator() + orgGiftFileList.get(i).getFileName());
+								}
 							}
 						}
 					}

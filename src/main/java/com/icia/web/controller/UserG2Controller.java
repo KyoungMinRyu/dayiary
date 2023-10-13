@@ -640,7 +640,7 @@ public class UserG2Controller {
 		model.addAttribute("toCount", toCount);
 		model.addAttribute("fromCount", fromCount);
 
-		if (friend != null) 
+		if(friend != null) 
 		{
 			List<Friend> list = friendService.selectYourId(cookieUserId);
 			if (list != null && list.size() > 0) 
@@ -663,10 +663,10 @@ public class UserG2Controller {
 					DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 					String currentDate = dateFormat.format(new Date());
 					model.addAttribute("currentDate", currentDate);
-				}
+				}	
 			}
 			
-			List<Anniversary> selectcouple = anniversaryService.selectCoupleDate(cookieUserId);
+			List<Anniversary> selectcouple = anniversaryService.selectMyPageAnniversary(cookieUserId);
 			if (selectcouple != null && selectcouple.size() > 0) 
 			{
 				HashMap<String, Object> selectFileHashMap = new HashMap<String, Object>();

@@ -1,4 +1,4 @@
-	<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+   <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <!DOCTYPE html>
 <html>
@@ -120,10 +120,10 @@
       },
       success:function(response)
       {
-    	  if(response.code == 0)
+         if(response.code == 0)
           { // insert 성공
-            	alert("선물 등록에 성공하셨습니다.");
-            	location.href = "/gift/giftView?productSeq=" + response.data;
+               alert("선물 등록에 성공하셨습니다.");
+               location.href = "/gift/giftView?productSeq=" + response.data;
           }
           else if(response.code == 400)
           { // 파라미터 오류
@@ -132,11 +132,11 @@
           }
           else if(response.code == 500)
           { // 서버 에러
-            	alert("서버에 에러가 발생하였습니다.");
+               alert("서버에 에러가 발생하였습니다.");
           }
           else
           { // 알 수 없는 오류
-          	  alert("알 수 없는 오류가 발생하였습니다.");
+               alert("알 수 없는 오류가 발생하였습니다.");
           }
       },
       error:function(error)
@@ -165,13 +165,14 @@
 body {
   font-family: 'SUIT-Regular', sans-serif;
    background-color: #fffbf4 !important;
+   
 }
 
 .flexbox-container {
    display: -ms-flex;
    display: -webkit-flex;
    display: flex;
-   margin-bottom:100px;
+   margin-bottom: 200px;
 }
 
 .flexbox-container > div {
@@ -191,6 +192,7 @@ body {
 }
 
 footer {
+	position: fixed;
     bottom: 0;
     width: 100%;
     height: auto;
@@ -258,10 +260,11 @@ footer {
   </div>
   </div>
  </form>
+</body>
+
 <footer style="background-color: black; color: lightgray; text-align: center; margin-top:80px; padding: 30px;">
  <a style="font-size:20px; letter-spacing:5px;">《 Dayiary 》 </a> <br>
     &copy; Copyright Dayiary Corp. All Rights Reserved. <br>
     Always with you 🎉 여러분의 일상을 함께합니다.
 </footer> 
-</body>
 </html>

@@ -49,4 +49,6 @@ public interface AnniversaryDao
 	public List<Anniversary> selectCoupleDate(String userId);
 	
 	public List<String> selectSharedAnniversaryProfileList(HashMap<String, Object> hashMap);
+	
+	public List<Anniversary> selectMyPageAnniversary(String userId);
 }

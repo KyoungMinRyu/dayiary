@@ -209,7 +209,8 @@ SELECT BOARD_SEQ,
                BOARD_TYPE,
               C.FILE_SEQ
 
-              ORDER BY REG_DATE DESC))   
+              ORDER BY A.BOARD_SEQ DESC
+              ))   
  WHERE RNM <![CDATA[>=]]> #{startRow}
    AND RNM <![CDATA[<=]]> #{endRow}
 </select>

@@ -65,6 +65,19 @@ body {
 .form-control:disabled, .form-control[readonly] {
     background-color: #ffffff !important;
 }
+
+
+<c:if test="${empty inquiryBoard.inquiryBoardFile}">
+
+footer {
+  
+  position : fixed;
+  bottom : 0;
+  width : 100%;
+   
+}
+
+</c:if>
 </style>
 <%@ include file="/WEB-INF/views/include/head.jsp" %>
 <script type="text/javascript">

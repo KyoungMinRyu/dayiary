@@ -156,12 +156,11 @@ public class AnniversaryService {
 		try {
 			selectCoupleDate = anniversaryDao.selectCoupleDate(userId);
 		} catch (Exception e) {
-			logger.error("[AnniversaryService](selectFriendBirthday)", e);
+			logger.error("[AnniversaryService](selectCoupleDate)", e);
 		}
 		return selectCoupleDate;
 	}
 	
-
 	public List<String> selectSharedAnniversaryProfileList(HashMap<String, Object> hashMap)
 	{
 		List<String> list = null;
@@ -172,6 +171,20 @@ public class AnniversaryService {
 		catch (Exception e) 
 		{
 			logger.error("[AnniversaryService](selectSharedAnniversaryProfileList)", e);
+		}
+		return list;
+	}
+	
+	public List<Anniversary> selectMyPageAnniversary(String userId)
+	{
+		List<Anniversary> list = null;
+		try 
+		{
+			list = anniversaryDao.selectMyPageAnniversary(userId);
+		} 
+		catch (Exception e) 
+		{
+			logger.error("[AnniversaryService](selectMyPageAnniversary)", e);
 		}
 		return list;
 	}

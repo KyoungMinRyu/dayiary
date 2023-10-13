@@ -51,7 +51,11 @@ body {
 {
    font-family: 'SUIT-Regular', sans-serif;
 }
-
+footer {
+   position:fixed;
+   bottom: 0;
+   width: 100%;
+}
 
 
 </style>
@@ -222,7 +226,7 @@ $(document).ready(function(){
           
           reader.readAsDataURL(image);
         }
-           
+        $("footer").css("position", "static");
       }
 </script>
 

@@ -609,171 +609,148 @@ $(document).ready(function()
 });
 
 //aboutMe 메서드 실행
-function aboutMe() 
-{
-	$.ajax
-    ({
+function aboutMe() {
+    $.ajax({
         type: "POST",
         url: "/seller/getSellerProfile",
-        success: function(response)
-        {
-			if(response.code == 0)
-			{
-	        	$(".page-content").html("");
-	           	let json = response.data;
-	           	let makeTag = 
-	           	    "<div class='sellerinfocontainer' style='padding: 50px;'>" +
-	           	    "<h2>판매자 정보 수정</h2>" +
-	           	    "<div>" +
-	           	    "<div style='margin-top: 20px;'>" +
-	           	    "<label for='sellerid' style='font-size: 20px'>아이디 : &nbsp;</label>" +
-	           	    "<span style='font-size: 20px;'>" + json.sellerId + "</span>" +
-	           	    "</div>" +
-	           	    "<div>" +
-	           	    "<label for='sellerid' style='font-size: 20px'>가입일 : &nbsp;</label>" +
-	           	    "<span style='font-size: 20px;'>" + json.regDate + "</span>" +
-	           	    "</div>" +
-	           	    "<div>" +
-	           	    "<label for='sellerid' style='font-size: 20px'>이메일 : &nbsp;</label>" +
-	           	    "<span style='font-size: 20px;'>" + json.sellerEmail + "</span>" +
-	           	    "</div>" +
-	           	    "<div>" +
-	           	    "<label for='sellerid' style='font-size: 20px'>사업자번호 : &nbsp;</label>" +
-	           	    "<span style='font-size: 20px;'>" + json.sellerBusinessId + "</span>" +
-	           	    "</div>" +
-	           	    "<div>" +
-	           	    "<label for='sellerid' style='font-size: 20px'>전화번호 : &nbsp;</label>" +
-	           	    "<span style='font-size: 20px;'> " + json.sellerPh + "</span>" +
-	           	    "</div>" +
-	           	    "<form>" +
-	           	    "<div style='margin-top: 20px; display: flex; justify-content: flex-start;'>" +
-	           	    "<label for='sellerpwd' style='font-size: 20px;'>비밀번호 : &nbsp;</label>" +
-	           	    "<input style='width: 77.5%;' type='password' class='form-control' id='sellerPwd1' name='sellerPwd1' value=" + json.sellerPwd + " placeholder='비밀번호'/>" +
-	           	    "</div>" +
-	           	    "<div style='margin-top: 20px; display: flex; justify-content: flex-start;'>" +
-	           	    "<label for='sellerpwd' style='font-size: 20px'>비밀번호 확인 : &nbsp;</label>" +
-	           	    "<input style='width: 74.3%;' type='password' class='form-control' id='sellerPwd2' name='sellerPwd2' value='" + json.sellerPwd + "' placeholder='비밀번호 확인' />" +
-	           	    "</div>" +
-	           	    "<div style='margin-top: 20px; display: flex; justify-content: flex-start;'>" +
-	           	    "<label for='shopname' style='font-size: 20px'>판매자 상호명 : &nbsp;</label>" +
-	           	    "<input style='width: 74.3%;' type='text' class='form-control' id='shopName' name='shopName' value='" + json.sellerShopName + "' placeholder='상호명' />" +
-	           	    "</div>" +
-	           	    "<div style='margin-top: 20px;'>" +
-	           	    "<br>" +
-	           	    "<label for='selleradd' style='font-size: 25px'>판매자 주소</label>" +
-	           	    "<div class='field'>" +
-	           	    "<input type='button' onclick='getDaumPostcode()' value='우편번호 찾기' style='height: 38px; background-color: #000; color: white; font-size: 15px;'>" +
-	           	    "</div>" +
-	           	    "<div style='display: flex; justify-content: flex-start; margin-top: 15px;'>" +
-	           	    "<input type='text' name='postcode' id='postcode' style='width: 20%; height: 38px; margin-right: 10px;; background-color: #FFF;' placeholder='우편번호' disabled> " +
-	           	    "<input type='text' name='roadAddress' id='roadAddress' style='width: 64%; height: 38px; background-color: #FFF;' value='" + json.sellerAddress + "' placeholder='도로명주소' disabled>" +
-	           	    "</div>" +
-	           	    "<div>" +
-	           	    "<input type='text' name='detailAddress' id='detailAddress' style='width: 84.8%; height: 38px; margin-top: 15px;' placeholder='상세주소'>" +
-	           	    "</div>" +
-	           	    "</div>" +
-	           	    "<button style='font-size: 20px; width: 20%; margin-top: 15px;' type='button' id='btnUpdate' class='btn btn-primary'>수정</button>" +
-	           	    "<input type='hidden' name='hiddenAdd' id='hiddenAdd'>" +
-	           	    "</form>" +
-	           	    "</div>" +
-	           	    "</div>";
-	           	    
-	           	$(".page-content").html(makeTag);
-	           	
-	           	$("#hiddenAdd").val($("#roadAddress").val() + " " + $("#detailAddress").val());    
+        success: function (response) {
+            if (response.code == 0) {
+                $(".page-content").html("");
+                let json = response.data;
+                let makeTag =
+                    "<div class='sellerinfocontainer' style='padding: 50px;'>" +
+                    "<h2>판매자 정보 수정</h2>" +
+                    "<div>" +
+                    "<div style='margin-top: 20px;'>" +
+                    "<label for='sellerid' style='font-size: 20px'>아이디 : &nbsp;</label>" +
+                    "<span style='font-size: 20px;'>" + json.sellerId + "</span>" +
+                    "</div>" +
+                    "<div>" +
+                    "<label for='sellerid' style='font-size: 20px'>가입일 : &nbsp;</label>" +
+                    "<span style='font-size: 20px;'>" + json.regDate + "</span>" +
+                    "</div>" +
+                    "<div>" +
+                    "<label for 'sellerid' style='font-size: 20px'>이메일 : &nbsp;</label>" +
+                    "<span style='font-size: 20px;'>" + json.sellerEmail + "</span>" +
+                    "</div>" +
+                    "<div>" +
+                    "<label for 'sellerid' style='font-size: 20px'>사업자번호 : &nbsp;</label>" +
+                    "<span style='font-size: 20px;'>" + json.sellerBusinessId + "</span>" +
+                    "</div>" +
+                    "<div>" +
+                    "<label for 'sellerid' style='font-size: 20px'>전화번호 : &nbsp;</label>" +
+                    "<span style='font-size: 20px;'> " + json.sellerPh + "</span>" +
+                    "</div>" +
+                    "<form>" +
+                    "<div style='margin-top: 20px; display: flex; justify-content: flex-start;'>" +
+                    "<label for='sellerpwd' style='font-size: 20px;'>비밀번호 : &nbsp;</label>" +
+                    "<input style='width: 77.5%;' type='password' class='form-control' id='sellerPwd1' name='sellerPwd1' value=" + json.sellerPwd + " placeholder='비밀번호' />" +
+                    "</div>" +
+                    "<div style='margin-top: 20px; display: flex; justify-content: flex-start;'>" +
+                    "<label for 'sellerpwd' style='font-size: 20px'>비밀번호 확인 : &nbsp;</label>" +
+                    "<input style='width: 74.3%;' type='password' class='form-control' id='sellerPwd2' name='sellerPwd2' value='" + json.sellerPwd + "' placeholder='비밀번호 확인' />" +
+                    "</div>" +
+                    "<div style='margin-top: 20px; display: flex; justify-content: flex-start;'>" +
+                    "<label for 'shopname' style='font-size: 20px'>판매자 상호명 : &nbsp;</label>" +
+                    "<input style='width: 74.3%;' type='text' class='form-control' id='shopName' name='shopName' value='" + json.sellerShopName + "' placeholder='상호명' />" +
+                    "</div>" +
+                    "<div style='margin-top: 20px;'>" +
+                    "<br>" +
+                    "<label for 'selleradd' style='font-size: 25px'>판매자 주소</label>" +
+                    "<div class='field'>" +
+                    "<input type='button' onclick='getDaumPostcode()' value='우편번호 찾기' style='height: 38px; background-color: #000; color: white; font-size: 15px;' />" +
+                    "</div>" +
+                    "<div style='display: flex; justify-content: flex-start; margin-top: 15px;'>" +
+                    "<input type='text' name='postcode' id='postcode' style='width: 20%; height: 38px; margin-right: 10px; background-color: #FFF;' placeholder='우편번호' disabled> " +
+                    "<input type='text' name='roadAddress' id='roadAddress' style='width: 64%; height: 38px; background-color: #FFF;' value='" + json.sellerAddress + "' placeholder='도로명주소' disabled>" +
+                    "</div>" +
+                    "<div>" +
+                    "<input type='text' name='detailAddress' id='detailAddress' style='width: 84.8%; height: 38px; margin-top: 15px;' placeholder='상세주소'>" +
+                    "</div>" +
+                    "</div>" +
+                    "<button style='font-size: 20px; width: 20%; margin-top: 15px;' type='button' id='btnUpdate' class='btn btn-primary'>수정</button>" +
+                    "<input type='hidden' name='hiddenAdd' id='hiddenAdd' value=''>" +
+                    "</form>" +
+                    "</div>" +
+                    "</div>";
 
-	            //회원정보수정 완료 버튼 누를 시 ..
-	           	$("#btnUpdate").on("click", function() 
-	       		{
-	                // 모든 공백 체크 정규식
-	               	var emptCheck = /\s/g;
-	               // 영문 대소문자, 숫자로만 이루어진 4~12자리 정규식
-	               	var pwCheck = /^[a-zA-Z0-9]{4,12}$/;
-	                      
-	               	if($.trim($("#sellerPwd1").val()).length<=0)
-	               	{
-	               		alert("비밀번호를 입력하세요.");
-	                  	$("#sellerPwd1").val("");
-	                  	$("#sellerPwd1").focus();
-	                  	return;
-	               	}
-	                
-	               	if(emptCheck.test($("#sellerPwd1").val()))
-	               	{
-	                	alert("비밀번호는 공백을 포함할 수 없습니다.");
-	                  	$("#sellerPwd1").focus();
-	                  	return;
-	               	} 
-	               
-	               	if(!pwCheck.test($("#sellerPwd1").val()))
-	               	{
-	                  	alert("비밀번호는 영문대소문자와 숫자로 4~12자리 입니다.");
-	                  	$("#sellerPwd1").focus();
-	                  	return;
-	               	}
-	               
-	               	if($("#sellerPwd1").val() != $("#sellerPwd2").val())
-	               	{
-	                  	alert("비밀번호가 일치하지 않습니다.");
-	                  	$("#sellerPwd2").focus();
-	                  	return;
-	               	}
-	               
-	       			$.ajax
-	       			({
-	                	type:"POST",
-	                   	url:"/seller/updateProc",
-	                   	data:
-	                   	{
-	                    	sellerPwd:$("#sellerPwd1").val(),
-	                      	sellerShopName:$("#shopName").val(),
-	                      	sellerAddress:$("#hiddenAdd").val()
-	                   	},   
-	                   	datatype:"JSON",
-	                   	success:function(response)
-	                   	{
-	                      	if(response.code==0)
-	                       	{
-	                         	alert("판매자 정보가 수정되었습니다.");
-	                         	aboutMe();
-	                       	}
-	                      	else if(response.code == 400)
-	                      	{
-	                         	alert("파라미터 값이 올바르지 않습니다.");
-	                         	$("#sellerPwd1").focus();
-	                      	}
-	                      	else if(response.code == 404)
-	                      	{
-	                         	alert("판매자 정보가 존재하지 않습니다.");
-	                         	location.href="/seller/logout";
-	                      	}
-	                      	else if(response.code == 500)
-	                      	{
-	                         	alert("판매자 정보 수정 중 오류가 발생하였습니다.");
-	                         	$("#sellerPwd1").focus();
-	                      	}
-	                      	else
-	                      	{
-	                         	alert("판매자 수정 중 오류 발생");
-	                      	}
-	                   	},
-	                   	error:function(xhr, status, error)
-	                   	{
-	                      	icia.common.error(error);
-	                   	}
-	          		});
-	          	});
-			}
-			else
-			{
-                location.href="/seller/logout";
-			}
+                $(".page-content").html(makeTag);
+
+                // 회원정보수정 완료 버튼 누를 시 ..
+                $("#btnUpdate").on("click", function () {
+                    // 모든 공백 체크 정규식
+                    var emptCheck = /\s/g;
+                    // 영문 대소문자, 숫자로만 이루어진 4~12자리 정규식
+                    var pwCheck = /^[a-zA-Z0-9]{4,12}$/;
+
+                    if ($.trim($("#sellerPwd1").val()).length <= 0) {
+                        alert("비밀번호를 입력하세요.");
+                        $("#sellerPwd1").val("");
+                        $("#sellerPwd1").focus();
+                        return;
+                    }
+
+                    if (emptCheck.test($("#sellerPwd1").val())) {
+                        alert("비밀번호는 공백을 포함할 수 없습니다.");
+                        $("#sellerPwd1").focus();
+                        return;
+                    }
+
+                    if (!pwCheck.test($("#sellerPwd1").val())) {
+                        alert("비밀번호는 영문 대소문자와 숫자로 4~12자리 입니다.");
+                        $("#sellerPwd1").focus();
+                        return;
+                    }
+
+                    if ($("#sellerPwd1").val() != $("#sellerPwd2").val()) {
+                        alert("비밀번호가 일치하지 않습니다.");
+                        $("#sellerPwd2").focus();
+                        return;
+                    }
+
+                    // 이 부분은 주소를 업데이트하게끔 수정됨
+                    var newAddress = $("#roadAddress").val() + " " + $("#detailAddress").val();
+                    $("#hiddenAdd").val(newAddress);
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/seller/updateProc",
+                        data: {
+                            sellerPwd: $("#sellerPwd1").val(),
+                            sellerShopName: $("#shopName").val(),
+                            sellerAddress: $("#hiddenAdd").val()
+                        },
+                        datatype: "JSON",
+                        success: function (response) {
+                            if (response.code == 0) {
+                                alert("판매자 정보가 수정되었습니다.");
+                                location.reload();
+                            } else if (response.code == 400) {
+                                alert("파라미터 값이 올바르지 않습니다.");
+                                $("#sellerPwd1").focus();
+                            } else if (response.code == 404) {
+                                alert("판매자 정보가 존재하지 않습니다.");
+                                location.href = "/seller/logout";
+                            } else if (response.code == 500) {
+                                alert("판매자 정보 수정 중 오류가 발생하였습니다.");
+                                $("#sellerPwd1").focus();
+                            } else {
+                                alert("판매자 수정 중 오류 발생");
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            icia.common.error(error);
+                        }
+                    });
+                });
+            } else {
+                location.href = "/seller/logout";
+            }
         },
-        error: function(xhr, status, error) 
-        {
+        error: function (xhr, status, error) {
             console.log(error);
         }
-    });  
+    });
 }
 
 function fn_writeDeliveryNum(seq) 

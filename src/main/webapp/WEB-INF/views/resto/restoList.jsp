@@ -333,7 +333,7 @@ function fn_list(curPage)
 
    <div class="header"></div>
 
-    <h3> Restaurant ― Reservation </h3>
+    <h3> Restaurant ― RESERVATION </h3>
 
 
 

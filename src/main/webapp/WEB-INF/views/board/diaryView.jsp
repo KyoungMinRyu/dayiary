@@ -211,6 +211,9 @@ function fn_commentDelete(commentSeq) //댓글 삭제 버튼 클릭시
                else if(response.code == 1)
                {
                   alert("- 댓글이 삭제 되었습니다.");
+                  
+                  location.reload();
+
                   var deletedCommentSeq = commentSeq;
 
                   // 답글 버튼 숨김 처리

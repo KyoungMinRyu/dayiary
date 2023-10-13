@@ -195,7 +195,15 @@ b
 {
    font-family: 'sans-serif' !important;
 }
+
+
+#center {
+  display: flex;
+  align-items: center;
+}
 </style>
+
+
 <%      
 if(cookieUser != null)
 {
@@ -276,8 +284,9 @@ else if(cookieSeller != null)
         </ul>
       <ul class="right">
      <a href="/seller/sellerMyPage">
-        <li>
-          <b style="color: #FFF; text-decoration: underline; margin-left: 5px; display: inline-block; vertical-align: middle; margin-top: -5px;"><%= seller %></b>
+        <li id="center">
+            <img src="../resources/images/sellerfile.png"  style="width: 30px; height: 30px; margin-right:-5px;" >
+          <b style="color: #FFF; text-decoration: underline; margin-left: 5px; display: inline-block; vertical-align: middle; margin-top: -5px;" id="sellerProFileShopName"><%= seller %></b>
        </li>
      </a>
      <li style="margin-left: 20px;">

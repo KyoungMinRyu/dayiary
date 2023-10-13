@@ -170,7 +170,7 @@ let a = "${yourFriend.relationalType}";
         </svg>
       </button>
     <ul class="profile-section">
-        <div class="profile-section1">
+        <div class="profile-section1" style="height : 280px;">
           <div class="profile-image-container">
     <img src="${url}" alt="Profile Image" class="profile-image" style="cursor: pointer;">
     <svg onclick="showPopupProfileImg()" class="centered-svg" xmlns="http://www.w3.org/2000/svg" width="5" height="5" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer;">
